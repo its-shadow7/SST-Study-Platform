@@ -1,0 +1,1426 @@
+[
+  {
+    "filename": "Lecture_02_Notes.md",
+    "title": "Lecture 2: Network Packets and Layered Communication",
+    "subtitle": "\ud83c\udfaf Learning Objectives",
+    "word_count": 3867,
+    "read_time_min": 19,
+    "headings": [
+      {
+        "level": 2,
+        "title": "Student Notes \u2014 SST Computer Networks (Term 5)"
+      },
+      {
+        "level": 2,
+        "title": "\ud83c\udfaf Learning Objectives"
+      },
+      {
+        "level": 2,
+        "title": "1. What is a Protocol & Why Layering?"
+      },
+      {
+        "level": 3,
+        "title": "The Core Definition"
+      },
+      {
+        "level": 3,
+        "title": "Why Layered Protocols? The Engineering Rationale"
+      },
+      {
+        "level": 2,
+        "title": "2. The OSI Reference Model (7 Layers)"
+      },
+      {
+        "level": 3,
+        "title": "Layer-by-Layer Architectural Analysis"
+      },
+      {
+        "level": 2,
+        "title": "3. The TCP/IP Model (The Reality of the Internet)"
+      },
+      {
+        "level": 3,
+        "title": "Architectural Comparison: OSI vs. TCP/IP"
+      },
+      {
+        "level": 2,
+        "title": "4. Encapsulation, Decapsulation & Protocol Data Units (PDUs)"
+      },
+      {
+        "level": 3,
+        "title": "The Specific Terminology of PDUs"
+      },
+      {
+        "level": 3,
+        "title": "Decapsulation at the Receiving Host"
+      },
+      {
+        "level": 2,
+        "title": "5. Dissecting the Ethernet II Frame"
+      },
+      {
+        "level": 3,
+        "title": "Detailed Field Breakdown"
+      },
+      {
+        "level": 2,
+        "title": "6. Physics & Mathematics: Why the 64-Byte Minimum Frame?"
+      },
+      {
+        "level": 3,
+        "title": "The CSMA/CD Collision Window"
+      },
+      {
+        "level": 3,
+        "title": "The Mathematical Derivation"
+      },
+      {
+        "level": 2,
+        "title": "7. MTU, MSS & IP Fragmentation"
+      },
+      {
+        "level": 3,
+        "title": "MTU (Maximum Transmission Unit)"
+      },
+      {
+        "level": 3,
+        "title": "MSS (Maximum Segment Size)"
+      },
+      {
+        "level": 3,
+        "title": "IP Fragmentation Mechanics"
+      },
+      {
+        "level": 3,
+        "title": "Modern Solution: Path MTU Discovery (PMTUD)"
+      },
+      {
+        "level": 2,
+        "title": "8. MAC Addresses & The Layer 2 / Layer 3 Interface"
+      },
+      {
+        "level": 3,
+        "title": "MAC Address Anatomy"
+      },
+      {
+        "level": 3,
+        "title": "Scope Comparison: MAC vs. IP Address"
+      },
+      {
+        "level": 2,
+        "title": "9. Comprehensive End-to-End Walkthrough: Sending a Web Request"
+      },
+      {
+        "level": 3,
+        "title": "Trace of the Outgoing Frame Across Hops"
+      },
+      {
+        "level": 2,
+        "title": "\ud83d\udccc Summary Checklist & Exam Cram Notes"
+      },
+      {
+        "level": 2,
+        "title": "\ud83e\udde0 Practice Problems & Self-Check Questions"
+      }
+    ]
+  },
+  {
+    "filename": "Lecture_03_Notes.md",
+    "title": "Lecture 3: IP Addresses and Subnetting I",
+    "subtitle": "\ud83c\udfaf Learning Objectives",
+    "word_count": 2761,
+    "read_time_min": 14,
+    "headings": [
+      {
+        "level": 2,
+        "title": "Student Notes \u2014 SST Computer Networks (Term 5)"
+      },
+      {
+        "level": 2,
+        "title": "\ud83c\udfaf Learning Objectives"
+      },
+      {
+        "level": 2,
+        "title": "1. Why Do We Need IP Addresses?"
+      },
+      {
+        "level": 3,
+        "title": "The Inherent Flaw of Flat vs. Hierarchical Addressing"
+      },
+      {
+        "level": 2,
+        "title": "2. Anatomy of an IPv4 Address"
+      },
+      {
+        "level": 3,
+        "title": "Binary $\\leftrightarrow$ Decimal Conversion Mastery"
+      },
+      {
+        "level": 2,
+        "title": "3. Historical Context: The Classful Addressing System"
+      },
+      {
+        "level": 3,
+        "title": "The Class Breakdown Table"
+      },
+      {
+        "level": 3,
+        "title": "Why Classful Addressing Failed"
+      },
+      {
+        "level": 2,
+        "title": "4. CIDR & Subnet Masks (The Classless Era)"
+      },
+      {
+        "level": 3,
+        "title": "The Subnet Mask"
+      },
+      {
+        "level": 3,
+        "title": "CIDR Prefix Notation (`/N`)"
+      },
+      {
+        "level": 2,
+        "title": "5. Hardware Bitwise ANDing: How Routers Find the Network ID"
+      },
+      {
+        "level": 3,
+        "title": "Step-by-Step Bitwise Example"
+      },
+      {
+        "level": 2,
+        "title": "6. The Anatomy of Any Subnet: The 4 Critical Addresses"
+      },
+      {
+        "level": 2,
+        "title": "7. The \"Magic Number\" Shortcut Technique"
+      },
+      {
+        "level": 3,
+        "title": "The Algorithm"
+      },
+      {
+        "level": 2,
+        "title": "8. Complete Master CIDR Reference Table"
+      },
+      {
+        "level": 2,
+        "title": "9. Private IP Addresses (RFC 1918) & Special Blocks"
+      },
+      {
+        "level": 3,
+        "title": "Other Essential Reserved IPv4 Blocks"
+      },
+      {
+        "level": 2,
+        "title": "10. Comprehensive Worked Subnetting Numericals"
+      },
+      {
+        "level": 3,
+        "title": "Problem 1: 4th Octet Subnetting"
+      },
+      {
+        "level": 3,
+        "title": "Problem 2: 3rd Octet Subnetting (Across Octet Boundaries)"
+      },
+      {
+        "level": 3,
+        "title": "Problem 3: Point-to-Point WAN Link Design"
+      },
+      {
+        "level": 2,
+        "title": "\ud83d\udccc Summary Checklist & Exam Cram Notes"
+      },
+      {
+        "level": 2,
+        "title": "\ud83e\udde0 Practice Problems & Self-Check Questions"
+      }
+    ]
+  },
+  {
+    "filename": "Lecture_04_Notes.md",
+    "title": "Lecture 4: IP Addresses and Subnetting II",
+    "subtitle": "\ud83c\udfaf Learning Objectives",
+    "word_count": 2376,
+    "read_time_min": 12,
+    "headings": [
+      {
+        "level": 2,
+        "title": "Student Notes \u2014 SST Computer Networks (Term 5)"
+      },
+      {
+        "level": 2,
+        "title": "\ud83c\udfaf Learning Objectives"
+      },
+      {
+        "level": 2,
+        "title": "1. Subnet Design: From Requirements to CIDR"
+      },
+      {
+        "level": 3,
+        "title": "The Mathematical Requirement Formula"
+      },
+      {
+        "level": 3,
+        "title": "The Host-to-Prefix Lookup Matrix"
+      },
+      {
+        "level": 2,
+        "title": "2. Variable Length Subnet Masking (VLSM)"
+      },
+      {
+        "level": 3,
+        "title": "The Inefficiency of Fixed Length Subnet Masking (FLSM)"
+      },
+      {
+        "level": 3,
+        "title": "The VLSM Solution & The Golden Rule"
+      },
+      {
+        "level": 3,
+        "title": "Comprehensive Enterprise VLSM Case Study"
+      },
+      {
+        "level": 3,
+        "title": "Complete VLSM Allocation Table"
+      },
+      {
+        "level": 2,
+        "title": "3. IPv6: Architecture, Representation & Scopes"
+      },
+      {
+        "level": 3,
+        "title": "Why IPv6?"
+      },
+      {
+        "level": 3,
+        "title": "IPv6 Text Format & RFC 5952 Compression Rules"
+      },
+      {
+        "level": 3,
+        "title": "IPv6 Scopes and Address Classification"
+      },
+      {
+        "level": 3,
+        "title": "IPv4 vs. IPv6 Architectural Comparison"
+      },
+      {
+        "level": 2,
+        "title": "4. Default Gateway: The Host Forwarding Decision Tree"
+      },
+      {
+        "level": 3,
+        "title": "The Host Routing Decision Algorithm"
+      },
+      {
+        "level": 3,
+        "title": "Demonstration:"
+      },
+      {
+        "level": 2,
+        "title": "5. Network Address Translation (NAT / NAPT / PAT)"
+      },
+      {
+        "level": 3,
+        "title": "The Problem NAT Solves"
+      },
+      {
+        "level": 3,
+        "title": "NAPT / PAT (Port Address Translation) Mechanics"
+      },
+      {
+        "level": 3,
+        "title": "Port Forwarding (DNAT - Destination NAT)"
+      },
+      {
+        "level": 3,
+        "title": "NAT Traversal: The Challenge for P2P and WebRTC"
+      },
+      {
+        "level": 2,
+        "title": "\ud83d\udccc Summary Checklist & Exam Cram Notes"
+      },
+      {
+        "level": 2,
+        "title": "\ud83e\udde0 Practice Problems & Self-Check Questions"
+      }
+    ]
+  },
+  {
+    "filename": "Lecture_05_Notes.md",
+    "title": "Lecture 5: Graph Algorithms for Networking I",
+    "subtitle": "\ud83c\udfaf Learning Objectives",
+    "word_count": 2472,
+    "read_time_min": 12,
+    "headings": [
+      {
+        "level": 2,
+        "title": "Student Notes \u2014 SST Computer Networks (Term 5)"
+      },
+      {
+        "level": 2,
+        "title": "\ud83c\udfaf Learning Objectives"
+      },
+      {
+        "level": 2,
+        "title": "1. Modeling Networks as Graphs"
+      },
+      {
+        "level": 3,
+        "title": "Formal Graph Definition"
+      },
+      {
+        "level": 3,
+        "title": "Directed vs. Undirected Networks"
+      },
+      {
+        "level": 3,
+        "title": "Network Metrics: What Does \"Cost\" Mean in Practice?"
+      },
+      {
+        "level": 2,
+        "title": "2. Breadth-First Search (BFS) in Networking"
+      },
+      {
+        "level": 3,
+        "title": "Purpose & Theoretical Role"
+      },
+      {
+        "level": 3,
+        "title": "Formal Algorithm Specification"
+      },
+      {
+        "level": 3,
+        "title": "Complexity Analysis"
+      },
+      {
+        "level": 3,
+        "title": "Step-by-Step State Trace Example"
+      },
+      {
+        "level": 3,
+        "title": "Why Hop-Count BFS Fails on Real Networks"
+      },
+      {
+        "level": 2,
+        "title": "3. Depth-First Search (DFS) in Networking"
+      },
+      {
+        "level": 3,
+        "title": "Purpose & Theoretical Role"
+      },
+      {
+        "level": 3,
+        "title": "Cycle Detection Algorithm (Three-Color Method)"
+      },
+      {
+        "level": 2,
+        "title": "4. Dijkstra\u2019s Shortest-Path Algorithm"
+      },
+      {
+        "level": 3,
+        "title": "The Greedy Choice Property & Invariant"
+      },
+      {
+        "level": 3,
+        "title": "The Edge Relaxation Primitive"
+      },
+      {
+        "level": 3,
+        "title": "Complete Python Implementation with Min-Heap"
+      },
+      {
+        "level": 3,
+        "title": "Complexity Breakdown"
+      },
+      {
+        "level": 2,
+        "title": "5. End-to-End Dijkstra Trace on an ISP Network"
+      },
+      {
+        "level": 3,
+        "title": "Step-by-Step Execution Table"
+      },
+      {
+        "level": 3,
+        "title": "Final Shortest-Path Tree (Rooted at A):"
+      },
+      {
+        "level": 2,
+        "title": "6. From Graph Tree to Router Forwarding Table (FIB)"
+      },
+      {
+        "level": 3,
+        "title": "Router A's Forwarding Table:"
+      },
+      {
+        "level": 2,
+        "title": "\ud83d\udccc Summary Checklist & Exam Cram Notes"
+      },
+      {
+        "level": 2,
+        "title": "\ud83e\udde0 Practice Problems & Self-Check Questions"
+      }
+    ]
+  },
+  {
+    "filename": "Lecture_06_Notes.md",
+    "title": "Lecture 6: Graph Algorithms for Networking II",
+    "subtitle": "\ud83c\udfaf Learning Objectives",
+    "word_count": 2627,
+    "read_time_min": 13,
+    "headings": [
+      {
+        "level": 2,
+        "title": "Student Notes \u2014 SST Computer Networks (Term 5)"
+      },
+      {
+        "level": 2,
+        "title": "\ud83c\udfaf Learning Objectives"
+      },
+      {
+        "level": 2,
+        "title": "1. Why Dijkstra Fails on Negative-Weight Edges"
+      },
+      {
+        "level": 3,
+        "title": "The Concrete Counterexample"
+      },
+      {
+        "level": 3,
+        "title": "Why Do Negative Weights Exist in Computer Networks?"
+      },
+      {
+        "level": 3,
+        "title": "Negative Cycles: The Mathematical Undecidability"
+      },
+      {
+        "level": 2,
+        "title": "2. The Bellman-Ford Algorithm"
+      },
+      {
+        "level": 3,
+        "title": "Dynamic Programming Formulation"
+      },
+      {
+        "level": 3,
+        "title": "Why Exactly $|V| - 1$ Relaxation Passes?"
+      },
+      {
+        "level": 3,
+        "title": "Negative Cycle Detection at the $|V|$-th Pass"
+      },
+      {
+        "level": 2,
+        "title": "3. Bellman-Ford Implementation & Trace"
+      },
+      {
+        "level": 3,
+        "title": "Complexity Breakdown"
+      },
+      {
+        "level": 3,
+        "title": "Numerical Trace Table"
+      },
+      {
+        "level": 2,
+        "title": "4. The Distributed Bellman-Ford Equation & Distance Vector Routing"
+      },
+      {
+        "level": 2,
+        "title": "5. Minimum Spanning Trees (MST) in Networking"
+      },
+      {
+        "level": 3,
+        "title": "What is a Minimum Spanning Tree?"
+      },
+      {
+        "level": 3,
+        "title": "MST vs. Shortest Path Tree (Crucial Distinction!)"
+      },
+      {
+        "level": 2,
+        "title": "6. Kruskal's vs. Prim's Algorithm"
+      },
+      {
+        "level": 3,
+        "title": "Kruskal\u2019s Algorithm (Edge-Centric Greedy)"
+      },
+      {
+        "level": 3,
+        "title": "Prim\u2019s Algorithm (Vertex-Centric Greedy)"
+      },
+      {
+        "level": 2,
+        "title": "7. Spanning Tree Protocol (STP - IEEE 802.1D)"
+      },
+      {
+        "level": 3,
+        "title": "Why Layer 2 Loops Are Catastrophic"
+      },
+      {
+        "level": 3,
+        "title": "How STP Works: 4 Sequential Steps"
+      },
+      {
+        "level": 2,
+        "title": "8. Master Algorithm Comparison Matrix"
+      },
+      {
+        "level": 2,
+        "title": "\ud83d\udccc Summary Checklist & Exam Cram Notes"
+      },
+      {
+        "level": 2,
+        "title": "\ud83e\udde0 Practice Problems & Self-Check Questions"
+      }
+    ]
+  },
+  {
+    "filename": "Lecture_07_Notes.md",
+    "title": "Lecture 7: Routing and Forwarding I",
+    "subtitle": "\ud83c\udfaf Learning Objectives",
+    "word_count": 2294,
+    "read_time_min": 11,
+    "headings": [
+      {
+        "level": 2,
+        "title": "Student Notes \u2014 SST Computer Networks (Term 5)"
+      },
+      {
+        "level": 2,
+        "title": "\ud83c\udfaf Learning Objectives"
+      },
+      {
+        "level": 2,
+        "title": "1. Routing vs. Forwarding: The Architectural Divide"
+      },
+      {
+        "level": 3,
+        "title": "Comprehensive Comparison Matrix"
+      },
+      {
+        "level": 2,
+        "title": "2. RIB vs. FIB: From Protocols to Silicon"
+      },
+      {
+        "level": 2,
+        "title": "3. Reading and Interpreting a Routing Table"
+      },
+      {
+        "level": 3,
+        "title": "Linux Kernel Routing Table (`ip route show`)"
+      },
+      {
+        "level": 3,
+        "title": "Enterprise Router Routing Table (Cisco IOS Format)"
+      },
+      {
+        "level": 3,
+        "title": "Route Codes & Notations Explained:"
+      },
+      {
+        "level": 2,
+        "title": "4. The Longest Prefix Match (LPM) Principle"
+      },
+      {
+        "level": 3,
+        "title": "Step-by-Step LPM Resolution Example"
+      },
+      {
+        "level": 2,
+        "title": "5. High-Performance Hardware Lookup: Tries & TCAM"
+      },
+      {
+        "level": 3,
+        "title": "Software Data Structure: Radix / Patricia Trie"
+      },
+      {
+        "level": 3,
+        "title": "Hardware Silicon: TCAM (Ternary Content Addressable Memory)"
+      },
+      {
+        "level": 2,
+        "title": "6. Static Routing & The Gateway of Last Resort"
+      },
+      {
+        "level": 3,
+        "title": "Static Routing"
+      },
+      {
+        "level": 3,
+        "title": "Default Route (`0.0.0.0/0`)"
+      },
+      {
+        "level": 3,
+        "title": "Floating Static Route (Fault Tolerant Redundancy)"
+      },
+      {
+        "level": 2,
+        "title": "7. The 9-Step Packet Forwarding Life Cycle Inside a Router"
+      },
+      {
+        "level": 3,
+        "title": "Detailed Breakdown:"
+      },
+      {
+        "level": 2,
+        "title": "\ud83d\udccc Summary Checklist & Exam Cram Notes"
+      },
+      {
+        "level": 2,
+        "title": "\ud83e\udde0 Practice Problems & Self-Check Questions"
+      }
+    ]
+  },
+  {
+    "filename": "Lecture_08_Notes.md",
+    "title": "Lecture 8: Routing and Forwarding II",
+    "subtitle": "\ud83c\udfaf Learning Objectives",
+    "word_count": 2501,
+    "read_time_min": 13,
+    "headings": [
+      {
+        "level": 2,
+        "title": "Student Notes \u2014 SST Computer Networks (Term 5)"
+      },
+      {
+        "level": 2,
+        "title": "\ud83c\udfaf Learning Objectives"
+      },
+      {
+        "level": 2,
+        "title": "1. Distance Vector Routing Protocols"
+      },
+      {
+        "level": 3,
+        "title": "The Core Paradigm: \"Routing by Rumor\""
+      },
+      {
+        "level": 3,
+        "title": "The Canonical Implementation: RIP (RFC 1058 / RFC 2453)"
+      },
+      {
+        "level": 2,
+        "title": "2. The Count-to-Infinity Problem & Routing Loops"
+      },
+      {
+        "level": 3,
+        "title": "Step-by-Step Failure Scenario"
+      },
+      {
+        "level": 2,
+        "title": "3. Loop Mitigation Mechanisms in Distance Vector"
+      },
+      {
+        "level": 3,
+        "title": "1. Split Horizon"
+      },
+      {
+        "level": 3,
+        "title": "2. Split Horizon with Poison Reverse"
+      },
+      {
+        "level": 3,
+        "title": "3. Hold-Down Timers"
+      },
+      {
+        "level": 2,
+        "title": "4. Link-State Routing: The OSPF Architecture"
+      },
+      {
+        "level": 3,
+        "title": "The Link-State Philosophy: \"Global Map & Independent Calculation\""
+      },
+      {
+        "level": 3,
+        "title": "The 5 OSPF Packet Types & Neighbor Adjacency"
+      },
+      {
+        "level": 3,
+        "title": "The OSPF Adjacency State Machine:"
+      },
+      {
+        "level": 2,
+        "title": "5. Scalability: OSPF Areas & DR/BDR Election"
+      },
+      {
+        "level": 3,
+        "title": "OSPF Two-Tier Hierarchical Areas"
+      },
+      {
+        "level": 3,
+        "title": "DR and BDR in Broadcast Multi-Access Networks"
+      },
+      {
+        "level": 2,
+        "title": "6. Inter-Domain Routing & BGP (Border Gateway Protocol)"
+      },
+      {
+        "level": 3,
+        "title": "Interior Gateway Protocols (IGP) vs. Exterior Gateway Protocols (EGP)"
+      },
+      {
+        "level": 3,
+        "title": "What is an Autonomous System (AS)?"
+      },
+      {
+        "level": 3,
+        "title": "BGP as a Path Vector Protocol"
+      },
+      {
+        "level": 3,
+        "title": "How `AS_PATH` Guarantees Instant Loop Elimination:"
+      },
+      {
+        "level": 3,
+        "title": "Key BGP Path Attributes"
+      },
+      {
+        "level": 2,
+        "title": "7. Master Routing Protocol Comparison Matrix"
+      },
+      {
+        "level": 2,
+        "title": "\ud83d\udccc Summary Checklist & Exam Cram Notes"
+      },
+      {
+        "level": 2,
+        "title": "\ud83e\udde0 Practice Problems & Self-Check Questions"
+      }
+    ]
+  },
+  {
+    "filename": "Lecture_09_Notes.md",
+    "title": "Lecture 9: DNS and Internet Applications",
+    "subtitle": "\ud83c\udfaf Learning Objectives",
+    "word_count": 1675,
+    "read_time_min": 8,
+    "headings": [
+      {
+        "level": 2,
+        "title": "Student Notes \u2014 SST Computer Networks (Term 5)"
+      },
+      {
+        "level": 2,
+        "title": "\ud83c\udfaf Learning Objectives"
+      },
+      {
+        "level": 2,
+        "title": "1. Why DNS?"
+      },
+      {
+        "level": 2,
+        "title": "2. DNS Hierarchy"
+      },
+      {
+        "level": 3,
+        "title": "Three Types of DNS Servers"
+      },
+      {
+        "level": 3,
+        "title": "Recursive Resolver"
+      },
+      {
+        "level": 2,
+        "title": "3. DNS Resolution \u2014 Step by Step"
+      },
+      {
+        "level": 3,
+        "title": "DNS Caching and TTL"
+      },
+      {
+        "level": 2,
+        "title": "4. DNS Record Types"
+      },
+      {
+        "level": 3,
+        "title": "DNS Lookup Commands"
+      },
+      {
+        "level": 2,
+        "title": "5. URL Anatomy"
+      },
+      {
+        "level": 2,
+        "title": "6. HTTP \u2014 HyperText Transfer Protocol"
+      },
+      {
+        "level": 3,
+        "title": "HTTP Request Format"
+      },
+      {
+        "level": 3,
+        "title": "HTTP Methods"
+      },
+      {
+        "level": 3,
+        "title": "HTTP Response Format"
+      },
+      {
+        "level": 2,
+        "title": "7. HTTP Status Codes"
+      },
+      {
+        "level": 3,
+        "title": "Key Distinctions"
+      },
+      {
+        "level": 2,
+        "title": "8. Cookies and Sessions"
+      },
+      {
+        "level": 3,
+        "title": "The Stateless Problem"
+      },
+      {
+        "level": 3,
+        "title": "Cookie Flow"
+      },
+      {
+        "level": 3,
+        "title": "Cookie Security Attributes"
+      },
+      {
+        "level": 3,
+        "title": "Cookie vs. Session"
+      },
+      {
+        "level": 3,
+        "title": "Authentication vs Authorization"
+      },
+      {
+        "level": 2,
+        "title": "\ud83d\udccc Key Takeaways"
+      },
+      {
+        "level": 2,
+        "title": "\ud83e\udde0 Quick Self-Check Questions"
+      }
+    ]
+  },
+  {
+    "filename": "Lecture_10_Notes.md",
+    "title": "Lecture 10: TCP, UDP and Socket Programming",
+    "subtitle": "\ud83c\udfaf Learning Objectives",
+    "word_count": 1557,
+    "read_time_min": 8,
+    "headings": [
+      {
+        "level": 2,
+        "title": "Student Notes \u2014 SST Computer Networks (Term 5)"
+      },
+      {
+        "level": 2,
+        "title": "\ud83c\udfaf Learning Objectives"
+      },
+      {
+        "level": 2,
+        "title": "1. Transport Layer Fundamentals"
+      },
+      {
+        "level": 3,
+        "title": "The Problem: Multiple Applications, One Machine"
+      },
+      {
+        "level": 3,
+        "title": "Ports"
+      },
+      {
+        "level": 3,
+        "title": "Port Ranges"
+      },
+      {
+        "level": 3,
+        "title": "Common Well-Known Ports"
+      },
+      {
+        "level": 3,
+        "title": "Transport Layer Functions"
+      },
+      {
+        "level": 2,
+        "title": "2. UDP \u2014 User Datagram Protocol"
+      },
+      {
+        "level": 3,
+        "title": "UDP Header (8 bytes total)"
+      },
+      {
+        "level": 3,
+        "title": "Properties"
+      },
+      {
+        "level": 3,
+        "title": "When to Use UDP"
+      },
+      {
+        "level": 2,
+        "title": "3. TCP \u2014 Transmission Control Protocol"
+      },
+      {
+        "level": 3,
+        "title": "TCP's Four Guarantees"
+      },
+      {
+        "level": 3,
+        "title": "Key TCP Header Fields"
+      },
+      {
+        "level": 2,
+        "title": "4. TCP Three-Way Handshake (Connection Setup)"
+      },
+      {
+        "level": 2,
+        "title": "5. TCP Four-Way Close (Connection Termination)"
+      },
+      {
+        "level": 2,
+        "title": "6. TCP Reliability Mechanisms"
+      },
+      {
+        "level": 3,
+        "title": "Acknowledgments and Retransmission"
+      },
+      {
+        "level": 3,
+        "title": "Flow Control \u2014 Sliding Window"
+      },
+      {
+        "level": 2,
+        "title": "7. Socket Programming in Python"
+      },
+      {
+        "level": 3,
+        "title": "What is a Socket?"
+      },
+      {
+        "level": 3,
+        "title": "TCP Server"
+      },
+      {
+        "level": 3,
+        "title": "TCP Client"
+      },
+      {
+        "level": 3,
+        "title": "TCP Server/Client Lifecycle"
+      },
+      {
+        "level": 3,
+        "title": "UDP Server"
+      },
+      {
+        "level": 3,
+        "title": "UDP Client"
+      },
+      {
+        "level": 3,
+        "title": "Multi-client TCP Server (Threading)"
+      },
+      {
+        "level": 2,
+        "title": "8. TCP vs UDP Comparison"
+      },
+      {
+        "level": 2,
+        "title": "\ud83d\udccc Key Takeaways"
+      },
+      {
+        "level": 2,
+        "title": "\ud83e\udde0 Quick Self-Check Questions"
+      }
+    ]
+  },
+  {
+    "filename": "Lecture_11_Notes.md",
+    "title": "Lecture 11: NAT, DHCP and Local Network Communication",
+    "subtitle": "\ud83c\udfaf Learning Objectives",
+    "word_count": 1652,
+    "read_time_min": 8,
+    "headings": [
+      {
+        "level": 2,
+        "title": "Student Notes \u2014 SST Computer Networks (Term 5)"
+      },
+      {
+        "level": 2,
+        "title": "\ud83c\udfaf Learning Objectives"
+      },
+      {
+        "level": 2,
+        "title": "1. ARP \u2014 Address Resolution Protocol"
+      },
+      {
+        "level": 3,
+        "title": "The Problem"
+      },
+      {
+        "level": 3,
+        "title": "ARP Resolution Process"
+      },
+      {
+        "level": 3,
+        "title": "ARP Commands"
+      },
+      {
+        "level": 3,
+        "title": "ARP Cache States"
+      },
+      {
+        "level": 3,
+        "title": "Special ARP Types"
+      },
+      {
+        "level": 2,
+        "title": "2. NAT \u2014 Network Address Translation"
+      },
+      {
+        "level": 3,
+        "title": "Purpose"
+      },
+      {
+        "level": 3,
+        "title": "PAT (Port Address Translation) \u2014 State Table"
+      },
+      {
+        "level": 3,
+        "title": "Outbound (SNAT) Flow"
+      },
+      {
+        "level": 3,
+        "title": "Inbound (Reply) Flow"
+      },
+      {
+        "level": 3,
+        "title": "Port Forwarding (DNAT)"
+      },
+      {
+        "level": 3,
+        "title": "NAT Security Behavior"
+      },
+      {
+        "level": 3,
+        "title": "NAT Limitations"
+      },
+      {
+        "level": 3,
+        "title": "NAT Traversal"
+      },
+      {
+        "level": 2,
+        "title": "3. DHCP \u2014 Dynamic Host Configuration Protocol"
+      },
+      {
+        "level": 3,
+        "title": "What DHCP Provides"
+      },
+      {
+        "level": 3,
+        "title": "DHCP DORA Process"
+      },
+      {
+        "level": 3,
+        "title": "DHCP Lease Renewal"
+      },
+      {
+        "level": 3,
+        "title": "DHCP Relay Agents"
+      },
+      {
+        "level": 2,
+        "title": "4. What a Home Router Actually Does"
+      },
+      {
+        "level": 3,
+        "title": "Router Boot Sequence"
+      },
+      {
+        "level": 3,
+        "title": "Device Join Sequence (New Laptop Connects to Wi-Fi)"
+      },
+      {
+        "level": 2,
+        "title": "5. Complete Local-to-Internet Journey"
+      },
+      {
+        "level": 2,
+        "title": "\ud83d\udccc Key Takeaways"
+      },
+      {
+        "level": 2,
+        "title": "\ud83e\udde0 Quick Self-Check Questions"
+      }
+    ]
+  },
+  {
+    "filename": "Lecture_12_Notes.md",
+    "title": "Lecture 12: Network Troubleshooting",
+    "subtitle": "\ud83c\udfaf Learning Objectives",
+    "word_count": 1925,
+    "read_time_min": 10,
+    "headings": [
+      {
+        "level": 2,
+        "title": "Student Notes \u2014 SST Computer Networks (Term 5)"
+      },
+      {
+        "level": 2,
+        "title": "\ud83c\udfaf Learning Objectives"
+      },
+      {
+        "level": 2,
+        "title": "1. Troubleshooting Methodology"
+      },
+      {
+        "level": 2,
+        "title": "2. ping"
+      },
+      {
+        "level": 3,
+        "title": "Common Options"
+      },
+      {
+        "level": 3,
+        "title": "Reading Output"
+      },
+      {
+        "level": 3,
+        "title": "ping Diagnostics"
+      },
+      {
+        "level": 2,
+        "title": "3. traceroute / tracert"
+      },
+      {
+        "level": 3,
+        "title": "How It Works"
+      },
+      {
+        "level": 3,
+        "title": "Commands"
+      },
+      {
+        "level": 3,
+        "title": "Reading Output"
+      },
+      {
+        "level": 3,
+        "title": "Interpreting Latency Jumps"
+      },
+      {
+        "level": 2,
+        "title": "4. nslookup and dig"
+      },
+      {
+        "level": 3,
+        "title": "nslookup"
+      },
+      {
+        "level": 3,
+        "title": "dig (Preferred \u2014 More Detail)"
+      },
+      {
+        "level": 3,
+        "title": "Reading dig Output"
+      },
+      {
+        "level": 3,
+        "title": "DNS Troubleshooting"
+      },
+      {
+        "level": 2,
+        "title": "5. netstat and ss"
+      },
+      {
+        "level": 3,
+        "title": "ss (Modern \u2014 Preferred)"
+      },
+      {
+        "level": 3,
+        "title": "Reading ss Output"
+      },
+      {
+        "level": 3,
+        "title": "TCP States Reference"
+      },
+      {
+        "level": 2,
+        "title": "6. tcpdump"
+      },
+      {
+        "level": 3,
+        "title": "Basic Usage"
+      },
+      {
+        "level": 3,
+        "title": "Filters"
+      },
+      {
+        "level": 3,
+        "title": "Reading tcpdump Output"
+      },
+      {
+        "level": 3,
+        "title": "Practical tcpdump Scenarios"
+      },
+      {
+        "level": 2,
+        "title": "7. Wireshark"
+      },
+      {
+        "level": 3,
+        "title": "Key Features"
+      },
+      {
+        "level": 3,
+        "title": "Useful Display Filters"
+      },
+      {
+        "level": 2,
+        "title": "8. Common Problems and Solutions"
+      },
+      {
+        "level": 2,
+        "title": "\ud83d\udccc Key Takeaways"
+      },
+      {
+        "level": 2,
+        "title": "\ud83e\udde0 Quick Self-Check Questions"
+      }
+    ]
+  },
+  {
+    "filename": "Lecture_13_Notes.md",
+    "title": "Lecture 13: The Complete Internet Journey \u2014 From URL to Response",
+    "subtitle": "\ud83c\udfaf Learning Objectives",
+    "word_count": 2500,
+    "read_time_min": 12,
+    "headings": [
+      {
+        "level": 2,
+        "title": "Student Notes \u2014 SST Computer Networks (Term 5)"
+      },
+      {
+        "level": 2,
+        "title": "\ud83c\udfaf Learning Objectives"
+      },
+      {
+        "level": 2,
+        "title": "The Scenario"
+      },
+      {
+        "level": 2,
+        "title": "Phase 1: Browser Cache Check"
+      },
+      {
+        "level": 2,
+        "title": "Phase 2: DNS Resolution"
+      },
+      {
+        "level": 3,
+        "title": "Cache Chain (checked in order)"
+      },
+      {
+        "level": 3,
+        "title": "Full Resolution Trace"
+      },
+      {
+        "level": 3,
+        "title": "DNS Packet Details"
+      },
+      {
+        "level": 2,
+        "title": "Phase 3: ARP \u2014 Getting the Gateway's MAC"
+      },
+      {
+        "level": 2,
+        "title": "Phase 4: TCP Three-Way Handshake"
+      },
+      {
+        "level": 2,
+        "title": "Phase 5: TLS Handshake"
+      },
+      {
+        "level": 3,
+        "title": "TLS 1.3 Handshake (1-RTT)"
+      },
+      {
+        "level": 3,
+        "title": "Key TLS Concepts"
+      },
+      {
+        "level": 3,
+        "title": "How Diffie-Hellman Key Exchange Works"
+      },
+      {
+        "level": 2,
+        "title": "Phase 6: HTTP Request"
+      },
+      {
+        "level": 3,
+        "title": "Request Header Breakdown"
+      },
+      {
+        "level": 3,
+        "title": "Full Packet Stack at This Point"
+      },
+      {
+        "level": 2,
+        "title": "Phase 7: Server-Side Processing"
+      },
+      {
+        "level": 3,
+        "title": "Load Balancer"
+      },
+      {
+        "level": 3,
+        "title": "Web Server Processing Steps"
+      },
+      {
+        "level": 3,
+        "title": "HTTP Response"
+      },
+      {
+        "level": 3,
+        "title": "Response Header Breakdown"
+      },
+      {
+        "level": 2,
+        "title": "Phase 8: Return Journey"
+      },
+      {
+        "level": 3,
+        "title": "Subsequent Resource Requests"
+      },
+      {
+        "level": 2,
+        "title": "Phase 9: Connection Close"
+      },
+      {
+        "level": 2,
+        "title": "Complete Timeline"
+      },
+      {
+        "level": 2,
+        "title": "Protocol-to-Layer Mapping"
+      },
+      {
+        "level": 2,
+        "title": "Performance Phases and Optimizations"
+      },
+      {
+        "level": 2,
+        "title": "Where Things Go Wrong \u2014 Troubleshooting Map"
+      },
+      {
+        "level": 2,
+        "title": "Course Summary"
+      },
+      {
+        "level": 2,
+        "title": "\ud83e\udde0 Quick Self-Check Questions"
+      }
+    ]
+  }
+]

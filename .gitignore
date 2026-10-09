@@ -1,0 +1,26 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules/
+dist/
+web/dist/
+.npm
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+env/
+venv/
+
+# Vercel
+.vercel/
+
+# OS
+.DS_Store
+Thumbs.db

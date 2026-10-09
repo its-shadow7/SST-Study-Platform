@@ -1,0 +1,62 @@
+[
+  {
+    "note_id": "cml-lecture-01-linear-regression",
+    "term": "Term 3",
+    "subject_code": "CML",
+    "topic_title": "Linear Regression & Gradient Descent Optimization",
+    "tags": [
+      "Machine Learning",
+      "Regression",
+      "Gradient Descent",
+      "Loss Functions",
+      "Math"
+    ],
+    "summary": "Mathematical principles of linear regression, parameter estimation via Ordinary Least Squares (OLS), and numerical optimization with Gradient Descent variants.",
+    "learning_objectives": [
+      "Derive the Mean Squared Error (MSE) objective function.",
+      "Formulate Ordinary Least Squares (OLS) closed-form normal equations.",
+      "Understand batch, stochastic, and mini-batch gradient descent update rules."
+    ],
+    "last_updated": "2026-10-07T10:30:00Z"
+  },
+  {
+    "note_id": "cn-lecture-01-introduction",
+    "term": "Term 3",
+    "subject_code": "CN",
+    "topic_title": "Introduction to Computer Networks & Network Core",
+    "tags": [
+      "Networking",
+      "OSI Model",
+      "Internet",
+      "Packets",
+      "Architecture"
+    ],
+    "summary": "Foundational overview of computer networks, examining network infrastructure, edge versus core devices, packet transmission dynamics, and latency components.",
+    "learning_objectives": [
+      "Understand the difference between the network edge and network core.",
+      "Explain packet switching vs circuit switching and multiplexing techniques.",
+      "Comprehend delays in packet-switched networks: processing, queuing, transmission, and propagation."
+    ],
+    "last_updated": "2026-10-07T10:00:00Z"
+  },
+  {
+    "note_id": "cn-lecture-02-packet-switching",
+    "term": "Term 3",
+    "subject_code": "CN",
+    "topic_title": "Packet Switching & Layered Architecture (OSI / TCP/IP)",
+    "tags": [
+      "Networking",
+      "TCP/IP",
+      "OSI Model",
+      "Encapsulation",
+      "Transport"
+    ],
+    "summary": "Covers the modular layered architecture of computer networking protocols, protocol data units (PDU), header overhead, and end-to-end transmission dynamics.",
+    "learning_objectives": [
+      "Differentiate the 5-layer Internet protocol stack from the 7-layer OSI model.",
+      "Understand protocol encapsulation and decapsulation with headers at each tier.",
+      "Analyze packet loss, buffer overflow, and throughput metrics."
+    ],
+    "last_updated": "2026-10-07T10:15:00Z"
+  }
+]

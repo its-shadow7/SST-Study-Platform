@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "note_id": "cml-lecture-01-linear-regression",
+  "term": "Term 3",
+  "subject_code": "CML",
+  "topic_title": "Linear Regression & Gradient Descent Optimization",
+  "tags": ["Machine Learning", "Regression", "Gradient Descent", "Loss Functions", "Math"],
+  "learning_objectives": [
+    "Derive the Mean Squared Error (MSE) objective function.",
+    "Formulate Ordinary Least Squares (OLS) closed-form normal equations.",
+    "Understand batch, stochastic, and mini-batch gradient descent update rules."
+  ],
+  "summary": "Mathematical principles of linear regression, parameter estimation via Ordinary Least Squares (OLS), and numerical optimization with Gradient Descent variants.",
+  "key_takeaways": [
+    "Hypothesis function: h_theta(x) = theta^T x.",
+    "Cost function MSE: J(theta) = 1/(2m) sum (h_theta(x_i) - y_i)^2.",
+    "Analytical solution (Normal Equation): theta = (X^T X)^(-1) X^T y.",
+    "Gradient Descent iteratively steps along the negative gradient: theta := theta - alpha * grad(J)."
+  ],
+  "sections": [
+    {
+      "section_id": "sec-01-linear-model",
+      "heading": "1. Linear Regression Model Formulation",
+      "body": "In supervised linear regression, given a dataset $\\{(x^{(i)}, y^{(i)})\\}_{i=1}^m$ where each input feature vector $x^{(i)} \\in \\mathbb{R}^n$, we model the target as a linear combination of inputs:\n\n$$h_\\theta(x) = \\theta_0 + \\theta_1 x_1 + \\dots + \\theta_n x_n = \\theta^T x$$\n\nTo find optimal parameters $\\theta$, we minimize the **Mean Squared Error (MSE)** cost function:\n\n$$J(\\theta) = \\frac{1}{2m} \\sum_{i=1}^m \\left(h_\\theta(x^{(i)}) - y^{(i)}\\right)^2$$",
+      "citations": ["Pattern Recognition and Machine Learning - Christopher Bishop, Chapter 3"]
+    },
+    {
+      "section_id": "sec-02-gradient-descent",
+      "heading": "2. Gradient Descent Algorithm",
+      "body": "Gradient descent is a first-order iterative optimization algorithm for finding a local minimum of a differentiable function.\n\n### Update Rule\nAt each iteration, we update all parameters simultaneously:\n\n$$\\theta_j := \\theta_j - \\alpha \\frac{\\partial}{\\partial \\theta_j} J(\\theta)$$\n\nComputing the partial derivative gives:\n\n$$\\frac{\\partial}{\\partial \\theta_j} J(\\theta) = \\frac{1}{m} \\sum_{i=1}^m \\left(h_\\theta(x^{(i)}) - y^{(i)}\\right) x_j^{(i)}$$\n\nWhere $\\alpha$ represents the learning rate hyperparameter. A learning rate that is too high causes divergence; one that is too low causes slow convergence.",
+      "citations": ["Andrew Ng - CS229 Lecture Notes on Supervised Learning"]
+    }
+  ],
+  "last_updated": "2026-10-07T10:30:00Z",
+  "approval_status": "approved"
+}
