@@ -9,6 +9,7 @@ node_modules/
 dist/
 web/dist/
 .npm
+*.tsbuildinfo
 
 # Python
 __pycache__/
@@ -25,3 +26,6 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+#origanl notes
+Original_Notes/

@@ -58,5 +58,105 @@
       "Analyze packet loss, buffer overflow, and throughput metrics."
     ],
     "last_updated": "2026-10-07T10:15:00Z"
+  },
+  {
+    "note_id": "cn-t5-l1",
+    "term": "Term 5",
+    "subject_code": "CN",
+    "topic_title": "Computer Networks: L1 - Foundations, Physical Architecture & Network Performance",
+    "tags": [
+      "Computer Networks",
+      "L1",
+      "Topologies",
+      "Packet Switching",
+      "Circuit Switching",
+      "Delays",
+      "Bandwidth",
+      "Throughput",
+      "Goodput",
+      "Latency",
+      "BDP",
+      "Network Core",
+      "IXP"
+    ],
+    "summary": "Exhaustive lecture notes for Computer Networks Lecture 1: Comprehensive exploration of distributed computing reality, historical evolution, 4 network components, LAN/WAN hierarchies, Internet Exchange Points (IXPs), physical topologies, packet vs circuit switching, router architectures, and mathematical latency formulations (nodal delays, bottleneck throughput, and BDP).",
+    "learning_objectives": [
+      "Understand why software engineers need computer networks and how modern distributed systems depend on network fabrics.",
+      "Trace the historical evolution of networking from manual sneakernets to ARPANET, TCP/IP, and the World Wide Web.",
+      "Categorize the four fundamental components of any network: End Devices, Transmission Links, Intermediate Devices, and Protocols.",
+      "Differentiate Network Edge systems from Network Core fabrics and analyze router control plane (Routing) vs data plane (Forwarding).",
+      "Analyze physical and logical network topologies (Bus, Star, Ring, Mesh, Tree/Hybrid) including failure modes, N(N-1)/2 wiring complexity, and scalability limits.",
+      "Compare Packet Switching vs. Circuit Switching, statistical multiplexing, and store-and-forward router behavior.",
+      "Formulate and calculate the four nodal delay components: transmission, propagation, queuing, and processing delay.",
+      "Differentiate bandwidth, throughput (bottleneck link principle), and goodput, and compute Bandwidth-Delay Product (BDP) with bit-vs-byte conversion."
+    ],
+    "last_updated": "2026-10-13T00:00:00Z"
+  },
+  {
+    "note_id": "cn-t5-l2",
+    "term": "Term 5",
+    "subject_code": "CN",
+    "topic_title": "Computer Networks: L2 - Layered Architectures, OSI, TCP/IP & Encapsulation",
+    "tags": [
+      "Computer Networks",
+      "L2",
+      "OSI Model",
+      "TCP/IP",
+      "Encapsulation",
+      "PDU",
+      "Ethernet Frame",
+      "MAC Address",
+      "Nyquist",
+      "Shannon",
+      "Router Processing"
+    ],
+    "summary": "Exhaustive lecture notes for Computer Networks Lecture 2: Comprehensive deep dive into protocol standardization, the 7-Layer OSI model, the TCP/IP stack, PDU hierarchies, complete encapsulation/decapsulation workflows, byte-level header anatomy (TCP, IPv4, Ethernet II), Layer 3 router frame rewriting mechanics, addressing taxonomies, and physical transmission channel physics (Nyquist & Shannon).",
+    "learning_objectives": [
+      "Explain the engineering rationale for layered network architectures (Separation of Concerns, Abstraction, Interoperability, Modularity).",
+      "Dissect all 7 layers of the OSI Reference Model and understand why Session and Presentation were consolidated into Application in modern stacks.",
+      "Master the industry-standard 4/5-layer TCP/IP protocol suite and the 'Hourglass' architectural principle.",
+      "Trace the complete Protocol Data Unit (PDU) encapsulation and decapsulation pipeline across hosts, switches, and routers.",
+      "Analyze header structures byte-by-byte: TCP (20B), IPv4 (20B), and Ethernet II (14B + 4B FCS) including the 64-byte minimum frame constraint.",
+      "Understand router Layer 3 forwarding: why IP addresses are global and immutable end-to-end while MAC addresses are hop-by-hop ephemeral.",
+      "Differentiate addressing tiers (Port, IP, MAC) and delivery modes (Unicast, Broadcast, Multicast) across collision and broadcast domains.",
+      "Calculate physical transmission channel capacity using Nyquist's formula for noiseless links and Shannon's capacity theorem for noisy links."
+    ],
+    "last_updated": "2026-10-13T00:00:00Z"
+  },
+  {
+    "note_id": "cn-t5-l3",
+    "term": "Term 5",
+    "subject_code": "CN",
+    "topic_title": "Computer Networks: L3 - Ethernet Framing, ARP, IPv4 Subnetting & Addressing",
+    "tags": [
+      "Computer Networks",
+      "L3",
+      "Ethernet",
+      "Switch Learning",
+      "CAM Table",
+      "ARP",
+      "IPv4",
+      "Subnetting",
+      "CIDR",
+      "VLSM",
+      "IPv6",
+      "DHCP",
+      "NAT",
+      "Default Gateway"
+    ],
+    "summary": "Exhaustive lecture notes for Computer Networks Lecture 3: Comprehensive mastery of Layer 2 Ethernet framing, switch transparent CAM learning, IP MTU fragmentation, ARP protocol mechanics and security, 32-bit IPv4 addressing, binary conversion arithmetic, historical classful breakdown, CIDR prefix mathematics, Variable Length Subnet Masking (VLSM) worked case studies, private networking, NAT/PAT, DHCP DORA handshakes, and the modern IPv6 transition.",
+    "learning_objectives": [
+      "Dissect the exact anatomy of an Ethernet II frame, 48-bit MAC addressing, and the physics of the 64-byte minimum frame size.",
+      "Master the switch transparent MAC learning algorithm and distinguish switch CAM forwarding tables from host ARP tables.",
+      "Understand Maximum Transmission Unit (MTU) constraints, Jumbo Frames, and calculate multi-fragment IP packet fragmentation offsets.",
+      "Explain the complete Address Resolution Protocol (ARP) workflow, message format, caching dynamics, and spoofing/poisoning security mitigations.",
+      "Convert 32-bit IPv4 addresses between binary bitstreams and dotted-decimal notation rapidly using 8-bit positional weights.",
+      "Critique historical Classful addressing (Classes A, B, C, D, E) and explain why CIDR (Classless Inter-Domain Routing) was required.",
+      "Formulate and calculate subnet boundaries: Network ID, Broadcast ID, Usable Host Range, and host capacity using 2^H - 2.",
+      "Execute Variable Length Subnet Masking (VLSM) designs by allocating largest host blocks first and eliminating address space fragmentation.",
+      "Differentiate RFC 1918 private address ranges, special addresses (Loopback, APIPA, Default Route), and Network Address Translation (NAT/PAT).",
+      "Trace the 4-step DHCP DORA handshake and dissect IPv6 128-bit structure, zero-compression rules, and prefix classifications."
+    ],
+    "last_updated": "2026-10-13T00:00:00Z"
   }
 ]

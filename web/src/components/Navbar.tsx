@@ -1,128 +1,179 @@
 import React from 'react';
-import { Search, Moon, Sun, Bookmark, LogIn, LogOut, Trash2, GraduationCap } from 'lucide-react';
-import { Theme } from '../types/note';
-import { useAuth } from '../context/AuthContext';
-
-import { GoogleSignInButton } from './GoogleSignInButton';
+import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
+import { NotificationsDropdown } from './NotificationsDropdown';
+import {
+  Search,
+  Bookmark,
+  Layers,
+  Settings as SettingsIcon,
+  LogIn,
+  LogOut,
+  Menu,
+  GraduationCap,
+  ShieldAlert
+} from 'lucide-react';
 
 interface NavbarProps {
-  currentTheme: Theme;
-  onThemeChange: (theme: Theme) => void;
   onOpenSearch: () => void;
-  showBookmarksOnly: boolean;
-  onToggleBookmarksOnly: () => void;
+  onOpenMobileMenu?: () => void;
+  showMobileMenuButton?: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  currentTheme,
-  onThemeChange,
   onOpenSearch,
-  showBookmarksOnly,
-  onToggleBookmarksOnly
+  onOpenMobileMenu,
+  showMobileMenuButton = false,
 }) => {
-  const { user, loginDevMock, logout, deleteAccount } = useAuth();
+  const { user, logout } = useAuth();
+  const location = useLocation();
+
+  const isCurrent = (path: string) => location.pathname.startsWith(path);
 
   return (
-    <header className="navbar">
-      <div className="brand-section">
-        <span className="brand-logo-badge">SST</span>
-        <div>
-          <span className="brand-title">Study Platform</span>
-          <span className="brand-sub">Notes Portal</span>
-        </div>
+    <header className="sticky top-0 z-40 h-14 w-full border-b border-white/[0.08] bg-black/60 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between select-none">
+      {/* Left: Mobile Toggle & Brand Logo */}
+      <div className="flex items-center gap-3">
+        {showMobileMenuButton && (
+          <button
+            onClick={onOpenMobileMenu}
+            className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-200 hover:bg-white/5 lg:hidden transition-colors"
+            title="Open navigation menu"
+            aria-label="Open course navigation menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        )}
+
+        <Link to="/terms" className="flex items-center gap-2.5 group">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center font-bold text-xs text-white shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
+            SST
+          </div>
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold tracking-tight text-zinc-100 group-hover:text-white transition-colors">
+              SST Study Platform
+            </span>
+            <span className="text-[10px] text-zinc-400 tracking-wider font-mono">
+              Scaler School of Tech
+            </span>
+          </div>
+        </Link>
       </div>
 
-      <div className="nav-actions">
-        {/* Search trigger */}
+      {/* Center: Search Trigger & Navigation Links */}
+      <div className="flex items-center gap-3">
+        {/* Command Palette Trigger */}
         <button
-          className="search-trigger-btn"
           onClick={onOpenSearch}
-          title="Search notes (Ctrl+K or Cmd+K)"
+          aria-label="Search lecture notes"
+          className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 text-xs text-zinc-400 transition-all w-48 sm:w-64"
         >
-          <Search size={15} />
-          <span>Search notes...</span>
-          <span className="kbd-shortcut">Ctrl K</span>
+          <Search className="w-3.5 h-3.5 text-zinc-400" />
+          <span className="flex-1 text-left truncate text-zinc-400">Search notes...</span>
+          <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-mono rounded bg-white/5 border border-white/10 text-zinc-400">
+            Ctrl K
+          </kbd>
         </button>
 
-        {/* Bookmarks filter */}
-        <button
-          className={`auth-btn ${showBookmarksOnly ? 'auth-btn-primary' : 'auth-btn-ghost'}`}
-          onClick={onToggleBookmarksOnly}
-          title="Filter saved bookmarks"
-        >
-          <Bookmark size={15} fill={showBookmarksOnly ? 'currentColor' : 'none'} />
-          <span>Bookmarks</span>
-        </button>
+        {/* Global Navigation links */}
+        <nav className="hidden md:flex items-center gap-1 text-xs">
+          <Link
+            to="/terms"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors ${
+              isCurrent('/terms') || isCurrent('/term')
+                ? 'bg-white/10 text-zinc-100 font-medium'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>Curriculum</span>
+          </Link>
 
-        {/* Theme selector */}
-        <select
-          className="theme-select"
-          value={currentTheme}
-          onChange={(e) => onThemeChange(e.target.value as Theme)}
-          title="Select theme style"
-        >
-          <option value="oled-slate">OLED Slate</option>
-          <option value="minimalist-midnight">Minimalist Midnight</option>
-          <option value="clean-light">Clean Light</option>
-        </select>
+          <Link
+            to="/bookmarks"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors ${
+              isCurrent('/bookmarks')
+                ? 'bg-white/10 text-zinc-100 font-medium'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+            }`}
+          >
+            <Bookmark className="w-3.5 h-3.5" />
+            <span>Bookmarks</span>
+          </Link>
 
-        {/* Auth section */}
+          {(user?.role === 'admin' || user?.role === 'moderator') && (
+            <Link
+              to="/moderation"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors ${
+                isCurrent('/moderation')
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 font-medium shadow-sm'
+                  : 'text-amber-400 hover:text-amber-300 hover:bg-amber-500/10'
+              }`}
+            >
+              <ShieldAlert className="w-3.5 h-3.5" />
+              <span>Moderation</span>
+            </Link>
+          )}
+        </nav>
+      </div>
+
+      {/* Right: User / Settings / Login */}
+      <div className="flex items-center gap-2">
         {user ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span
-              style={{
-                fontSize: '0.8rem',
-                color: 'var(--text-secondary)',
-                maxWidth: '140px',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis'
-              }}
-              title={user.email}
+          <div className="flex items-center gap-2">
+            <NotificationsDropdown />
+
+            <Link
+              to="/settings"
+              className={`flex items-center gap-2 px-2 py-1 rounded-lg transition-colors border ${
+                isCurrent('/settings')
+                  ? 'bg-white/10 border-white/20 text-zinc-100'
+                  : 'border-transparent hover:border-white/10 hover:bg-white/5 text-zinc-300'
+              }`}
+              title="Account & Profile Settings"
             >
-              {user.display_name || user.email.split('@')[0]}
-            </span>
+              <div className="w-7 h-7 rounded-full overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-[11px] font-bold text-white shadow-sm border border-white/10 shrink-0">
+                {user.avatar_url ? (
+                  <img
+                    src={user.avatar_url}
+                    alt={user.display_name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLElement).style.display = 'none';
+                    }}
+                  />
+                ) : (
+                  <span>{(user.display_name || user.email).charAt(0).toUpperCase()}</span>
+                )}
+              </div>
+
+              <div className="hidden sm:flex flex-col text-left leading-tight">
+                <span className="text-xs font-medium text-zinc-200 truncate max-w-[120px]">
+                  {user.display_name}
+                </span>
+                <span className="text-[10px] text-zinc-400 font-mono truncate max-w-[120px]">
+                  @{user.username || 'student'} • <span className="text-emerald-400 font-semibold">T{user.active_term || 1}</span>
+                </span>
+              </div>
+            </Link>
+
             <button
-              className="auth-btn auth-btn-ghost"
-              onClick={logout}
-              title="Sign out of student account"
+              onClick={() => logout()}
+              title="Sign Out"
+              aria-label="Sign out of account"
+              className="p-1.5 rounded-md text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
             >
-              <LogOut size={15} />
-              <span>Sign Out</span>
-            </button>
-            <button
-              className="auth-btn auth-btn-ghost"
-              onClick={() => {
-                if (window.confirm('Are you sure you want to delete your profile and all bookmarks?')) {
-                  deleteAccount();
-                }
-              }}
-              title="Delete account data"
-              style={{ color: 'var(--accent-rose)' }}
-            >
-              <Trash2 size={15} />
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
         ) : (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <GoogleSignInButton
-              theme={currentTheme === 'clean-light' ? 'outline' : 'filled_black'}
-              size="medium"
-            />
-            <button
-              className="auth-btn auth-btn-ghost"
-              onClick={() => {
-                loginDevMock('student@sst.scaler.com').catch((e) => {
-                  console.error('Navbar dev login bypass error:', e);
-                });
-              }}
-              title="Quick dev login bypass (student@sst.scaler.com)"
-              style={{ fontSize: '0.75rem', padding: '0.35rem 0.65rem' }}
-            >
-              <LogIn size={13} />
-              <span>Dev Login</span>
-            </button>
-          </div>
+          <Link
+            to="/login"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-xs font-medium text-blue-400 transition-colors"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            <span>Sign In</span>
+          </Link>
         )}
       </div>
     </header>

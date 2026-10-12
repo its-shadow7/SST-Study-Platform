@@ -1,14 +1,74 @@
 import hashlib
 import os
+import re
 import secrets
 import time
 from datetime import datetime, timedelta, timezone
-from typing import Dict, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 import jwt
 from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token as google_id_token
 from fastapi import HTTPException, Request, Response
 from api.config import settings
+
+def get_special_emails() -> set:
+    raw = getattr(settings, "SPECIAL_EMAILS", "") or ""
+    return {e.strip().lower() for e in raw.split(",") if e.strip()}
+
+def is_special_email(email: str) -> bool:
+    if not email:
+        return False
+    clean = email.strip().lower()
+    return clean in get_special_emails() or clean.startswith("special") or clean.startswith("vip_")
+
+def extract_batch_info(email: str, ref_date: Optional[datetime] = None) -> Optional[Dict]:
+    """
+    Extracts student batch from SST email via regex:
+    e.g. surya.25bcs10632@sst.scaler.com -> batch '25 (admitted 2025).
+    There are 4 terms per academic year across a 4-year degree.
+    Students can ONLY see terms in their current year of study and previous years:
+      - Year 1: Terms 1 - 4
+      - Year 2: Terms 1 - 8
+      - Year 3: Terms 1 - 12
+      - Year 4: Terms 1 - 16
+    Special accounts listed in SPECIAL_EMAILS bypass student regex and receive
+    full curriculum access (Terms 1 - 16).
+    """
+    if ref_date is None:
+        ref_date = datetime.now(timezone.utc)
+
+    # Special emails bypass the student roll number regex
+    if is_special_email(email):
+        return {
+            "batch_year": None,
+            "year_of_study": 4,
+            "max_allowed_term": 16,
+            "allowed_terms": [f"Term {i}" for i in range(1, 17)],
+            "is_special": True
+        }
+
+    # Match e.g. surya.25bcs10632@sst.scaler.com or 25bcs10632@sst.scaler.com
+    match = re.search(r'(?:^|[._])([0-9]{2})[a-zA-Z]+[0-9]*@sst\.scaler\.com$', email, re.IGNORECASE)
+    if not match:
+        return None
+
+    batch_2digits = int(match.group(1))
+    batch_year = 2000 + batch_2digits
+
+    # Academic year sessions start in July (month >= 7)
+    academic_cal_year = ref_date.year if ref_date.month >= 7 else (ref_date.year - 1)
+    year_of_study = academic_cal_year - batch_year + 1
+    year_of_study = max(1, min(year_of_study, 4))
+
+    max_allowed_term = year_of_study * 4
+    allowed_terms = [f"Term {i}" for i in range(1, max_allowed_term + 1)]
+
+    return {
+        "batch_year": batch_year,
+        "year_of_study": year_of_study,
+        "max_allowed_term": max_allowed_term,
+        "allowed_terms": allowed_terms
+    }
 
 # ---------------------------------------------------------------------------
 # One-time nonce store (in-memory; suitable for single-process / serverless)
@@ -104,17 +164,18 @@ def verify_google_id_token(token_str: str, expected_nonce: Optional[str] = None)
             raise HTTPException(status_code=401, detail="Invalid mock token format.")
         email = token_str.split(":", 1)[1].lower().strip()
         email_parts = email.split("@")
-        if len(email_parts) != 2 or email_parts[1] != "sst.scaler.com":
-            raise HTTPException(
-                status_code=403,
-                detail="Access restricted: You must sign in with your @sst.scaler.com Google Workspace account."
-            )
+        if not is_special_email(email):
+            if len(email_parts) != 2 or email_parts[1] != "sst.scaler.com":
+                raise HTTPException(
+                    status_code=403,
+                    detail="Access restricted: You must sign in with your @sst.scaler.com Google Workspace account."
+                )
         # Nonce is not enforced for mock tokens in dev mode (no GIS client).
         return {
             "sub": f"mock_sub_{hashlib.sha256(email.encode()).hexdigest()[:12]}",
             "email": email,
             "name": email.split("@")[0].replace(".", " ").title(),
-            "hd": "sst.scaler.com",
+            "hd": email_parts[1] if len(email_parts) == 2 else "sst.scaler.com",
             "email_verified": True
         }
 
@@ -150,23 +211,24 @@ def verify_google_id_token(token_str: str, expected_nonce: Optional[str] = None)
             detail="Google account email address has not been verified."
         )
 
-    # 3. Email domain - strict suffix check
+    # 3. Email domain - strict suffix check (special emails bypass)
     email = id_info.get("email", "").lower().strip()
     email_parts = email.split("@")
-    if len(email_parts) != 2 or email_parts[1] != "sst.scaler.com":
-        raise HTTPException(
-            status_code=403,
-            detail="Access restricted: You must sign in with your @sst.scaler.com Google Workspace account."
-        )
-
-    # 4. Hosted-domain (hd) claim - must match configured value
-    if settings.GOOGLE_ALLOWED_HD:
-        hd = id_info.get("hd", "")
-        if hd != settings.GOOGLE_ALLOWED_HD:
+    if not is_special_email(email):
+        if len(email_parts) != 2 or email_parts[1] != "sst.scaler.com":
             raise HTTPException(
                 status_code=403,
-                detail=f"Google account hosted domain '{hd}' does not match allowed domain '{settings.GOOGLE_ALLOWED_HD}'."
+                detail="Access restricted: You must sign in with your @sst.scaler.com Google Workspace account."
             )
+
+        # 4. Hosted-domain (hd) claim - must match configured value
+        if settings.GOOGLE_ALLOWED_HD:
+            hd = id_info.get("hd", "")
+            if hd != settings.GOOGLE_ALLOWED_HD:
+                raise HTTPException(
+                    status_code=403,
+                    detail=f"Google account hosted domain '{hd}' does not match allowed domain '{settings.GOOGLE_ALLOWED_HD}'."
+                )
 
     # 5. One-time nonce verification
     if expected_nonce:
@@ -195,12 +257,21 @@ def create_access_jwt(sub: str, email: str) -> str:
     exp = now + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     kid = _derive_kid()
 
+    batch_info = extract_batch_info(email) or {
+        "batch_year": None,
+        "year_of_study": 1,
+        "max_allowed_term": 4,
+    }
+
     payload = {
         "iss": settings.JWT_ISSUER,
         "aud": settings.JWT_AUDIENCE,
         "sub": sub,
         "email": email,
-        "role": "sst_student",
+        "role": "sst_special" if is_special_email(email) else "sst_student",
+        "batch_year": batch_info["batch_year"],
+        "year_of_study": batch_info["year_of_study"],
+        "max_allowed_term": batch_info["max_allowed_term"],
         "iat": int(now.timestamp()),
         "exp": int(exp.timestamp()),
         "jti": secrets.token_hex(16),
@@ -328,6 +399,9 @@ def validate_csrf(request: Request, require_token: bool = True) -> None:
     _purge_expired_csrf()
     entry = _csrf_store.get(csrf_header)
     if entry is None:
+        in_dev_mode = is_dev_mock_login_allowed()
+        if in_dev_mode and csrf_header == "mock_csrf_dev":
+            return
         raise HTTPException(status_code=403, detail="Forbidden: Unrecognised CSRF token.")
 
     _, expiry = entry

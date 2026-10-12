@@ -1,9 +1,59 @@
 import { Note, NoteIndexItem } from '../types/note';
+import { setCsrfToken } from './apiClient';
+
+let refreshPromise: Promise<boolean> | null = null;
+
+/**
+ * Deduplicated auth session refresh.
+ * Calls /api/auth/refresh to rotate refresh token and obtain a fresh access_token cookie.
+ */
+async function refreshAuthSession(): Promise<boolean> {
+  if (refreshPromise) {
+    return refreshPromise;
+  }
+
+  refreshPromise = (async () => {
+    try {
+      const response = await fetch('/api/auth/refresh', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        return false;
+      }
+
+      const data = await response.json();
+      if (data?.csrf_token) {
+        setCsrfToken(data.csrf_token);
+      }
+      return true;
+    } catch {
+      return false;
+    } finally {
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+}
 
 export async function fetchNotesIndex(): Promise<NoteIndexItem[]> {
-  const response = await fetch('/data/notes-index.json', {
-    credentials: 'include'
+  let response = await fetch('/data/notes-index.json', {
+    credentials: 'include',
   });
+
+  if (response.status === 401) {
+    const refreshed = await refreshAuthSession();
+    if (refreshed) {
+      response = await fetch('/data/notes-index.json', {
+        credentials: 'include',
+      });
+    }
+  }
 
   if (!response.ok) {
     if (response.status === 401 || response.status === 403) {
@@ -16,9 +66,18 @@ export async function fetchNotesIndex(): Promise<NoteIndexItem[]> {
 }
 
 export async function fetchNoteById(noteId: string): Promise<Note> {
-  const response = await fetch(`/data/notes/${noteId}.json`, {
-    credentials: 'include'
+  let response = await fetch(`/data/notes/${noteId}.json`, {
+    credentials: 'include',
   });
+
+  if (response.status === 401) {
+    const refreshed = await refreshAuthSession();
+    if (refreshed) {
+      response = await fetch(`/data/notes/${noteId}.json`, {
+        credentials: 'include',
+      });
+    }
+  }
 
   if (!response.ok) {
     if (response.status === 401 || response.status === 403) {
@@ -32,3 +91,4 @@ export async function fetchNoteById(noteId: string): Promise<Note> {
 
   return response.json();
 }
+

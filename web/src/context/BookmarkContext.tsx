@@ -1,36 +1,37 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { api } from '../services/apiClient';
-import { Bookmark, BookmarkListResponse } from '../types/note';
+import { api } from '@/services/apiClient';
+import { Bookmark, BookmarkListResponse } from '@/types/note';
 import { useAuth } from './AuthContext';
+import { toast } from 'sonner';
 
 interface BookmarkContextType {
+  bookmarks: Bookmark[];
   bookmarkedIds: Set<string>;
   loading: boolean;
-  toggleBookmark: (noteId: string) => Promise<boolean>;
+  toggleBookmark: (noteId: string, noteTitle?: string) => Promise<boolean>;
   isBookmarked: (noteId: string) => boolean;
-  toastMessage: string | null;
-  clearToast: () => void;
+  refetchBookmarks: () => Promise<void>;
 }
 
 const BookmarkContext = createContext<BookmarkContextType | undefined>(undefined);
 
 export const BookmarkProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user } = useAuth();
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState<boolean>(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  const clearToast = () => setToastMessage(null);
 
   const fetchBookmarks = async () => {
     if (!user) {
+      setBookmarks([]);
       setBookmarkedIds(new Set());
       return;
     }
     setLoading(true);
     try {
       const res = await api.get<BookmarkListResponse>('/api/bookmarks');
-      const ids = new Set(res.bookmarks.map((b) => b.note_id));
+      setBookmarks(res.bookmarks || []);
+      const ids = new Set((res.bookmarks || []).map((b) => b.note_id));
       setBookmarkedIds(ids);
     } catch (err) {
       console.warn('Failed to load bookmarks', err);
@@ -47,15 +48,16 @@ export const BookmarkProvider: React.FC<{ children: ReactNode }> = ({ children }
     return bookmarkedIds.has(noteId);
   };
 
-  const toggleBookmark = async (noteId: string): Promise<boolean> => {
+  const toggleBookmark = async (noteId: string, noteTitle?: string): Promise<boolean> => {
     if (!user) {
-      setToastMessage('Please sign in with your @sst.scaler.com account to bookmark notes.');
+      toast.error('Please sign in with your @sst.scaler.com account to bookmark notes.');
       return false;
     }
 
     const wasBookmarked = bookmarkedIds.has(noteId);
-    
-    // 1. Optimistic UI update
+    const label = noteTitle || noteId;
+
+    // 1. Optimistic UI update immediately to mask serverless cold starts
     setBookmarkedIds((prev) => {
       const next = new Set(prev);
       if (wasBookmarked) {
@@ -66,17 +68,29 @@ export const BookmarkProvider: React.FC<{ children: ReactNode }> = ({ children }
       return next;
     });
 
+    setBookmarks((prev) => {
+      if (wasBookmarked) {
+        return prev.filter((b) => b.note_id !== noteId);
+      } else {
+        return [{ note_id: noteId, created_at: new Date().toISOString() }, ...prev];
+      }
+    });
+
+    if (wasBookmarked) {
+      toast.info(`Removed "${label}" from bookmarks`);
+    } else {
+      toast.success(`Bookmarked "${label}"`);
+    }
+
     try {
       if (wasBookmarked) {
         await api.delete(`/api/bookmarks/${noteId}`);
-        setToastMessage(`Removed bookmark for ${noteId}`);
       } else {
         await api.put(`/api/bookmarks/${noteId}`);
-        setToastMessage(`Bookmarked ${noteId}`);
       }
       return !wasBookmarked;
     } catch (err: any) {
-      // 2. Server rollback on failure (TDD Section 8)
+      // 2. Rollback optimistic update on server error
       setBookmarkedIds((prev) => {
         const rollback = new Set(prev);
         if (wasBookmarked) {
@@ -86,7 +100,14 @@ export const BookmarkProvider: React.FC<{ children: ReactNode }> = ({ children }
         }
         return rollback;
       });
-      setToastMessage(`Failed to update bookmark (${err.message || 'Network error'}). Rolled back.`);
+      setBookmarks((prev) => {
+        if (wasBookmarked) {
+          return [{ note_id: noteId, created_at: new Date().toISOString() }, ...prev];
+        } else {
+          return prev.filter((b) => b.note_id !== noteId);
+        }
+      });
+      toast.error(`Bookmark sync failed: ${err.message || 'Server error'}. Rolled back.`);
       return wasBookmarked;
     }
   };
@@ -94,12 +115,12 @@ export const BookmarkProvider: React.FC<{ children: ReactNode }> = ({ children }
   return (
     <BookmarkContext.Provider
       value={{
+        bookmarks,
         bookmarkedIds,
         loading,
         toggleBookmark,
         isBookmarked,
-        toastMessage,
-        clearToast
+        refetchBookmarks: fetchBookmarks,
       }}
     >
       {children}

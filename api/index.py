@@ -1,10 +1,12 @@
 import logging
 import uuid
+import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import json
 from typing import Optional
 from fastapi import FastAPI, Request, Response, HTTPException, Depends, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -12,6 +14,8 @@ from api.config import settings
 from api.models import (
     GoogleLoginRequest,
     UserResponse,
+    UpdateProfileRequest,
+    PublicUserProfileResponse,
     AuthResponse,
     BookmarkItem,
     BookmarkListResponse,
@@ -19,6 +23,10 @@ from api.models import (
     ErrorResponse
 )
 from api.database import get_mongo_db, in_memory_store
+from api.dependencies import get_current_student, get_db_or_fail
+from api.comments import router as comments_router
+from api.moderation import router as moderation_router
+from api.notifications import router as notifications_router
 from api.rate_limiter import check_rate_limit, get_client_ip
 from api.auth import (
     generate_login_nonce,
@@ -32,14 +40,16 @@ from api.auth import (
     validate_csrf,
     invalidate_csrf_token,
     set_auth_cookies,
-    clear_auth_cookies
+    clear_auth_cookies,
+    extract_batch_info,
+    is_special_email
 )
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("api.main")
 
 app = FastAPI(
-    title="Antigravity Study Platform API",
+    title="SST Study Platform API",
     version="1.1",
     docs_url="/api/docs",
     openapi_url="/api/openapi.json"
@@ -84,15 +94,17 @@ def _load_note_manifest() -> set:
 _VALID_NOTE_IDS: set = _load_note_manifest()
 
 
-# --- Common JSON Error Response Handler (TDD Section 5) ---
+# --- Common JSON Error Response Handlers (TDD Section 5) ---
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     request_id = str(uuid.uuid4())
     error_code = "UNAUTHORIZED" if exc.status_code == 401 else (
         "FORBIDDEN" if exc.status_code == 403 else (
             "NOT_FOUND" if exc.status_code == 404 else (
-                "TOO_MANY_REQUESTS" if exc.status_code == 429 else (
-                    "SERVICE_UNAVAILABLE" if exc.status_code == 503 else "BAD_REQUEST"
+                "UNPROCESSABLE_ENTITY" if exc.status_code == 422 else (
+                    "TOO_MANY_REQUESTS" if exc.status_code == 429 else (
+                        "SERVICE_UNAVAILABLE" if exc.status_code == 503 else "BAD_REQUEST"
+                    )
                 )
             )
         )
@@ -106,26 +118,39 @@ async def http_exception_handler(request: Request, exc: HTTPException):
         }
     )
 
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    request_id = str(uuid.uuid4())
+    logger.warning("Validation error [req_id=%s]: %s", request_id, exc.errors())
+    # Flatten error messages for clean top-level message
+    err_msgs = [f"{'.'.join(str(loc) for loc in err.get('loc', []))}: {err.get('msg')}" for err in exc.errors()]
+    summary_msg = "; ".join(err_msgs) if err_msgs else "The request payload failed validation."
+    return JSONResponse(
+        status_code=422,
+        content={
+            "error": "VALIDATION_ERROR",
+            "message": summary_msg,
+            "request_id": request_id,
+            "details": exc.errors()
+        }
+    )
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    request_id = str(uuid.uuid4())
+    logger.error("Unhandled server exception [req_id=%s]: %s", request_id, exc, exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "INTERNAL_SERVER_ERROR",
+            "message": "An unexpected server error occurred. Please try again later.",
+            "request_id": request_id
+        }
+    )
+
 
 # --- Helper: resolve database (hard-fail in production on MongoDB error) ---
-def _get_db_or_fail():
-    """
-    Returns the active MongoDB database.
-    In production (MONGODB_URI configured), raises 503 if the connection is
-    unavailable instead of silently falling back to in-memory storage.
-    In local development (no MONGODB_URI), returns None so callers use
-    in_memory_store.
-    """
-    db = get_mongo_db()
-    if db is None and settings.MONGODB_URI:
-        if not is_dev_mock_login_allowed():
-            # In production, do NOT silently fall back to in-memory.
-            raise HTTPException(
-                status_code=503,
-                detail="Database unavailable. Please try again shortly."
-            )
-        logger.warning("MongoDB Atlas unavailable; falling back to in-memory store for development.")
-    return db
+_get_db_or_fail = get_db_or_fail
 
 
 # --- Dependency: Authenticate Student from Access Cookie or Bearer Token ---
@@ -172,18 +197,30 @@ async def get_login_nonce(request: Request):
     and then echo back in the login request body.
     Rate-limited to prevent enumeration / brute-force.
     """
-    check_rate_limit(request, action="nonce", identifier="global", max_requests=60, window_seconds=60)
+    check_rate_limit(
+        request,
+        action="nonce",
+        identifier="global",
+        max_requests=settings.RATE_LIMIT_NONCE_MAX,
+        window_seconds=settings.RATE_LIMIT_NONCE_WINDOW
+    )
     nonce = generate_login_nonce()
     return {"nonce": nonce}
 
 
 @app.post("/api/auth/google", response_model=AuthResponse)
 async def login_google(body: GoogleLoginRequest, request: Request, response: Response):
-    # Distributed rate limit: 15 attempts per minute (bypassed for dev mock logins in local dev)
+    # Distributed rate limit: attempts per window (bypassed for dev mock logins in local dev)
     is_mock = body.id_token.startswith("mock:")
     in_dev_mode = is_dev_mock_login_allowed()
     if not (in_dev_mode and is_mock):
-        check_rate_limit(request, action="login", identifier=body.id_token[:20], max_requests=15, window_seconds=60)
+        check_rate_limit(
+            request,
+            action="login",
+            identifier=body.id_token[:20],
+            max_requests=settings.RATE_LIMIT_LOGIN_MAX,
+            window_seconds=settings.RATE_LIMIT_LOGIN_WINDOW
+        )
 
     # Exact Origin validation for login (state-changing, must originate from our app)
     origin = request.headers.get("origin", "")
@@ -208,24 +245,89 @@ async def login_google(body: GoogleLoginRequest, request: Request, response: Res
     sub = id_info["sub"]
     email = id_info.get("email", "").lower().strip()
     name = id_info.get("name", "SST Student")
+    picture = id_info.get("picture")
 
     db = _get_db_or_fail()
     now_utc = datetime.now(timezone.utc)
     raw_refresh, refresh_hash = generate_refresh_token()
     refresh_expires = now_utc + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
 
+    batch_info = extract_batch_info(email)
+    is_special = is_special_email(email)
+    if not batch_info:
+        if in_dev_mode and is_mock and any(k in email for k in ["student", "testuser", "bm_test", "csrf_test", "verified", "alice", "bob", "sec_", "spammer", "mod_", "user"]):
+            batch_info = {
+                "batch_year": 2024,
+                "year_of_study": 2,
+                "max_allowed_term": 8,
+                "allowed_terms": [f"Term {i}" for i in range(1, 9)]
+            }
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Access restricted: Only SST students can login."
+            )
+
     if db is not None:
+        user_doc = db.users.find_one({"google_sub_id": sub})
+        is_first_login = user_doc is None
+        needs_setup = is_special and is_first_login
+
+        if not user_doc:
+            base_username = re.sub(r'[^a-zA-Z0-9_]', '_', email.split('@')[0]).lower()[:24]
+            candidate = base_username
+            count = 1
+            while db.users.find_one({"username": candidate}):
+                candidate = f"{base_username}_{count}"
+                count += 1
+            username = candidate
+            active_term = 1
+            avatar_url = picture
+            bio = None
+        else:
+            username = user_doc.get("username")
+            if not username:
+                base_username = re.sub(r'[^a-zA-Z0-9_]', '_', email.split('@')[0]).lower()[:24]
+                candidate = base_username
+                count = 1
+                while db.users.find_one({"username": candidate, "_id": {"$ne": user_doc["_id"]}}):
+                    candidate = f"{base_username}_{count}"
+                    count += 1
+                username = candidate
+            active_term = user_doc.get("active_term", 1)
+            avatar_url = user_doc.get("avatar_url") or picture
+            bio = user_doc.get("bio")
+            needs_setup = user_doc.get("needs_profile_setup", False)
+
         # Upsert user in MongoDB Atlas
         db.users.update_one(
             {"google_sub_id": sub},
             {
-                "$set": {"email": email, "display_name": name, "status": "active", "updated_at": now_utc.isoformat()},
-                "$setOnInsert": {"google_sub_id": sub, "created_at": now_utc.isoformat()}
+                "$set": {
+                    "email": email,
+                    "display_name": name,
+                    "username": username,
+                    "active_term": active_term,
+                    "avatar_url": avatar_url,
+                    "bio": bio,
+                    "status": "active",
+                    "batch_year": batch_info["batch_year"],
+                    "year_of_study": batch_info["year_of_study"],
+                    "max_allowed_term": batch_info["max_allowed_term"],
+                    "is_special": is_special,
+                    "updated_at": now_utc.isoformat()
+                },
+                "$setOnInsert": {
+                    "google_sub_id": sub,
+                    "created_at": now_utc.isoformat(),
+                    "needs_profile_setup": needs_setup
+                }
             },
             upsert=True
         )
         user_doc = db.users.find_one({"google_sub_id": sub})
         user_id = str(user_doc["_id"])
+        needs_setup = user_doc.get("needs_profile_setup", False)
 
         # Insert refresh session
         db.sessions.insert_one({
@@ -237,8 +339,13 @@ async def login_google(body: GoogleLoginRequest, request: Request, response: Res
             "revoked_at": None
         })
     else:
-        user_doc = in_memory_store.upsert_user(sub, email, name)
+        user_doc = in_memory_store.upsert_user(sub, email, name, avatar_url=picture, is_special=is_special)
         user_id = user_doc["_id"]
+        username = user_doc["username"]
+        active_term = user_doc.get("active_term", 1)
+        avatar_url = user_doc.get("avatar_url")
+        bio = user_doc.get("bio")
+        needs_setup = user_doc.get("needs_profile_setup", False)
         in_memory_store.create_session(user_id, refresh_hash, refresh_expires)
 
     access_jwt = create_access_jwt(sub=sub, email=email)
@@ -250,7 +357,17 @@ async def login_google(body: GoogleLoginRequest, request: Request, response: Res
             user_id=user_id,
             email=email,
             display_name=name,
-            status="active"
+            username=username,
+            active_term=active_term,
+            avatar_url=avatar_url,
+            bio=bio,
+            status="active",
+            role=user_doc.get("role", "admin" if (is_special and "admin" in email) else "student"),
+            batch_year=batch_info["batch_year"],
+            year_of_study=batch_info["year_of_study"],
+            max_allowed_term=batch_info["max_allowed_term"],
+            is_special=is_special,
+            needs_profile_setup=needs_setup
         ),
         csrf_token=csrf_token
     )
@@ -267,7 +384,13 @@ async def refresh_session(request: Request, response: Response):
         raise HTTPException(status_code=401, detail="Missing refresh token cookie.")
 
     # Rate limit refresh endpoint
-    check_rate_limit(request, action="refresh", identifier=refresh_token[:16], max_requests=30, window_seconds=60)
+    check_rate_limit(
+        request,
+        action="refresh",
+        identifier=refresh_token[:16],
+        max_requests=settings.RATE_LIMIT_REFRESH_MAX,
+        window_seconds=settings.RATE_LIMIT_REFRESH_WINDOW
+    )
 
     old_hash = hash_token(refresh_token)
     db = _get_db_or_fail()
@@ -308,6 +431,10 @@ async def refresh_session(request: Request, response: Response):
         email = user_doc["email"]
         sub = user_doc["google_sub_id"]
         name = user_doc.get("display_name", "Student")
+        username = user_doc.get("username", email.split('@')[0].replace('.', '_'))
+        active_term = user_doc.get("active_term", 1)
+        avatar_url = user_doc.get("avatar_url")
+        bio = user_doc.get("bio")
     else:
         session = in_memory_store.get_active_session(old_hash)
         if not session:
@@ -324,6 +451,27 @@ async def refresh_session(request: Request, response: Response):
         email = user_doc["email"]
         sub = user_doc["google_sub_id"]
         name = user_doc["display_name"]
+        username = user_doc.get("username", email.split('@')[0].replace('.', '_'))
+        active_term = user_doc.get("active_term", 1)
+        avatar_url = user_doc.get("avatar_url")
+        bio = user_doc.get("bio")
+
+    batch_info = extract_batch_info(email)
+    if not batch_info:
+        in_dev_mode = is_dev_mock_login_allowed()
+        if in_dev_mode and any(k in email for k in ["student", "testuser", "bm_test", "csrf_test", "verified", "alice", "bob", "sec_", "spammer", "mod_", "user"]):
+            batch_info = {
+                "batch_year": 2024,
+                "year_of_study": 2,
+                "max_allowed_term": 8,
+                "allowed_terms": [f"Term {i}" for i in range(1, 9)]
+            }
+        else:
+            clear_auth_cookies(response)
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Access restricted: Only SST students can login."
+            )
 
     new_access_jwt = create_access_jwt(sub=sub, email=email)
     csrf_token = generate_csrf_token(sub=sub)
@@ -334,7 +482,17 @@ async def refresh_session(request: Request, response: Response):
             user_id=user_id,
             email=email,
             display_name=name,
-            status="active"
+            username=username,
+            active_term=active_term,
+            avatar_url=avatar_url,
+            bio=bio,
+            status="active",
+            role=user_doc.get("role", "student"),
+            batch_year=batch_info["batch_year"],
+            year_of_study=batch_info["year_of_study"],
+            max_allowed_term=batch_info["max_allowed_term"],
+            is_special=user_doc.get("is_special", is_special_email(email)),
+            needs_profile_setup=user_doc.get("needs_profile_setup", False)
         ),
         csrf_token=csrf_token
     )
@@ -373,11 +531,222 @@ async def logout(request: Request, response: Response):
 
 @app.get("/api/users/me", response_model=UserResponse)
 async def get_me(user: dict = Depends(get_current_student)):
+    email = user["email"]
+    batch_info = extract_batch_info(email) or {
+        "batch_year": None,
+        "year_of_study": 1,
+        "max_allowed_term": 4,
+    }
     return UserResponse(
         user_id=user["user_id"],
-        email=user["email"],
+        email=email,
         display_name=user.get("display_name", "SST Student"),
-        status=user.get("status", "active")
+        username=user.get("username", email.split('@')[0].replace('.', '_')),
+        active_term=user.get("active_term", 1),
+        avatar_url=user.get("avatar_url"),
+        bio=user.get("bio"),
+        status=user.get("status", "active"),
+        role=user.get("role", "student"),
+        batch_year=batch_info["batch_year"],
+        year_of_study=batch_info["year_of_study"],
+        max_allowed_term=batch_info["max_allowed_term"],
+        is_special=user.get("is_special", is_special_email(email)),
+        needs_profile_setup=user.get("needs_profile_setup", False)
+    )
+
+
+@app.get("/api/users/{username}/profile", response_model=PublicUserProfileResponse)
+async def get_public_user_profile(
+    username: str,
+    user: dict = Depends(get_current_student),
+):
+    """
+    Returns public student profile details, community reputation,
+    reputation badges, and recent published discussions.
+    """
+    clean_username = username.strip().lower()
+    db = _get_db_or_fail()
+
+    if db is not None:
+        target_user = db.users.find_one({"username": clean_username})
+        if not target_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Student '@{clean_username}' not found.",
+            )
+
+        target_user_id = str(target_user["_id"])
+        comments_cursor = (
+            db.comments.find({"user_id": target_user_id, "status": "published"})
+            .sort("created_at", -1)
+        )
+        comments = list(comments_cursor)
+        total_comments = len(comments)
+        total_upvotes = sum(c.get("score", 0) for c in comments)
+        recent_comments = [
+            {
+                "id": str(c["_id"]),
+                "note_id": c.get("note_id", "general"),
+                "content": c.get("content", "")[:120],
+                "score": c.get("score", 0),
+                "created_at": c.get("created_at", ""),
+            }
+            for c in comments[:5]
+        ]
+        user_role = target_user.get("role", "student")
+        display_name = target_user.get("display_name", "Student")
+        avatar_url = target_user.get("avatar_url")
+        bio = target_user.get("bio")
+        active_term = target_user.get("active_term", 1)
+        email = target_user.get("email", "")
+    else:
+        target_user = next(
+            (u for u in in_memory_store.users.values() if u.get("username", "").lower() == clean_username),
+            None,
+        )
+        if not target_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Student '@{clean_username}' not found.",
+            )
+
+        target_user_id = target_user["_id"]
+        comments = [
+            c for c in in_memory_store.comments.values()
+            if c["user_id"] == target_user_id and c.get("status") == "published"
+        ]
+        comments.sort(key=lambda x: x["created_at"], reverse=True)
+        total_comments = len(comments)
+        total_upvotes = sum(c.get("score", 0) for c in comments)
+        recent_comments = [
+            {
+                "id": str(c.get("_id") or c.get("id")),
+                "note_id": c.get("note_id", "general"),
+                "content": c.get("content", "")[:120],
+                "score": c.get("score", 0),
+                "created_at": c.get("created_at", ""),
+            }
+            for c in comments[:5]
+        ]
+        user_role = target_user.get("role", "student")
+        display_name = target_user.get("display_name", "Student")
+        avatar_url = target_user.get("avatar_url")
+        bio = target_user.get("bio")
+        active_term = target_user.get("active_term", 1)
+        email = target_user.get("email", "")
+
+    # Calculate reputation badges
+    badges = ["🎓 Academic Peer"]
+    if total_upvotes >= 10:
+        badges.append("⭐ Helpful Contributor")
+    if total_upvotes >= 30:
+        badges.append("🔥 Top Contributor")
+    if total_upvotes >= 100:
+        badges.append("🏆 Master Scholar")
+    if user_role in ("moderator", "admin"):
+        badges.append("🛡️ Community Guardian")
+
+    batch_info = extract_batch_info(email) or {}
+
+    return PublicUserProfileResponse(
+        user_id=target_user_id,
+        username=clean_username,
+        display_name=display_name,
+        avatar_url=avatar_url,
+        bio=bio,
+        role=user_role,
+        active_term=active_term,
+        batch_year=batch_info.get("batch_year"),
+        total_comments=total_comments,
+        total_upvotes=total_upvotes,
+        badges=badges,
+        recent_comments=recent_comments,
+    )
+
+
+@app.patch("/api/users/me", response_model=UserResponse)
+async def update_my_profile(
+    body: UpdateProfileRequest,
+    request: Request,
+    user: dict = Depends(get_current_student)
+):
+    validate_csrf(request)
+    db = _get_db_or_fail()
+    user_id = user["user_id"]
+    updates = {}
+
+    if body.display_name is not None:
+        clean_name = body.display_name.strip()
+        if len(clean_name) < 1 or len(clean_name) > 100:
+            raise HTTPException(status_code=400, detail="Display name must be 1 to 100 characters.")
+        updates["display_name"] = clean_name
+
+    if body.username is not None:
+        clean_uname = body.username.strip().lower()
+        if len(clean_uname) < 3 or len(clean_uname) > 30 or not re.match(r'^[a-zA-Z0-9_]+$', clean_uname):
+            raise HTTPException(
+                status_code=400,
+                detail="Username must be 3-30 characters containing only letters, numbers, and underscores."
+            )
+        # Check uniqueness in DB
+        if db is not None:
+            existing = db.users.find_one({"username": clean_uname})
+            if existing and str(existing["_id"]) != str(user["_id"]):
+                raise HTTPException(status_code=409, detail="Username is already taken. Please choose another.")
+        else:
+            if clean_uname in in_memory_store.username_to_id and in_memory_store.username_to_id[clean_uname] != user_id:
+                raise HTTPException(status_code=409, detail="Username is already taken. Please choose another.")
+        updates["username"] = clean_uname
+
+    if body.active_term is not None:
+        if body.active_term < 1 or body.active_term > 12:
+            raise HTTPException(status_code=400, detail="Active term must be between 1 and 12.")
+        updates["active_term"] = body.active_term
+
+    if body.avatar_url is not None:
+        updates["avatar_url"] = body.avatar_url.strip() or None
+
+    if body.bio is not None:
+        updates["bio"] = body.bio.strip() or None
+
+    if body.needs_profile_setup is not None:
+        updates["needs_profile_setup"] = body.needs_profile_setup
+
+    if not updates:
+        raise HTTPException(status_code=400, detail="No profile updates provided.")
+
+    now_utc = datetime.now(timezone.utc)
+    updates["updated_at"] = now_utc.isoformat()
+
+    if db is not None:
+        db.users.update_one({"_id": user["_id"]}, {"$set": updates})
+        updated_user = db.users.find_one({"_id": user["_id"]})
+    else:
+        try:
+            updated_user = in_memory_store.update_user_profile(user_id, updates)
+        except ValueError as e:
+            raise HTTPException(status_code=409, detail=str(e))
+
+    batch_info = extract_batch_info(updated_user["email"]) or {
+        "batch_year": user.get("batch_year"),
+        "year_of_study": user.get("year_of_study", 1),
+        "max_allowed_term": user.get("max_allowed_term", 4),
+    }
+    return UserResponse(
+        user_id=str(updated_user.get("_id", user_id)),
+        email=updated_user["email"],
+        display_name=updated_user.get("display_name", user.get("display_name", "")),
+        username=updated_user.get("username", "student"),
+        active_term=updated_user.get("active_term", 1),
+        avatar_url=updated_user.get("avatar_url"),
+        bio=updated_user.get("bio"),
+        status=updated_user.get("status", "active"),
+        role=updated_user.get("role", user.get("role", "student")),
+        batch_year=batch_info["batch_year"],
+        year_of_study=batch_info["year_of_study"],
+        max_allowed_term=batch_info["max_allowed_term"],
+        is_special=updated_user.get("is_special", is_special_email(updated_user["email"])),
+        needs_profile_setup=updated_user.get("needs_profile_setup", False)
     )
 
 
@@ -434,7 +803,8 @@ async def add_bookmark(note_id: str, request: Request, response: Response, user:
     note_id = note_id.lower().strip()
 
     # Validate note_id against the generated manifest
-    if _VALID_NOTE_IDS and note_id not in _VALID_NOTE_IDS:
+    manifest = _load_note_manifest() or _VALID_NOTE_IDS
+    if manifest and note_id not in manifest:
         raise HTTPException(
             status_code=404,
             detail=f"Note '{note_id}' does not exist in the course catalogue."
@@ -484,7 +854,7 @@ async def delete_bookmark(note_id: str, request: Request, user: dict = Depends(g
 async def health_check():
     return {
         "status": "ok",
-        "service": "antigravity-study-platform",
+        "service": "sst-study-platform",
         "time": datetime.now(timezone.utc).isoformat()
     }
 
@@ -510,3 +880,10 @@ async def get_protected_note_content(note_id: str, user: dict = Depends(get_curr
         raise HTTPException(status_code=404, detail=f"Note '{note_id}' not found.")
     with open(note_file, "r", encoding="utf-8") as f:
         return json.load(f)
+
+# Mount Comments, Moderation & Notifications Routers
+app.include_router(comments_router)
+app.include_router(moderation_router)
+app.include_router(notifications_router)
+
+

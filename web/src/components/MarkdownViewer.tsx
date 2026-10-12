@@ -1,48 +1,180 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Check, Copy } from 'lucide-react';
 
 interface MarkdownViewerProps {
   content: string;
 }
 
+const CodeBlock: React.FC<{ language: string; value: string }> = ({ language, value }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (e) {
+      console.error('Failed to copy', e);
+    }
+  };
+
+  return (
+    <div className="relative group my-6 rounded-lg overflow-hidden border border-white/10 bg-[#0c0c0f]">
+      {/* Code Header bar */}
+      <div className="flex items-center justify-between px-4 py-2 bg-white/[0.04] border-b border-white/[0.08] text-xs text-zinc-400 font-mono select-none">
+        <span className="uppercase tracking-wider text-[11px] font-semibold text-zinc-400">
+          {language || 'text'}
+        </span>
+        <button
+          onClick={handleCopy}
+          aria-label="Copy code block"
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-300 text-xs transition-all active:scale-95"
+        >
+          {copied ? (
+            <>
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="text-emerald-400 font-medium">Copied!</span>
+            </>
+          ) : (
+            <>
+              <Copy className="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-200" />
+              <span>Copy</span>
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Code Content */}
+      <div className="p-4 overflow-x-auto text-[0.875rem]">
+        <SyntaxHighlighter
+          language={language || 'text'}
+          style={vscDarkPlus}
+          customStyle={{
+            background: 'transparent',
+            padding: 0,
+            margin: 0,
+            fontSize: '0.875rem',
+            lineHeight: '1.65',
+            fontFamily: 'JetBrains Mono, monospace',
+          }}
+          wrapLongLines={false}
+        >
+          {value.replace(/\n$/, '')}
+        </SyntaxHighlighter>
+      </div>
+    </div>
+  );
+};
+
 export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ content }) => {
   return (
-    <div className="markdown-body">
+    <div className="markdown-body text-zinc-300 leading-markdown text-[1.0625rem]">
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[[rehypeKatex, { trust: false }]]}
-        skipHtml={true} // Strictly disable raw HTML (TDD Section 8)
+        skipHtml={true}
         components={{
-          // Safe link handling with rel="noopener noreferrer"
-          a: ({ node, href, children, ...props }) => {
-            const isExternal = href?.startsWith('http://') || href?.startsWith('https://');
+          // Off-white headings with tight letter-spacing
+          h1: ({ children, ...props }) => (
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-100 mt-8 mb-4 border-b border-white/10 pb-2" {...props}>
+              {children}
+            </h1>
+          ),
+          h2: ({ children, ...props }) => (
+            <h2 className="text-xl font-semibold tracking-tight text-zinc-100 mt-7 mb-3" {...props}>
+              {children}
+            </h2>
+          ),
+          h3: ({ children, ...props }) => (
+            <h3 className="text-lg font-medium text-zinc-200 mt-6 mb-2" {...props}>
+              {children}
+            </h3>
+          ),
+          p: ({ children, ...props }) => (
+            <p className="mb-6 leading-[1.85] text-zinc-300 font-normal" {...props}>
+              {children}
+            </p>
+          ),
+          ul: ({ children, ...props }) => (
+            <ul className="list-disc pl-6 mb-6 space-y-2 text-zinc-300" {...props}>
+              {children}
+            </ul>
+          ),
+          ol: ({ children, ...props }) => (
+            <ol className="list-decimal pl-6 mb-6 space-y-2 text-zinc-300" {...props}>
+              {children}
+            </ol>
+          ),
+          li: ({ children, ...props }) => (
+            <li className="leading-relaxed" {...props}>
+              {children}
+            </li>
+          ),
+          blockquote: ({ children, ...props }) => (
+            <blockquote className="border-l-2 border-blue-500/80 bg-blue-500/5 px-4 py-2 rounded-r my-6 text-zinc-300 italic" {...props}>
+              {children}
+            </blockquote>
+          ),
+          table: ({ children, ...props }) => (
+            <div className="overflow-x-auto my-6 rounded-lg border border-white/10">
+              <table className="w-full text-left text-sm border-collapse" {...props}>
+                {children}
+              </table>
+            </div>
+          ),
+          th: ({ children, ...props }) => (
+            <th className="px-4 py-2.5 bg-white/[0.03] border-b border-white/10 text-zinc-200 font-semibold text-xs uppercase tracking-wider" {...props}>
+              {children}
+            </th>
+          ),
+          td: ({ children, ...props }) => (
+            <td className="px-4 py-2.5 border-b border-white/5 text-zinc-300" {...props}>
+              {children}
+            </td>
+          ),
+          a: ({ href, children, ...props }) => {
+            const isUnsafe = Boolean(href && /^(javascript|data|vbscript|file):/i.test(href.trim()));
+            const safeHref = isUnsafe ? '#' : href;
+            const isExternal = Boolean(safeHref && (safeHref.startsWith('http://') || safeHref.startsWith('https://')));
             return (
               <a
-                href={href}
+                href={safeHref}
                 target={isExternal ? '_blank' : undefined}
                 rel={isExternal ? 'noopener noreferrer' : undefined}
-                style={{ color: 'var(--primary)', textDecoration: 'underline' }}
+                data-unsafe={isUnsafe ? 'true' : undefined}
+                className="text-blue-400 hover:text-blue-300 underline underline-offset-4 decoration-blue-500/40 hover:decoration-blue-400 transition-colors"
                 {...props}
               >
                 {children}
               </a>
             );
           },
-          // Render Mermaid and code blocks safely without running eval/exec
+          // Distinguish between block pre/code and inline code
           code: ({ node, className, children, ...props }) => {
             const match = /language-(\w+)/.exec(className || '');
-            const lang = match ? match[1] : '';
+            const isBlock = Boolean(match) || (typeof children === 'string' && children.includes('\n'));
 
-            // Even if mermaid is tagged, render as safe code block (TDD Section 8)
+            if (isBlock) {
+              const lang = match ? match[1] : '';
+              return <CodeBlock language={lang} value={String(children)} />;
+            }
+
             return (
-              <code className={className} {...props}>
+              <code
+                className="px-1.5 py-0.5 rounded border border-white/10 bg-white/5 font-mono text-[0.875em] text-zinc-200"
+                {...props}
+              >
                 {children}
               </code>
             );
-          }
+          },
+          pre: ({ children }) => <>{children}</>,
         }}
       >
         {content}

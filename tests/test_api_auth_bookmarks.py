@@ -74,7 +74,7 @@ def test_health_check(prod_client):
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "ok"
-    assert data["service"] == "antigravity-study-platform"
+    assert data["service"] == "sst-study-platform"
 
 
 # ---------------------------------------------------------------------------
@@ -127,6 +127,66 @@ def test_google_login_disallowed_domain(dev_client):
     assert "error" in err
     assert err["error"] == "FORBIDDEN"
     assert "request_id" in err
+
+
+def test_google_login_non_student_sst_email_rejected(dev_client):
+    """Staff/faculty or generic @sst.scaler.com emails lacking roll numbers must be rejected with 403."""
+    payload = {"id_token": "mock:professor.smith@sst.scaler.com"}
+    response = dev_client.post("/api/auth/google", json=payload)
+    assert response.status_code == 403
+    err = response.json()
+    assert err["error"] == "FORBIDDEN"
+    assert "Only SST students can login" in err["message"]
+
+
+def test_google_login_special_email_allowed_and_first_login_prompt(dev_client):
+    """Special emails bypass the student regex, get 16 terms, and require onboarding on first login."""
+    payload = {"id_token": "mock:special_reviewer@sst.scaler.com"}
+    response = dev_client.post("/api/auth/google", json=payload)
+    assert response.status_code == 200, response.json()
+
+    data = response.json()
+    user = data["user"]
+    assert user["is_special"] is True
+    assert user["needs_profile_setup"] is True
+    assert user["max_allowed_term"] == 16
+
+
+def test_special_email_profile_setup_completion(dev_client):
+    """Special user completes one-time onboarding by submitting user details via PATCH /api/users/me."""
+    login_resp = dev_client.post("/api/auth/google", json={"id_token": "mock:special_guest@sst.scaler.com"})
+    assert login_resp.status_code == 200
+    csrf_token = login_resp.json()["csrf_token"]
+    cookies = login_resp.cookies
+
+    # Submit profile setup details
+    update_payload = {
+        "display_name": "Prof. Alan Turing",
+        "username": "alan_turing",
+        "active_term": 5,
+        "bio": "Visiting Faculty in Computation",
+        "needs_profile_setup": False
+    }
+    patch_resp = dev_client.patch(
+        "/api/users/me",
+        json=update_payload,
+        headers={"x-csrf-token": csrf_token},
+        cookies=cookies
+    )
+    assert patch_resp.status_code == 200, patch_resp.json()
+    updated = patch_resp.json()
+    assert updated["display_name"] == "Prof. Alan Turing"
+    assert updated["username"] == "alan_turing"
+    assert updated["active_term"] == 5
+    assert updated["bio"] == "Visiting Faculty in Computation"
+    assert updated["needs_profile_setup"] is False
+
+    # Verify subsequent GET /api/users/me retains the completed profile state
+    me_resp = dev_client.get("/api/users/me", cookies=cookies)
+    assert me_resp.status_code == 200
+    me_data = me_resp.json()
+    assert me_data["display_name"] == "Prof. Alan Turing"
+    assert me_data["needs_profile_setup"] is False
 
 
 # ---------------------------------------------------------------------------
@@ -328,3 +388,97 @@ def test_lookalike_and_non_sst_domains_rejected(dev_client):
         resp = dev_client.post("/api/auth/google", json={"id_token": f"mock:{bad_email}"})
         assert resp.status_code == 403, f"Expected 403 for {bad_email}, got {resp.status_code}"
         assert resp.json()["error"] == "FORBIDDEN"
+
+
+# ---------------------------------------------------------------------------
+# Common API Error Format: Validation Errors (422)
+# ---------------------------------------------------------------------------
+
+def test_validation_error_format_422(dev_client):
+    """Payloads failing Pydantic schema validation return standardized error response."""
+    resp = dev_client.post("/api/auth/google", json={})
+    assert resp.status_code == 422
+    data = resp.json()
+    assert data["error"] == "VALIDATION_ERROR"
+    assert "request_id" in data
+    assert "message" in data
+    assert "details" in data
+    assert isinstance(data["details"], list)
+
+
+# ---------------------------------------------------------------------------
+# Rate Limiting & Redis Fail-Closed (503) & Quota Exhaustion
+# ---------------------------------------------------------------------------
+
+def test_redis_fail_closed_503_behavior(prod_client, monkeypatch):
+    """
+    In production, if the Upstash Redis rate limiter is configured but unreachable,
+    the endpoint must fail closed and return 503 SERVICE_UNAVAILABLE.
+    """
+    import requests
+    from api import rate_limiter
+
+    monkeypatch.setattr(settings, "UPSTASH_REDIS_REST_URL", "https://mock-redis.upstash.io")
+    monkeypatch.setattr(settings, "UPSTASH_REDIS_REST_TOKEN", "mock-token-secret")
+    monkeypatch.setattr(settings, "ENVIRONMENT", "production")
+
+    def mock_post_failure(*args, **kwargs):
+        raise requests.exceptions.ConnectionError("Redis connection refused")
+
+    monkeypatch.setattr(rate_limiter._http_session, "post", mock_post_failure)
+
+    resp = prod_client.get("/api/auth/nonce")
+    assert resp.status_code == 503
+    data = resp.json()
+    assert data["error"] == "SERVICE_UNAVAILABLE"
+    assert "request_id" in data
+    assert "Rate limit service temporarily unavailable" in data["message"]
+
+
+def test_redis_quota_exhaustion_503_behavior(prod_client, monkeypatch):
+    """
+    If Upstash returns 429 quota exhaustion, the service fails closed with 503.
+    """
+    from unittest.mock import MagicMock
+    from api import rate_limiter
+
+    monkeypatch.setattr(settings, "UPSTASH_REDIS_REST_URL", "https://mock-redis.upstash.io")
+    monkeypatch.setattr(settings, "UPSTASH_REDIS_REST_TOKEN", "mock-token-secret")
+    monkeypatch.setattr(settings, "ENVIRONMENT", "production")
+
+    mock_resp = MagicMock()
+    mock_resp.status_code = 429
+    mock_resp.text = '{"error": "Daily request limit exceeded"}'
+
+    monkeypatch.setattr(rate_limiter._http_session, "post", lambda *args, **kwargs: mock_resp)
+
+    resp = prod_client.get("/api/auth/nonce")
+    assert resp.status_code == 503
+    data = resp.json()
+    assert data["error"] == "SERVICE_UNAVAILABLE"
+    assert "request_id" in data
+
+
+def test_rate_limit_exceeded_429(dev_client, monkeypatch):
+    """Exceeding the request threshold returns 429 TOO_MANY_REQUESTS."""
+    from api.rate_limiter import _local_rate_limit_store
+    _local_rate_limit_store.clear()
+
+    monkeypatch.setattr(settings, "UPSTASH_REDIS_REST_URL", "")
+    monkeypatch.setattr(settings, "UPSTASH_REDIS_REST_TOKEN", "")
+    monkeypatch.setattr(settings, "RATE_LIMIT_NONCE_MAX", 2)
+    monkeypatch.setattr(settings, "RATE_LIMIT_NONCE_WINDOW", 60)
+
+    # 1st and 2nd should pass
+    r1 = dev_client.get("/api/auth/nonce")
+    assert r1.status_code == 200
+    r2 = dev_client.get("/api/auth/nonce")
+    assert r2.status_code == 200
+
+    # 3rd should be rate-limited
+    r3 = dev_client.get("/api/auth/nonce")
+    assert r3.status_code == 429
+    data = r3.json()
+    assert data["error"] == "TOO_MANY_REQUESTS"
+    assert "request_id" in data
+

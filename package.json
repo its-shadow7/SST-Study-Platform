@@ -2,7 +2,7 @@
   "name": "sst-study-platform",
   "version": "1.1.0",
   "private": true,
-  "description": "Antigravity Study Platform for Scaler School of Technology",
+  "description": "Study Platform for Scaler School of Technology",
   "scripts": {
     "build:notes": "python tooling/build_notes.py",
     "build:web": "npm --prefix web run build",

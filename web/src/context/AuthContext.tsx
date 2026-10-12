@@ -11,6 +11,14 @@ interface AuthContextType {
   logout: () => Promise<void>;
   deleteAccount: () => Promise<void>;
   refreshSession: () => Promise<boolean>;
+  updateProfile: (updates: {
+    display_name?: string;
+    username?: string;
+    active_term?: number;
+    avatar_url?: string | null;
+    bio?: string | null;
+    needs_profile_setup?: boolean;
+  }) => Promise<User>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -75,11 +83,25 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } catch (err: any) {
       if (import.meta.env.DEV && (!err.status || err.status >= 500)) {
         console.warn('Backend server unavailable; activating local dev login bypass.');
+        const match = /(?:^|[._])([0-9]{2})[a-zA-Z]+[0-9]*@sst\.scaler\.com$/i.exec(email);
+        const batch_year = match ? 2000 + parseInt(match[1], 10) : undefined;
+        const now = new Date();
+        const academic_year = now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear() - 1;
+        const year_of_study = batch_year ? Math.max(1, Math.min(academic_year - batch_year + 1, 4)) : 4;
+        const max_allowed_term = year_of_study * 4;
+
         const mockUser: User = {
           user_id: 'mock_dev_student',
           email: email,
           display_name: email.split('@')[0].replace('.', ' ').replace(/^./, str => str.toUpperCase()),
-          status: 'active'
+          username: email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase(),
+          active_term: 1,
+          avatar_url: null,
+          bio: 'Computer Science student at Scaler School of Technology',
+          status: 'active',
+          batch_year,
+          year_of_study,
+          max_allowed_term
         };
         setUser(mockUser);
         setCsrfToken('mock_csrf_dev');
@@ -143,6 +165,35 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const updateProfile = async (updates: {
+    display_name?: string;
+    username?: string;
+    active_term?: number;
+    avatar_url?: string | null;
+    bio?: string | null;
+    needs_profile_setup?: boolean;
+  }): Promise<User> => {
+    try {
+      const updatedUser = await api.patch<User>('/api/users/me', updates);
+      setUser(updatedUser);
+      return updatedUser;
+    } catch (err: any) {
+      if (import.meta.env.DEV && (!err.status || err.status >= 500) && user) {
+        const fallbackUser: User = {
+          ...user,
+          ...updates,
+          display_name: updates.display_name ?? user.display_name,
+          username: updates.username ?? user.username,
+          active_term: updates.active_term ?? user.active_term,
+          needs_profile_setup: updates.needs_profile_setup !== undefined ? updates.needs_profile_setup : user.needs_profile_setup,
+        };
+        setUser(fallbackUser);
+        return fallbackUser;
+      }
+      throw err;
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -153,7 +204,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         loginDevMock,
         logout,
         deleteAccount,
-        refreshSession
+        refreshSession,
+        updateProfile
       }}
     >
       {children}

@@ -1,6 +1,7 @@
 import hashlib
 import hmac
 import logging
+import os
 import time
 from collections import defaultdict
 from typing import Optional
@@ -65,13 +66,28 @@ def check_upstash_rate_limit(key: str, max_requests: int, window_seconds: int) -
         )
         if resp.status_code == 200:
             data = resp.json()
-            current_count = data[1].get("result", 0)
-            return current_count < max_requests
+            # Verify pipeline response structure and check for individual command errors
+            if isinstance(data, list):
+                for idx, cmd_result in enumerate(data):
+                    if isinstance(cmd_result, dict) and "error" in cmd_result:
+                        logger.error("Upstash pipeline command %d error: %s", idx, cmd_result["error"])
+                        raise RuntimeError(f"Upstash command error: {cmd_result['error']}")
+                current_count = data[1].get("result", 0) if len(data) > 1 and isinstance(data[1], dict) else 0
+                return current_count < max_requests
+            return True
+        elif resp.status_code == 429 or "quota" in resp.text.lower() or "limit exceeded" in resp.text.lower():
+            logger.critical("UPSTASH REDIS QUOTA EXCEEDED: status=%d, body=%s. Enforcing fail-closed 503.", resp.status_code, resp.text)
+            raise HTTPException(
+                status_code=503,
+                detail="Rate limit service temporarily unavailable due to upstream quota exhaustion. Please try again shortly."
+            )
         else:
-            logger.error(f"Upstash response error: {resp.status_code} - {resp.text}")
+            logger.error("Upstash response error: status=%d, body=%s", resp.status_code, resp.text)
             raise RuntimeError(f"Upstash status {resp.status_code}")
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Upstash Redis rate limiter error: {e}")
+        logger.error("Upstash Redis rate limiter error: %s", e)
         # TDD Section 5: "If Redis is unavailable, fail closed for endpoints that require the limiter with a short 503 response"
         raise HTTPException(
             status_code=503,
