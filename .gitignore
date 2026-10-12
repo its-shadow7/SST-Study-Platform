@@ -29,3 +29,5 @@ Thumbs.db
 
 #origanl notes
 Original_Notes/
+.vercel
+.env*
