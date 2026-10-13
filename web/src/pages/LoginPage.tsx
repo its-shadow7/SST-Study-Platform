@@ -8,9 +8,9 @@ export const LoginPage: React.FC = () => {
   const { user, loading, loginDevMock, error } = useAuth();
   const navigate = useNavigate();
 
-  // If already authenticated, redirect to student's active term
+  // If already authenticated, redirect to curriculum hub
   if (!loading && user) {
-    return <Navigate to={`/term/term-${user.active_term || 1}`} replace />;
+    return <Navigate to="/terms" replace />;
   }
 
   return (
@@ -59,7 +59,7 @@ export const LoginPage: React.FC = () => {
               <button
                 onClick={() => {
                   loginDevMock('student@sst.scaler.com')
-                    .then(() => navigate('/term/term-1'))
+                    .then(() => navigate('/terms'))
                     .catch((e) => console.error('Dev bypass error:', e));
                 }}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-xs text-zinc-300 transition-colors"
@@ -70,7 +70,7 @@ export const LoginPage: React.FC = () => {
               <button
                 onClick={() => {
                   loginDevMock('special@sst.scaler.com')
-                    .then(() => navigate('/term/term-1'))
+                    .then(() => navigate('/terms'))
                     .catch((e) => console.error('Dev bypass error:', e));
                 }}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/20 text-xs text-indigo-300 transition-colors"

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { Note, NoteIndexItem } from '@/types/note';
 import { fetchNoteById } from '@/services/notesService';
 import { useBookmarks } from '@/context/BookmarkContext';
@@ -9,6 +9,7 @@ import { TableOfContents, MobileTableOfContents } from '@/components/TableOfCont
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { NoteSkeleton } from '@/components/NoteSkeleton';
 import { CommentSection } from '@/components/CommentSection';
+import { QuizSection } from '@/components/QuizSection';
 import {
   Bookmark as BookmarkIcon,
   CheckCircle,
@@ -20,7 +21,9 @@ import {
   Check,
   Lock,
   AlertTriangle,
-  RotateCcw
+  RotateCcw,
+  HelpCircle,
+  ArrowRight
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -41,6 +44,21 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
     noteId: string;
   }>();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const activeTab: 'notes' | 'quiz' = tabParam === 'quiz' ? 'quiz' : 'notes';
+
+  const handleTabChange = (tab: 'notes' | 'quiz') => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (tab === 'notes') {
+        next.delete('tab');
+      } else {
+        next.set('tab', 'quiz');
+      }
+      return next;
+    });
+  };
 
   const [currentNote, setCurrentNote] = useState<Note | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -51,7 +69,8 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
   const { isBookmarked, toggleBookmark } = useBookmarks();
   const { user } = useAuth();
 
-  const maxAllowedTerm = user?.max_allowed_term ?? 16;
+  const isDevOrPrivileged = import.meta.env.DEV || user?.role === 'admin' || user?.role === 'moderator' || user?.is_special;
+  const maxAllowedTerm = isDevOrPrivileged ? 16 : (user?.max_allowed_term ?? 16);
   const requestedTermNum = parseInt(termId?.replace(/\D/g, '') || '0', 10);
   const isTermLocked = requestedTermNum > 0 && requestedTermNum > maxAllowedTerm;
 
@@ -138,8 +157,16 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
   // Fetch the active note
   useEffect(() => {
     if (!noteId || noteId === 'index' || isTermLocked) return;
+    const normalizedId = noteId.replace(/-l(\d)$/i, '-l0$1');
+    if (normalizedId !== noteId) {
+      navigate(
+        `/term/${termId}/${subjectCode}/${normalizedId}${window.location.search}${window.location.hash}`,
+        { replace: true }
+      );
+      return;
+    }
     loadNote(noteId);
-  }, [noteId, isTermLocked]);
+  }, [noteId, isTermLocked, termId, subjectCode, navigate]);
 
   const bookmarked = noteId ? isBookmarked(noteId) : false;
 
@@ -236,29 +263,61 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
               </div>
             </div>
           ) : !currentNote ? (
-            <div className="py-24 text-center space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto text-zinc-400">
-                <BookOpen className="w-6 h-6" />
+            <div className="py-24 text-center space-y-5">
+              <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto text-zinc-300 shadow-inner">
+                <BookOpen className="w-7 h-7" />
               </div>
-              <h2 className="text-xl font-bold text-zinc-100">
-                {noteId && noteId !== 'index' ? 'Note Not Found' : `${currentTermFormatted} Curriculum`}
-              </h2>
-              <p className="text-sm text-zinc-400 max-w-md mx-auto leading-relaxed">
-                {noteId && noteId !== 'index'
-                  ? `The requested note ID "${noteId}" is not available in ${currentTermFormatted}.`
-                  : `No approved lecture notes are currently published for ${currentTermFormatted}. Select another term or check back after class.`}
-              </p>
-              <button
-                onClick={() => navigate('/terms')}
-                className="mt-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-medium text-white transition-colors"
-              >
-                Browse All Terms
-              </button>
+              <div className="space-y-1.5">
+                <h2 className="text-xl font-bold text-zinc-100">
+                  {noteId && noteId !== 'index' ? 'Note Not Found' : `${currentTermFormatted} Curriculum`}
+                </h2>
+                <p className="text-sm text-zinc-400 max-w-md mx-auto leading-relaxed">
+                  {noteId && noteId !== 'index'
+                    ? `The requested note ID "${noteId}" is not available in ${currentTermFormatted}.`
+                    : `No approved lecture notes are currently published for ${currentTermFormatted}. Select an active term below to start studying.`}
+                </p>
+              </div>
+
+              {/* Direct Quick Jump to Active Terms */}
+              <div className="pt-2 flex flex-col items-center gap-3 max-w-md mx-auto">
+                <span className="text-[11px] text-zinc-500 uppercase tracking-wider font-semibold">
+                  Published Course Curricula
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full">
+                  <button
+                    onClick={() => navigate('/term/term-5/cn/cn-t5-l01')}
+                    className="flex items-center justify-between p-3 rounded-xl bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/30 text-left transition-all group"
+                  >
+                    <div>
+                      <div className="text-xs font-semibold text-blue-300">Term 5 • Computer Networks</div>
+                      <div className="text-[11px] text-zinc-400">Lectures 1–3 + Quizzes</div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-blue-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-2" />
+                  </button>
+                  <button
+                    onClick={() => navigate('/term/term-3/cn/cn-lecture-01-introduction')}
+                    className="flex items-center justify-between p-3 rounded-xl bg-indigo-600/10 hover:bg-indigo-600/20 border border-indigo-500/30 text-left transition-all group"
+                  >
+                    <div>
+                      <div className="text-xs font-semibold text-indigo-300">Term 3 • Computer Networks</div>
+                      <div className="text-[11px] text-zinc-400">Lectures 1–2 + CML</div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-indigo-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-2" />
+                  </button>
+                </div>
+                <button
+                  onClick={() => navigate('/terms')}
+                  className="mt-1 text-xs text-zinc-400 hover:text-zinc-200 transition-colors flex items-center gap-1.5"
+                >
+                  <span>Or browse all 16 terms in Curriculum Hub</span>
+                  <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
             </div>
           ) : (
             <article className="space-y-8">
-              {/* Mobile Table of Contents Accordion */}
-              {currentNote.sections && currentNote.sections.length > 0 && (
+              {/* Mobile Table of Contents Accordion (visible only in Notes mode) */}
+              {currentNote.sections && currentNote.sections.length > 0 && activeTab === 'notes' && (
                 <MobileTableOfContents sections={currentNote.sections} />
               )}
 
@@ -343,62 +402,95 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
                 )}
               </div>
 
-              {/* Note Content Sections */}
-              <div className="space-y-12">
-                {currentNote.sections.map((section, idx) => (
-                  <section
-                    key={section.section_id}
-                    id={section.section_id}
-                    className="scroll-mt-20 pt-2"
-                  >
-                    <h2 className="text-2xl font-bold tracking-tight text-zinc-100 mb-4 pb-2 border-b border-white/[0.08] flex items-center gap-3">
-                      <span className="text-xs font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
-                        {String(idx + 1).padStart(2, '0')}
-                      </span>
-                      <span>{section.heading}</span>
-                    </h2>
 
-                    {/* Section Markdown Body */}
-                    <MarkdownViewer content={section.body} />
 
-                    {/* Citations / References if any */}
-                    {section.citations && section.citations.length > 0 && (
-                      <div className="mt-4 pt-3 border-t border-white/[0.04] text-xs text-zinc-500">
-                        <span className="font-semibold text-zinc-400 mr-2">Citations:</span>
-                        {section.citations.join('; ')}
-                      </div>
-                    )}
-                  </section>
-                ))}
-              </div>
-
-              {/* Key Takeaways Bottom Card */}
-              {currentNote.key_takeaways && currentNote.key_takeaways.length > 0 && (
-                <div className="mt-12 p-6 rounded-xl border border-blue-500/20 bg-blue-500/[0.03] space-y-3">
-                  <h3 className="text-base font-semibold text-blue-400 flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4" />
-                    Key Takeaways
-                  </h3>
-                  <ul className="space-y-2 text-sm text-zinc-300">
-                    {currentNote.key_takeaways.map((takeaway, i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <span className="text-blue-500 font-bold">•</span>
-                        <span>{takeaway}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              {/* Tab 1: Topic Quiz View */}
+              {activeTab === 'quiz' && (
+                currentNote.quiz ? (
+                  <QuizSection
+                    quiz={currentNote.quiz}
+                    onSwitchToNotes={() => handleTabChange('notes')}
+                  />
+                ) : (
+                  <div className="py-16 text-center space-y-4 border border-white/[0.06] rounded-2xl bg-white/[0.02]">
+                    <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mx-auto text-purple-400">
+                      <HelpCircle className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-lg font-bold text-zinc-100">Topic Quiz Coming Soon</h3>
+                    <p className="text-sm text-zinc-400 max-w-md mx-auto">
+                      Practice questions for this lecture are currently being reviewed.
+                    </p>
+                    <button
+                      onClick={() => handleTabChange('notes')}
+                      className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors"
+                    >
+                      Return to Lecture Notes
+                    </button>
+                  </div>
+                )
               )}
 
-              {/* Real-Time Comment Section */}
-              <CommentSection noteId={currentNote.note_id} />
+              {/* Tab 2: Notes & Markdown View */}
+              {activeTab === 'notes' && (
+                <>
+                  {/* Note Content Sections */}
+                  <div className="space-y-12">
+                    {currentNote.sections.map((section, idx) => (
+                      <section
+                        key={section.section_id}
+                        id={section.section_id}
+                        className="scroll-mt-20 pt-2"
+                      >
+                        <h2 className="text-2xl font-bold tracking-tight text-zinc-100 mb-4 pb-2 border-b border-white/[0.08] flex items-center gap-3">
+                          <span className="text-xs font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
+                            {String(idx + 1).padStart(2, '0')}
+                          </span>
+                          <span>{section.heading}</span>
+                        </h2>
+
+                        {/* Section Markdown Body */}
+                        <MarkdownViewer content={section.body} />
+
+                        {/* Citations / References if any */}
+                        {section.citations && section.citations.length > 0 && (
+                          <div className="mt-4 pt-3 border-t border-white/[0.04] text-xs text-zinc-500">
+                            <span className="font-semibold text-zinc-400 mr-2">Citations:</span>
+                            {section.citations.join('; ')}
+                          </div>
+                        )}
+                      </section>
+                    ))}
+                  </div>
+
+                  {/* Key Takeaways Bottom Card */}
+                  {currentNote.key_takeaways && currentNote.key_takeaways.length > 0 && (
+                    <div className="mt-12 p-6 rounded-xl border border-blue-500/20 bg-blue-500/[0.03] space-y-3">
+                      <h3 className="text-base font-semibold text-blue-400 flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4" />
+                        Key Takeaways
+                      </h3>
+                      <ul className="space-y-2 text-sm text-zinc-300">
+                        {currentNote.key_takeaways.map((takeaway, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <span className="text-blue-500 font-bold">•</span>
+                            <span>{takeaway}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Real-Time Comment Section */}
+                  <CommentSection noteId={currentNote.note_id} />
+                </>
+              )}
             </article>
           )}
         </div>
       </main>
 
-      {/* 3. Right Island: Table of Contents (w-72) */}
-      {currentNote && currentNote.sections && (
+      {/* 3. Right Island: Table of Contents (w-72, visible only in Notes mode) */}
+      {currentNote && currentNote.sections && activeTab === 'notes' && (
         <TableOfContents sections={currentNote.sections} />
       )}
     </div>

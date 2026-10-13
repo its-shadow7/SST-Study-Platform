@@ -5,6 +5,29 @@ export interface NoteSection {
   citations: string[];
 }
 
+export interface QuizOption {
+  id: string;
+  text: string;
+}
+
+export interface QuizQuestion {
+  id: string;
+  type: 'single_choice' | 'multiple_choice';
+  question: string;
+  options: QuizOption[];
+  correctOptionIds: string[];
+  explanation: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  subtopic?: string;
+}
+
+export interface Quiz {
+  title: string;
+  description: string;
+  estimated_minutes: number;
+  questions: QuizQuestion[];
+}
+
 export interface Note {
   schema_version: number;
   note_id: string;
@@ -18,6 +41,7 @@ export interface Note {
   sections: NoteSection[];
   last_updated: string;
   approval_status: string;
+  quiz?: Quiz;
 }
 
 export interface NoteIndexItem {

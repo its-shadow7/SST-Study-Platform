@@ -244,10 +244,11 @@ def verify_google_id_token(token_str: str, expected_nonce: Optional[str] = None)
 # ---------------------------------------------------------------------------
 # Access JWT helpers
 # ---------------------------------------------------------------------------
-def create_access_jwt(sub: str, email: str) -> str:
+def create_access_jwt(sub: str, email: str, role: Optional[str] = None) -> str:
     """
     Creates a 15-minute RS256 signed access JWT.
     Claims: sub, email, role, iss, aud, iat, exp, jti, kid (header).
+    Admins receive role 'admin'; students receive role 'sst_student'.
     """
     pem_bytes = settings.get_private_key_pem()
     if not pem_bytes:
@@ -263,12 +264,16 @@ def create_access_jwt(sub: str, email: str) -> str:
         "max_allowed_term": 4,
     }
 
+    # Admins receive 'admin' role; all students receive 'sst_student'
+    is_admin = role == "admin" or (is_special_email(email) and "admin" in email.lower())
+    jwt_role = "admin" if is_admin else "sst_student"
+
     payload = {
         "iss": settings.JWT_ISSUER,
         "aud": settings.JWT_AUDIENCE,
         "sub": sub,
         "email": email,
-        "role": "sst_special" if is_special_email(email) else "sst_student",
+        "role": jwt_role,
         "batch_year": batch_info["batch_year"],
         "year_of_study": batch_info["year_of_study"],
         "max_allowed_term": batch_info["max_allowed_term"],

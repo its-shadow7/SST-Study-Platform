@@ -348,7 +348,8 @@ async def login_google(body: GoogleLoginRequest, request: Request, response: Res
         needs_setup = user_doc.get("needs_profile_setup", False)
         in_memory_store.create_session(user_id, refresh_hash, refresh_expires)
 
-    access_jwt = create_access_jwt(sub=sub, email=email)
+    user_role = user_doc.get("role", "admin" if (is_special and "admin" in email) else "student")
+    access_jwt = create_access_jwt(sub=sub, email=email, role=user_role)
     csrf_token = generate_csrf_token(sub=sub)
     set_auth_cookies(response, access_jwt, raw_refresh)
 
@@ -362,7 +363,7 @@ async def login_google(body: GoogleLoginRequest, request: Request, response: Res
             avatar_url=avatar_url,
             bio=bio,
             status="active",
-            role=user_doc.get("role", "admin" if (is_special and "admin" in email) else "student"),
+            role=user_role,
             batch_year=batch_info["batch_year"],
             year_of_study=batch_info["year_of_study"],
             max_allowed_term=batch_info["max_allowed_term"],
@@ -473,7 +474,8 @@ async def refresh_session(request: Request, response: Response):
                 detail="Access restricted: Only SST students can login."
             )
 
-    new_access_jwt = create_access_jwt(sub=sub, email=email)
+    user_role = user_doc.get("role", "student")
+    new_access_jwt = create_access_jwt(sub=sub, email=email, role=user_role)
     csrf_token = generate_csrf_token(sub=sub)
     set_auth_cookies(response, new_access_jwt, new_raw_refresh)
 
@@ -487,7 +489,7 @@ async def refresh_session(request: Request, response: Response):
             avatar_url=avatar_url,
             bio=bio,
             status="active",
-            role=user_doc.get("role", "student"),
+            role=user_role,
             batch_year=batch_info["batch_year"],
             year_of_study=batch_info["year_of_study"],
             max_allowed_term=batch_info["max_allowed_term"],
@@ -699,8 +701,8 @@ async def update_my_profile(
         updates["username"] = clean_uname
 
     if body.active_term is not None:
-        if body.active_term < 1 or body.active_term > 12:
-            raise HTTPException(status_code=400, detail="Active term must be between 1 and 12.")
+        if body.active_term < 1 or body.active_term > 16:
+            raise HTTPException(status_code=400, detail="Active term must be between 1 and 16.")
         updates["active_term"] = body.active_term
 
     if body.avatar_url is not None:
@@ -877,7 +879,11 @@ async def get_protected_note_content(note_id: str, user: dict = Depends(get_curr
     note_id = note_id.lower().strip()
     note_file = DATA_DIR / "notes" / f"{note_id}.json"
     if not note_file.exists():
-        raise HTTPException(status_code=404, detail=f"Note '{note_id}' not found.")
+        matches = list((DATA_DIR / "notes").rglob(f"{note_id}.json"))
+        if matches:
+            note_file = matches[0]
+        else:
+            raise HTTPException(status_code=404, detail=f"Note '{note_id}' not found.")
     with open(note_file, "r", encoding="utf-8") as f:
         return json.load(f)
 

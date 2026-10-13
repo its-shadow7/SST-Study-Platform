@@ -28,7 +28,7 @@ export const BookmarksPage: React.FC<BookmarksPageProps> = ({ notesIndex }) => {
       const termSlug = noteMeta.term.toLowerCase().replace(/\s+/g, '-');
       navigate(`/term/${termSlug}/${noteMeta.subject_code.toLowerCase()}/${noteId}`);
     } else {
-      navigate(`/term/term-1/general/${noteId}`);
+      navigate(`/read/${noteId}`);
     }
   };
 

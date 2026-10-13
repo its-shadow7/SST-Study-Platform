@@ -26,7 +26,8 @@ export const TermsPage: React.FC<TermsPageProps> = ({ notes }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const maxAllowedTerm = user?.max_allowed_term ?? 16;
+  const isDevOrPrivileged = import.meta.env.DEV || user?.role === 'admin' || user?.role === 'moderator';
+  const maxAllowedTerm = isDevOrPrivileged ? 16 : (user?.max_allowed_term ?? 16);
   const yearOfStudy = user?.year_of_study ?? 4;
   const batchYear = user?.batch_year;
 

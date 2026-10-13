@@ -25,7 +25,7 @@ class UserResponse(BaseModel):
 class UpdateProfileRequest(BaseModel):
     display_name: Optional[str] = Field(None, min_length=1, max_length=100, description="Full display name")
     username: Optional[str] = Field(None, min_length=3, max_length=30, pattern=r'^[a-zA-Z0-9_]+$', description="Unique public handle")
-    active_term: Optional[int] = Field(None, ge=1, le=12, description="Active curriculum term (1 to 12)")
+    active_term: Optional[int] = Field(None, ge=1, le=16, description="Active curriculum term (1 to 16)")
     avatar_url: Optional[str] = Field(None, max_length=500, description="Avatar image URL")
     bio: Optional[str] = Field(None, max_length=300, description="Short student bio")
     needs_profile_setup: Optional[bool] = Field(None, description="One-time onboarding setup status")

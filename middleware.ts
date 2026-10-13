@@ -105,9 +105,11 @@ export default async function middleware(request: Request) {
     }
 
     // ---- 2. Signature + registered-claims verification ----
+    const expectedIssuer = process.env.JWT_ISSUER || 'sst-study-platform';
+    const expectedAudience = process.env.JWT_AUDIENCE || 'sst-students';
     const { payload } = await jwtVerify(token, publicKey, {
-      issuer: 'antigravity-study-platform',
-      audience: 'antigravity-students',
+      issuer: [expectedIssuer, 'antigravity-study-platform'],
+      audience: [expectedAudience, 'antigravity-students'],
       clockTolerance: 10,          // 10-second tolerance for clock skew
       requiredClaims: ['sub', 'iss', 'aud', 'exp', 'iat', 'jti']
     });
@@ -118,8 +120,9 @@ export default async function middleware(request: Request) {
       return failResponse('JWT subject (sub) claim is empty.', 401);
     }
 
-    // role must be sst_student
-    if ((payload as Record<string, unknown>)['role'] !== 'sst_student') {
+    // Role must be sst_student or admin (faculty accounts are blocked)
+    const userRole = (payload as Record<string, unknown>)['role'];
+    if (userRole !== 'sst_student' && userRole !== 'admin') {
       return failResponse('Insufficient permissions for study notes.', 403);
     }
 

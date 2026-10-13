@@ -6,11 +6,8 @@ import {
   Award,
   MessageSquare,
   ThumbsUp,
-  GraduationCap,
-  Calendar,
   ExternalLink,
   Loader2,
-  ShieldAlert,
 } from 'lucide-react';
 import { api } from '@/services/apiClient';
 import { RoleBadge } from './RoleBadge';
@@ -84,17 +81,17 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-150 select-none"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-zinc-700/60 bg-zinc-900 shadow-2xl shadow-black/80 text-zinc-100 animate-in zoom-in-95 duration-200">
-        {/* Banner Background */}
-        <div className="h-24 w-full bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-800 relative">
+      <div className="relative w-full max-w-md overflow-hidden rounded-xl border border-white/10 bg-[#09090b] shadow-2xl text-zinc-200 animate-in zoom-in-95 duration-150">
+        {/* Subtle OLED Banner */}
+        <div className="h-20 w-full bg-gradient-to-r from-blue-950/30 via-zinc-900/50 to-purple-950/20 border-b border-white/[0.06] relative">
           <button
             onClick={onClose}
-            className="absolute top-3 right-3 p-1.5 rounded-full bg-black/40 hover:bg-black/70 text-zinc-300 hover:text-white transition-colors"
+            className="absolute top-2.5 right-2.5 p-1 rounded-md text-zinc-400 hover:text-zinc-200 hover:bg-white/5 transition-colors"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -102,10 +99,10 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
         </div>
 
         {/* Profile Content */}
-        <div className="p-6 pt-0 space-y-5">
+        <div className="p-5 pt-0 space-y-4">
           {/* Avatar & Header row */}
-          <div className="flex items-end justify-between -mt-12">
-            <div className="w-20 h-20 rounded-2xl bg-zinc-800 border-4 border-zinc-900 overflow-hidden shadow-xl flex items-center justify-center text-2xl font-bold text-white shrink-0">
+          <div className="flex items-end justify-between -mt-10">
+            <div className="w-16 h-16 rounded-xl bg-zinc-900 border border-white/20 overflow-hidden shadow-xl flex items-center justify-center text-xl font-bold text-zinc-100 shrink-0">
               {profile?.avatar_url ? (
                 <img
                   src={profile.avatar_url}
@@ -123,22 +120,22 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
                   onClose();
                   navigate(`/profile/${profile.username}`);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-medium text-zinc-200 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-medium text-zinc-200 transition-colors"
               >
                 <span>Full Profile</span>
-                <ExternalLink className="w-3.5 h-3.5" />
+                <ExternalLink className="w-3.5 h-3.5 text-zinc-400" />
               </button>
             )}
           </div>
 
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-12 text-zinc-400 gap-2">
-              <Loader2 className="w-6 h-6 animate-spin text-blue-400" />
+            <div className="flex flex-col items-center justify-center py-10 text-zinc-400 gap-2">
+              <Loader2 className="w-5 h-5 animate-spin text-blue-400" />
               <span className="text-xs">Loading student profile...</span>
             </div>
           ) : error ? (
-            <div className="py-8 text-center text-zinc-400 space-y-2">
-              <p className="text-sm text-rose-400">{error}</p>
+            <div className="py-6 text-center text-zinc-400 space-y-2">
+              <p className="text-xs text-rose-400">{error}</p>
               <button
                 onClick={onClose}
                 className="text-xs text-zinc-400 hover:text-white underline"
@@ -151,13 +148,13 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
               {/* Name & Role */}
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="text-xl font-bold text-zinc-100">{profile.display_name}</h2>
+                  <h2 className="text-base font-bold text-zinc-100">{profile.display_name}</h2>
                   <RoleBadge role={profile.role} size="md" />
                 </div>
-                <div className="flex items-center gap-3 text-xs text-zinc-400 font-mono">
+                <div className="flex items-center gap-2.5 text-xs text-zinc-400 font-mono">
                   <span>@{profile.username}</span>
                   <span>•</span>
-                  <span className="text-emerald-400 font-semibold">Term {profile.active_term}</span>
+                  <span className="text-emerald-400 font-medium">Term {profile.active_term}</span>
                   {profile.batch_year && (
                     <>
                       <span>•</span>
@@ -169,7 +166,7 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
 
               {/* Bio */}
               {profile.bio ? (
-                <p className="text-xs text-zinc-300 leading-relaxed bg-white/[0.02] p-3 rounded-xl border border-white/5">
+                <p className="text-xs text-zinc-300 leading-relaxed bg-white/[0.02] p-2.5 rounded-lg border border-white/[0.06]">
                   {profile.bio}
                 </p>
               ) : (
@@ -177,65 +174,67 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
               )}
 
               {/* Reputation & Activity Stats */}
-              <div className="grid grid-cols-2 gap-3 pt-1">
-                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-                    <ThumbsUp className="w-4 h-4" />
+              <div className="grid grid-cols-2 gap-2.5 pt-0.5">
+                <div className="p-3 rounded-lg border border-white/10 bg-white/[0.02] flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-md bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                    <ThumbsUp className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <span className="text-lg font-bold text-zinc-100">{profile.total_upvotes}</span>
-                    <p className="text-[11px] text-zinc-400">Upvotes Received</p>
+                    <span className="text-base font-bold text-zinc-100">{profile.total_upvotes}</span>
+                    <p className="text-[10px] text-zinc-400">Upvotes Received</p>
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
-                    <MessageSquare className="w-4 h-4" />
+                <div className="p-3 rounded-lg border border-white/10 bg-white/[0.02] flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-md bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+                    <MessageSquare className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <span className="text-lg font-bold text-zinc-100">{profile.total_comments}</span>
-                    <p className="text-[11px] text-zinc-400">Contributions</p>
+                    <span className="text-base font-bold text-zinc-100">{profile.total_comments}</span>
+                    <p className="text-[10px] text-zinc-400">Discussions</p>
                   </div>
                 </div>
               </div>
 
               {/* Badges Grid */}
-              <div className="space-y-2">
-                <span className="text-xs font-semibold text-zinc-300 flex items-center gap-1.5">
-                  <Award className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Reputation & Community Badges</span>
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {profile.badges.map((badge, idx) => (
-                    <span
-                      key={idx}
-                      className="px-2.5 py-1 rounded-lg bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 text-xs font-medium text-amber-300"
-                    >
-                      {badge}
-                    </span>
-                  ))}
+              {profile.badges.length > 0 && (
+                <div className="space-y-1.5">
+                  <span className="text-xs font-medium text-zinc-400 flex items-center gap-1.5">
+                    <Award className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Academic & Community Honors</span>
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {profile.badges.map((badge, idx) => (
+                      <span
+                        key={idx}
+                        className="px-2 py-0.5 rounded-md bg-amber-400/10 border border-amber-400/20 text-xs font-medium text-amber-300"
+                      >
+                        {badge}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Recent Discussions */}
               {profile.recent_comments.length > 0 && (
-                <div className="space-y-2 pt-1 border-t border-white/5">
-                  <span className="text-xs font-semibold text-zinc-400">
+                <div className="space-y-1.5 pt-1 border-t border-white/[0.06]">
+                  <span className="text-xs font-medium text-zinc-400">
                     Recent Discussions
                   </span>
-                  <div className="space-y-1.5 max-h-36 overflow-y-auto">
+                  <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
                     {profile.recent_comments.map((rc) => (
                       <Link
                         key={rc.id}
                         to={`/read/${rc.note_id}`}
                         onClick={onClose}
-                        className="block p-2.5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-colors"
+                        className="block p-2 rounded-lg border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-colors"
                       >
-                        <div className="flex items-center justify-between text-[11px] text-zinc-500 font-mono mb-1">
+                        <div className="flex items-center justify-between text-[10px] text-zinc-500 font-mono mb-0.5">
                           <span className="text-blue-400 font-semibold">{rc.note_id}</span>
                           <span>{rc.score} upvotes</span>
                         </div>
-                        <p className="text-xs text-zinc-300 line-clamp-1 font-sans">
+                        <p className="text-xs text-zinc-300 line-clamp-1">
                           {rc.content}
                         </p>
                       </Link>
@@ -250,4 +249,3 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
     </div>
   );
 };
-export default StudentProfileModal;

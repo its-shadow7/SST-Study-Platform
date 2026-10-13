@@ -27,8 +27,10 @@ export const NoteRedirector: React.FC<NoteRedirectorProps> = ({
       return;
     }
 
+    const normalizedId = noteId.replace(/-l(\d)$/i, '-l0$1');
+
     // 1. Try to match from loaded notesIndex
-    const matched = notesIndex.find((n) => n.note_id === noteId);
+    const matched = notesIndex.find((n) => n.note_id === noteId || n.note_id === normalizedId);
     if (matched) {
       const termSlug = `term-${matched.term.replace(/\D/g, '') || '1'}`;
       const subjectCode = matched.subject_code.toLowerCase();
@@ -45,7 +47,7 @@ export const NoteRedirector: React.FC<NoteRedirectorProps> = ({
     // 3. Fallback: try fetching note directly by ID
     let isCancelled = false;
     setResolving(true);
-    fetchNoteById(noteId)
+    fetchNoteById(normalizedId)
       .then((note) => {
         if (isCancelled) return;
         const termSlug = `term-${note.term.replace(/\D/g, '') || '1'}`;
@@ -56,8 +58,7 @@ export const NoteRedirector: React.FC<NoteRedirectorProps> = ({
       .catch(() => {
         if (isCancelled) return;
         toast.error(`Could not locate note '${noteId}'`);
-        const fallback = user ? `/term/term-${user.active_term || 1}` : '/terms';
-        navigate(fallback, { replace: true });
+        navigate('/terms', { replace: true });
       })
       .finally(() => {
         if (!isCancelled) setResolving(false);

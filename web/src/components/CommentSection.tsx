@@ -419,7 +419,7 @@ const CommentThread: React.FC<CommentThreadProps> = ({
                 onClick={() => onReport(comment.id)}
                 title="Report comment"
                 aria-label="Report comment"
-                className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-transparent hover:border-white/10 text-xs text-zinc-500 hover:text-amber-400 hover:bg-white/5 transition-colors ml-auto sm:ml-0"
+                className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-transparent hover:border-red-400/20 text-xs text-zinc-500 hover:text-red-400 hover:bg-red-400/10 transition-colors ml-auto sm:ml-0"
               >
                 <Flag className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Report</span>

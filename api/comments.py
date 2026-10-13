@@ -81,7 +81,7 @@ def check_comment_rate_limit(user_id: str) -> None:
         except HTTPException:
             if (
                 getattr(settings, "ENVIRONMENT", "").lower() != "production"
-                and settings.get_secret("VERCEL_ENV", "").lower() != "production"
+                and os.getenv("VERCEL_ENV", "").lower() != "production"
             ):
                 allowed = check_in_memory_rate_limit(limiter_key, max_requests, window_seconds)
             else:
@@ -703,7 +703,7 @@ async def report_comment(
                 update_ops["$set"]["status"] = "reported"
 
             db.comments.update_one(query, update_ops)
-            final_status = "quarantined" if is_quarantined else target.get("status", "reported")
+            final_status = "quarantined" if is_quarantined else ("reported" if target.get("status", "published") == "published" else target.get("status"))
         else:
             final_status = target.get("status", "reported")
 

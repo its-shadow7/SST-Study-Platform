@@ -43,6 +43,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const navigate = useNavigate();
   const { isBookmarked } = useBookmarks();
   const { user } = useAuth();
+  const isDevOrPrivileged = import.meta.env.DEV || user?.role === 'admin' || user?.role === 'moderator' || user?.is_special;
+  const maxAllowedTerm = isDevOrPrivileged ? 16 : (user?.max_allowed_term ?? 16);
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedSubjects, setExpandedSubjects] = useState<Record<string, boolean>>({});
 
@@ -148,7 +150,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           >
             {ALL_TERMS.map((t, idx) => {
               const termNum = idx + 1;
-              const isLocked = termNum > (user?.max_allowed_term ?? 16);
+              const isLocked = termNum > maxAllowedTerm;
               return (
                 <option
                   key={t}

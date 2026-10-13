@@ -95,13 +95,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           email: email,
           display_name: email.split('@')[0].replace('.', ' ').replace(/^./, str => str.toUpperCase()),
           username: email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase(),
-          active_term: 1,
+          active_term: 5,
           avatar_url: null,
           bio: 'Computer Science student at Scaler School of Technology',
           status: 'active',
           batch_year,
           year_of_study,
-          max_allowed_term
+          max_allowed_term: 16
         };
         setUser(mockUser);
         setCsrfToken('mock_csrf_dev');

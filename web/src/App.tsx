@@ -200,12 +200,19 @@ export const App: React.FC = () => {
             }
           />
 
-          {/* Default /term route opens student's active term */}
+          {/* Default /term route opens student's active term if it has notes, otherwise Curriculum Hub */}
           <Route
             path="/term"
             element={
               user ? (
-                <Navigate to={`/term/term-${user.active_term || 1}`} replace />
+                <Navigate
+                  to={
+                    user.active_term && notesIndex.some((n) => n.term.toLowerCase() === `term ${user.active_term}`.toLowerCase())
+                      ? `/term/term-${user.active_term}`
+                      : '/terms'
+                  }
+                  replace
+                />
               ) : (
                 <Navigate to="/login" replace />
               )
@@ -240,12 +247,12 @@ export const App: React.FC = () => {
             }
           />
 
-          {/* Fallback route: Authenticated user defaults to their active term */}
+          {/* Fallback route: Authenticated user defaults to Curriculum Hub */}
           <Route
             path="*"
             element={
               <Navigate
-                to={user ? `/term/term-${user.active_term || 1}` : '/login'}
+                to={user ? "/terms" : "/login"}
                 replace
               />
             }

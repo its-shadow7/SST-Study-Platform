@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "note_id": "cn-lecture-02-packet-switching",
+  "term": "Term 3",
+  "subject_code": "CN",
+  "topic_title": "Packet Switching & Layered Architecture (OSI / TCP/IP)",
+  "tags": [
+    "Networking",
+    "TCP/IP",
+    "OSI Model",
+    "Encapsulation",
+    "Transport"
+  ],
+  "learning_objectives": [
+    "Differentiate the 5-layer Internet protocol stack from the 7-layer OSI model.",
+    "Understand protocol encapsulation and decapsulation with headers at each tier.",
+    "Analyze packet loss, buffer overflow, and throughput metrics."
+  ],
+  "summary": "Covers the modular layered architecture of computer networking protocols, protocol data units (PDU), header overhead, and end-to-end transmission dynamics.",
+  "key_takeaways": [
+    "Layering provides modularity, clean abstraction, and independent protocol evolution.",
+    "The 5-layer Internet stack consists of Application, Transport, Network, Link, and Physical layers.",
+    "Data encapsulation wraps application messages into segments, packets, frames, and raw bits."
+  ],
+  "sections": [
+    {
+      "section_id": "sec-01-layering",
+      "heading": "1. Why Layering?",
+      "body": "Complex systems like the global Internet are organized hierarchically through **layering**. Each layer provides a well-defined service to the layer above it by utilizing services from the layer below.\n\n### The 5-Layer Internet Protocol Stack\n- **Application Layer**: Supports networked applications (HTTP, SMTP, DNS). Unit: *Message*.\n- **Transport Layer**: Host-to-host process data transfer (TCP, UDP). Unit: *Segment*.\n- **Network Layer**: Routing datagrams from source to destination (IP, ICMP, BGP). Unit: *Datagram / Packet*.\n- **Link Layer**: Data transfer between neighboring network elements (Ethernet, Wi-Fi). Unit: *Frame*.\n- **Physical Layer**: Carries individual bits across the physical medium (Copper, Fiber, Radio waves).",
+      "citations": [
+        "Kurose & Ross (8th Ed), Section 1.5"
+      ]
+    },
+    {
+      "section_id": "sec-02-encapsulation",
+      "heading": "2. Protocol Encapsulation",
+      "body": "As application data travels down the protocol stack at the transmitting end-system:\n\n1. **Application**: `[ Message ]`\n2. **Transport**: `[ TCP Header | Message ]` (Segment)\n3. **Network**: `[ IP Header | TCP Header | Message ]` (Datagram)\n4. **Link**: `[ Frame Header | IP Header | TCP Header | Message | Frame Trailer ]` (Frame)\n\nAt the receiving side, routers inspect only up to Layer 3, switches inspect Layer 2, and the destination host decapsulates the message up to Layer 5.",
+      "citations": [
+        "RFC 1122 - Requirements for Internet Hosts -- Communication Layers"
+      ]
+    }
+  ],
+  "last_updated": "2026-10-07T10:15:00Z",
+  "approval_status": "approved"
+}

@@ -112,7 +112,7 @@ def build():
     NOTES_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     (WEB_PUBLIC_DATA_DIR / "notes").mkdir(parents=True, exist_ok=True)
 
-    fixture_files = sorted(FIXTURES_DIR.glob("*.json"))
+    fixture_files = sorted(FIXTURES_DIR.rglob("*.json"))
     if not fixture_files:
         print("Warning: No fixture notes found in content/fixtures!")
         sys.exit(0)
@@ -138,8 +138,11 @@ def build():
     for data, fp in raw_fixtures:
         validate_note(data, fp, all_fixture_ids)
         note_id = data["note_id"]
+        term_slug = data.get("term", "term-1").lower().replace(" ", "-")
+        subject_slug = data.get("subject_code", "general").lower()
+        subject_folder = "computer-networks" if (subject_slug == "cn" and term_slug == "term-5") else subject_slug
 
-        # Write to protected data/notes/ and web/public/data/notes/
+        # Write to flat root paths for fast O(1) direct client lookups
         out_path = NOTES_OUTPUT_DIR / f"{note_id}.json"
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
@@ -148,7 +151,18 @@ def build():
         with open(web_out_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
-        print(f"[OK] Validated and built: {note_id} ({data['subject_code']} - {data['topic_title']})")
+        # Also write to structured subfolder hierarchy for organized filesystem browsing
+        struct_data_dir = NOTES_OUTPUT_DIR / term_slug / subject_folder
+        struct_data_dir.mkdir(parents=True, exist_ok=True)
+        with open(struct_data_dir / f"{note_id}.json", "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+        struct_web_dir = WEB_PUBLIC_DATA_DIR / "notes" / term_slug / subject_folder
+        struct_web_dir.mkdir(parents=True, exist_ok=True)
+        with open(struct_web_dir / f"{note_id}.json", "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+        print(f"[OK] Validated and built: {note_id} ({data['subject_code']} - {data['topic_title']}) -> {term_slug}/{subject_folder}")
 
         # Build index entry
         approved_notes.append({

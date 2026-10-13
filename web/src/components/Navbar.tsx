@@ -1,7 +1,8 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { NotificationsDropdown } from './NotificationsDropdown';
+import { RoleBadge } from './RoleBadge';
 import {
   Search,
   Bookmark,
@@ -11,7 +12,9 @@ import {
   LogOut,
   Menu,
   GraduationCap,
-  ShieldAlert
+  ShieldAlert,
+  FileText,
+  HelpCircle
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -27,8 +30,24 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const isCurrent = (path: string) => location.pathname.startsWith(path);
+  const pathParts = location.pathname.split('/').filter(Boolean);
+  const isReaderPage = (pathParts[0] === 'term' && pathParts.length >= 4) || pathParts[0] === 'read';
+  const activeTab = searchParams.get('tab') === 'quiz' ? 'quiz' : 'notes';
+
+  const handleSwitchTab = (tab: 'notes' | 'quiz') => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (tab === 'notes') {
+        next.delete('tab');
+      } else {
+        next.set('tab', 'quiz');
+      }
+      return next;
+    });
+  };
 
   return (
     <header className="sticky top-0 z-40 h-14 w-full border-b border-white/[0.08] bg-black/60 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between select-none">
@@ -60,13 +79,43 @@ export const Navbar: React.FC<NavbarProps> = ({
         </Link>
       </div>
 
-      {/* Center: Search Trigger & Navigation Links */}
+      {/* Center: Reader Mode Toggle & Search Trigger & Navigation Links */}
       <div className="flex items-center gap-3">
+        {/* Lecture Reader Mode Toggle (Notes vs Topic Quiz) */}
+        {isReaderPage && (
+          <div className="flex items-center p-0.5 rounded-lg border border-white/10 bg-zinc-900/80 shadow-inner">
+            <button
+              onClick={() => handleSwitchTab('notes')}
+              title="View Lecture Notes"
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs transition-all ${
+                activeTab === 'notes'
+                  ? 'bg-blue-600/25 text-blue-300 font-semibold border border-blue-500/40 shadow-sm shadow-blue-500/20'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5 border border-transparent'
+              }`}
+            >
+              <FileText className={`w-3.5 h-3.5 ${activeTab === 'notes' ? 'text-blue-400' : 'text-zinc-400'}`} />
+              <span>Notes</span>
+            </button>
+            <button
+              onClick={() => handleSwitchTab('quiz')}
+              title="Practice Lecture Quiz"
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs transition-all ${
+                activeTab === 'quiz'
+                  ? 'bg-purple-600/25 text-purple-300 font-semibold border border-purple-500/40 shadow-sm shadow-purple-500/20'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5 border border-transparent'
+              }`}
+            >
+              <HelpCircle className={`w-3.5 h-3.5 ${activeTab === 'quiz' ? 'text-purple-400' : 'text-zinc-400'}`} />
+              <span>Topic Quiz</span>
+            </button>
+          </div>
+        )}
+
         {/* Command Palette Trigger */}
         <button
           onClick={onOpenSearch}
           aria-label="Search lecture notes"
-          className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 text-xs text-zinc-400 transition-all w-48 sm:w-64"
+          className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 text-xs text-zinc-400 transition-all w-44 sm:w-60"
         >
           <Search className="w-3.5 h-3.5 text-zinc-400" />
           <span className="flex-1 text-left truncate text-zinc-400">Search notes...</span>
@@ -148,9 +197,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
 
               <div className="hidden sm:flex flex-col text-left leading-tight">
-                <span className="text-xs font-medium text-zinc-200 truncate max-w-[120px]">
-                  {user.display_name}
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-medium text-zinc-200 truncate max-w-[110px]">
+                    {user.display_name}
+                  </span>
+                  <RoleBadge role={user.role} size="sm" />
+                </div>
                 <span className="text-[10px] text-zinc-400 font-mono truncate max-w-[120px]">
                   @{user.username || 'student'} • <span className="text-emerald-400 font-semibold">T{user.active_term || 1}</span>
                 </span>
