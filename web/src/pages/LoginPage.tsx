@@ -69,7 +69,7 @@ export const LoginPage: React.FC = () => {
               </button>
               <button
                 onClick={() => {
-                  loginDevMock('special@sst.scaler.com')
+                  loginDevMock('acca3402@gmail.com')
                     .then(() => navigate('/terms'))
                     .catch((e) => console.error('Dev bypass error:', e));
                 }}

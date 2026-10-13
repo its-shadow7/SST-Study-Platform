@@ -83,12 +83,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } catch (err: any) {
       if (import.meta.env.DEV && (!err.status || err.status >= 500)) {
         console.warn('Backend server unavailable; activating local dev login bypass.');
+        const isSpecial = email.toLowerCase() === 'acca3402@gmail.com' || email.startsWith('special') || email.startsWith('vip_');
         const match = /(?:^|[._])([0-9]{2})[a-zA-Z]+[0-9]*@sst\.scaler\.com$/i.exec(email);
         const batch_year = match ? 2000 + parseInt(match[1], 10) : undefined;
         const now = new Date();
         const academic_year = now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear() - 1;
-        const year_of_study = batch_year ? Math.max(1, Math.min(academic_year - batch_year + 1, 4)) : 4;
-        const max_allowed_term = year_of_study * 4;
+        const year_of_study = isSpecial ? 4 : (batch_year ? Math.max(1, Math.min(academic_year - batch_year + 1, 4)) : 4);
+        const max_allowed_term = 16;
 
         const mockUser: User = {
           user_id: 'mock_dev_student',
@@ -101,7 +102,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           status: 'active',
           batch_year,
           year_of_study,
-          max_allowed_term: 16
+          max_allowed_term: 16,
+          is_special: isSpecial
         };
         setUser(mockUser);
         setCsrfToken('mock_csrf_dev');
