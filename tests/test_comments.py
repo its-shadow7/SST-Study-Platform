@@ -401,6 +401,17 @@ def test_content_moderation_flags_violation(monkeypatch):
     assert res_clean.status_code == 201
     assert res_clean.json()["status"] == "published"
 
+    # Test proactive spam detection auto-quarantines scam/promotional comments
+    res_spam = client.post(
+        f"/api/notes/{note_id}/comments",
+        json={"content": "Claim your free bitcoin now at http://crypto.xyz airdrop!"},
+        headers={"x-csrf-token": csrf}
+    )
+    assert res_spam.status_code == 201
+    spam_data = res_spam.json()
+    assert spam_data["status"] == "quarantined"
+    assert any("spam" in r for r in spam_data["moderation_reasons"])
+
 
 def test_comment_reporting_pipeline():
     suffix = uuid.uuid4().hex[:6]

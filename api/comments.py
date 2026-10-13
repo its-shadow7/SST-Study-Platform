@@ -96,19 +96,59 @@ def check_comment_rate_limit(user_id: str) -> None:
         )
 
 
+def check_spam_heuristics(text: str) -> List[str]:
+    """
+    Evaluates comment text against rule-based spam, scam, and character-flood patterns.
+    """
+    reasons = []
+    lower = text.lower()
+
+    # 1. Repetitive character flood (e.g. "aaaaaaa", "!!!!!!", "?????")
+    if re.search(r'(.)\1{7,}', text):
+        reasons.append("spam/character-flood")
+
+    # 2. Known scam / spam promotional patterns
+    spam_patterns = [
+        r'\b(free\s+robux|free\s+crypto|free\s+bitcoin|buy\s+crypto|airdrop)\b',
+        r'\b(t\.me\/|telegram\.me\/|wa\.me\/|whatsapp\.com\/channel\/)',
+        r'\b(casino|betting|slots|win\s+real\s+money|prize\s+money)\b',
+        r'\b(viagra|cialis|enhancement\s+pills)\b',
+        r'\b(click\s+here\s+to\s+claim|claim\s+your\s+reward|earn\s+\$\d+)\b',
+    ]
+    for pattern in spam_patterns:
+        if re.search(pattern, lower):
+            reasons.append("spam/promotional")
+            break
+
+    # 3. Excessive URL flooding or suspicious scam links
+    urls = re.findall(r'https?://\S+|www\.\S+', lower)
+    if len(urls) >= 3 or (len(urls) >= 1 and any(bad in url for url in urls for bad in ['crypto', 'airdrop', 'claim', 'free', 'bonus', 'gift', 'freemoney', 't.me'])):
+        reasons.append("spam/suspicious-links")
+
+    return reasons
+
+
 async def check_content_safety(text: str) -> List[str]:
     """
-    Validates comment text against the OpenAI Moderation API (https://api.openai.com/v1/moderations) using httpx.
-    Returns a list of flagged category names if flagged (e.g. ['hate', 'self-harm']).
-    Returns an empty list [] if clean or if API call is skipped/unavailable.
+    Validates comment text against:
+    1. Built-in proactive spam and link abuse heuristics (spam, character flood, crypto/scam links).
+    2. OpenAI Moderation API for harassment, hate, self-harm, sexual, and violence.
+    Returns a list of flagged category names if flagged.
     """
     if not text:
         return []
 
+    flagged_reasons = []
+
+    # 1. Proactive rule-based spam check
+    spam_flags = check_spam_heuristics(text)
+    flagged_reasons.extend(spam_flags)
+
+    # 2. OpenAI Moderation API for harassment, hate, self-harm, sexual, violence
     api_key = getattr(settings, "OPENAI_API_KEY", "").strip()
     if not api_key:
-        logger.warning("OPENAI_API_KEY is not set in .env. OpenAI Moderation API call skipped.")
-        return []
+        logger.warning("OPENAI_API_KEY is not set. OpenAI Moderation API call skipped.")
+        return flagged_reasons
 
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
@@ -121,23 +161,22 @@ async def check_content_safety(text: str) -> List[str]:
                 headers=headers,
                 json={"input": text},
             )
-            if resp.status_code != 200:
+            if resp.status_code == 200:
+                data = resp.json()
+                results = data.get("results", [])
+                if results:
+                    categories = results[0].get("categories", {})
+                    flagged_categories = [cat for cat, flagged in categories.items() if flagged is True]
+                    flagged_reasons.extend(flagged_categories)
+            else:
                 logger.error(
                     f"OpenAI Moderation API returned {resp.status_code}: {resp.text}"
                 )
-                return []
-
-            data = resp.json()
-            results = data.get("results", [])
-            if not results:
-                return []
-
-            categories = results[0].get("categories", {})
-            flagged_categories = [cat for cat, flagged in categories.items() if flagged is True]
-            return flagged_categories
     except Exception as exc:
         logger.error(f"Moderation API request failed: {exc}")
-        return []
+
+    # Deduplicate while preserving order
+    return list(dict.fromkeys(flagged_reasons))
 
 
 @router.get("/api/notes/{note_id}/comments", response_model=CommentListResponse)

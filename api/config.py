@@ -34,7 +34,7 @@ class Settings:
     UPSTASH_REDIS_REST_TOKEN: str = os.getenv("UPSTASH_REDIS_REST_TOKEN", "").strip()
     
     # OpenAI Moderation
-    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "").strip()
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "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").strip()
     
     # Rate Limiting Thresholds (Configurable via environment)
     RATE_LIMIT_NONCE_MAX: int = int(os.getenv("RATE_LIMIT_NONCE_MAX", "60"))
