@@ -130,30 +130,17 @@ def test_google_login_disallowed_domain(dev_client):
 
 
 def test_google_login_non_student_sst_email_rejected(dev_client):
-    """Staff/faculty or generic @sst.scaler.com emails lacking roll numbers must be rejected with 403."""
-    payload = {"id_token": "mock:professor.smith@sst.scaler.com"}
-    response = dev_client.post("/api/auth/google", json=payload)
-    assert response.status_code == 403
-    err = response.json()
-    assert err["error"] == "FORBIDDEN"
-    assert "Only SST students can login" in err["message"]
-
-
-def test_google_login_special_email_allowed_and_first_login_prompt(dev_client):
-    """Special emails bypass the student regex, get 16 terms, and require onboarding on first login."""
-    payload = {"id_token": "mock:special_reviewer@sst.scaler.com"}
-    response = dev_client.post("/api/auth/google", json=payload)
-    assert response.status_code == 200, response.json()
-
-    data = response.json()
-    user = data["user"]
-    assert user["is_special"] is True
-    assert user["needs_profile_setup"] is True
-    assert user["max_allowed_term"] == 16
+    """Staff/faculty, generic @sst.scaler.com emails lacking roll numbers, or unauthorized special@ emails must be rejected with 403."""
+    for bad_email in ["professor.smith@sst.scaler.com", "special@sst.scaler.com", "admin@sst.scaler.com", "special_reviewer@sst.scaler.com"]:
+        payload = {"id_token": f"mock:{bad_email}"}
+        response = dev_client.post("/api/auth/google", json=payload)
+        assert response.status_code == 403
+        err = response.json()
+        assert err["error"] == "FORBIDDEN"
 
 
 def test_google_login_acca3402_special_gmail_allowed(dev_client):
-    """acca3402@gmail.com is an explicitly allowed special account and must be allowed through."""
+    """acca3402@gmail.com is the authorized special account and receives full 16-term curriculum access."""
     payload = {"id_token": "mock:acca3402@gmail.com"}
     response = dev_client.post("/api/auth/google", json=payload)
     assert response.status_code == 200, response.json()
@@ -162,13 +149,14 @@ def test_google_login_acca3402_special_gmail_allowed(dev_client):
     user = data["user"]
     assert user["email"] == "acca3402@gmail.com"
     assert user["is_special"] is True
+    assert isinstance(user.get("needs_profile_setup"), bool)
     assert user["max_allowed_term"] == 16
     assert "access_token" in response.cookies
 
 
 def test_special_email_profile_setup_completion(dev_client):
     """Special user completes one-time onboarding by submitting user details via PATCH /api/users/me."""
-    login_resp = dev_client.post("/api/auth/google", json={"id_token": "mock:special_guest@sst.scaler.com"})
+    login_resp = dev_client.post("/api/auth/google", json={"id_token": "mock:acca3402@gmail.com"})
     assert login_resp.status_code == 200
     csrf_token = login_resp.json()["csrf_token"]
     cookies = login_resp.cookies
@@ -176,7 +164,7 @@ def test_special_email_profile_setup_completion(dev_client):
     # Submit profile setup details
     update_payload = {
         "display_name": "Prof. Alan Turing",
-        "username": "alan_turing",
+        "username": "alan_turing_special",
         "active_term": 5,
         "bio": "Visiting Faculty in Computation",
         "needs_profile_setup": False
@@ -190,7 +178,7 @@ def test_special_email_profile_setup_completion(dev_client):
     assert patch_resp.status_code == 200, patch_resp.json()
     updated = patch_resp.json()
     assert updated["display_name"] == "Prof. Alan Turing"
-    assert updated["username"] == "alan_turing"
+    assert updated["username"] == "alan_turing_special"
     assert updated["active_term"] == 5
     assert updated["bio"] == "Visiting Faculty in Computation"
     assert updated["needs_profile_setup"] is False

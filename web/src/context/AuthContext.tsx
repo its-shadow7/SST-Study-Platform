@@ -83,7 +83,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } catch (err: any) {
       if (import.meta.env.DEV && (!err.status || err.status >= 500)) {
         console.warn('Backend server unavailable; activating local dev login bypass.');
-        const isSpecial = email.toLowerCase() === 'acca3402@gmail.com' || email.startsWith('special') || email.startsWith('vip_');
+        const isSpecial = email.toLowerCase() === 'acca3402@gmail.com';
         const match = /(?:^|[._])([0-9]{2})[a-zA-Z]+[0-9]*@sst\.scaler\.com$/i.exec(email);
         const batch_year = match ? 2000 + parseInt(match[1], 10) : undefined;
         const now = new Date();
