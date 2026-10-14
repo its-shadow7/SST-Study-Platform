@@ -195,8 +195,9 @@ def test_special_email_profile_setup_completion(dev_client):
 # Mock login blocked in production (GOOGLE_CLIENT_ID set)
 # ---------------------------------------------------------------------------
 
-def test_mock_login_blocked_in_production(prod_client):
-    """When GOOGLE_CLIENT_ID is configured, mock tokens must be rejected."""
+def test_mock_login_blocked_in_production(prod_client, monkeypatch):
+    """When running in production, mock tokens must be rejected with 401 Unauthorized."""
+    monkeypatch.setattr("api.index.check_rate_limit", lambda *args, **kwargs: None)
     payload = {"id_token": "mock:student@sst.scaler.com"}
     response = prod_client.post("/api/auth/google", json=payload)
     assert response.status_code == 401
