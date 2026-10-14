@@ -387,6 +387,12 @@ The web has transitioned through four major protocol architectures to overcome l
 - **HTTP/1.1 (RFC 2616)**: Introduced **Persistent Connections** (`Connection: keep-alive` by default). Multiple requests and responses can reuse the exact same established TCP socket.
 - **The HTTP/1.1 Head-of-Line (HoL) Blocking Pathology**: Although HTTP/1.1 attempted *pipelining*, responses were strictly required to return in the exact chronological order of requests. If Request 1 (a slow database query) hangs, Requests 2, 3, and 4 queued behind it are completely blocked, regardless of how quickly they could be served. Browsers worked around this by opening 6 parallel TCP connections per domain.
 
+> [!NOTE]
+> **Exam & Industry Clarification: Why is there no "HTTP/1.2"?**
+> Students often wonder whether "HTTP 1.2" exists. In web standards, **there is NO HTTP/1.2 specification**.
+> After **HTTP/1.1** (RFC 2068 / RFC 2616 in 1997/1999), the web architecture did not produce an incremental minor version. Instead, the IETF standardized Google's experimental **SPDY** protocol directly into **HTTP/2** (RFC 7540 in 2015).
+> When people mistakenly mention "1.2" in web discussions, they are usually referring to **TLS 1.2** (RFC 5246, the cryptographic transport layer protocol securing HTTPS), or accidentally conflating the progression from HTTP/1.0 to HTTP/1.1 and HTTP/2.
+
 ### 2. HTTP/2 (RFC 7540): Binary Framing & Multiplexing
 HTTP/2 discarded plaintext ASCII transmission in favor of a high-performance **Binary Framing Layer** over a **single TCP connection**:
 - **Binary Framing**: Messages are broken into small binary frames (Type, Flags, Stream ID, Length, Payload: `HEADERS`, `DATA`, `SETTINGS`, `RST_STREAM`).

@@ -450,6 +450,50 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         s.sendto(b"ACK: " + data, client_addr)  # Direct datagram transmission
 ```
 
+### Multi-Client Concurrent TCP Server (Threading)
+
+In production server systems, a single-threaded server blocking on `client_sock.recv()` cannot handle concurrent connections from multiple clients. We spawn an independent execution thread for each incoming connection using Python's `threading` library:
+
+```python
+import socket
+import threading
+
+def handle_client(conn: socket.socket, addr: tuple):
+    """Handles an independent client connection in a dedicated thread."""
+    print(f"[+] Worker thread spawned for client: {addr}")
+    try:
+        while True:
+            data = conn.recv(1024)
+            if not data:
+                # Client initiated graceful 4-way close (sent FIN)
+                break
+            print(f"[{addr}] Echoing {len(data)} bytes: {data.decode('utf-8', errors='replace')}")
+            conn.sendall(data)
+    except ConnectionResetError:
+        print(f"[!] Connection forcibly reset by client: {addr}")
+    finally:
+        conn.close()
+        print(f"[-] Closed socket and terminated thread for: {addr}")
+
+def run_multithreaded_server(host: str = '0.0.0.0', port: int = 8080):
+    """Initializes and runs the multi-threaded concurrent TCP server."""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind((host, port))
+        server.listen(128)  # Accommodates concurrent connection spikes
+        print(f"[*] Concurrent Multi-Threaded TCP Server listening on {host}:{port}")
+        
+        while True:
+            conn, addr = server.accept()
+            # Spawn daemon thread so server shutdown does not hang on idle clients
+            client_thread = threading.Thread(target=handle_client, args=(conn, addr), daemon=True)
+            client_thread.start()
+            print(f"[*] Active client worker threads: {threading.active_count() - 1}")
+
+if __name__ == '__main__':
+    run_multithreaded_server()
+```
+
 **Citations & References:**
 - Python Software Foundation: socket — Low-level networking interface Documentation
 - Unix Network Programming: The Sockets Networking API (Stevens, Fenner, Rudoff)
