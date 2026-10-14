@@ -130,14 +130,16 @@
       "Loopback",
       "APIPA"
     ],
-    "summary": "An exhaustive, rigorous masterclass in IPv4 architecture. Details binary numbering, classful history, CIDR prefix mechanics, bitwise AND operations, the mathematical foundations of subnetting, VLSM engineering, and RFC-reserved address spaces.",
+    "summary": "An exhaustive, rigorous masterclass in IPv4 architecture. Details binary numbering, classful history, CIDR prefix mechanics, bitwise AND operations, the mathematical foundations of subnetting, VLSM engineering, RFC-reserved address spaces, ARP vs CAM table distinctions, and MTU fragmentation mechanics.",
     "learning_objectives": [
       "Explain why logical hierarchical IP addressing is required for global routing instead of flat hardware MAC addresses.",
       "Perform rapid, bidirectional binary-to-decimal and decimal-to-binary conversions across all 8-bit octet boundaries.",
       "Critique legacy classful addressing (Classes A, B, C, D, E) and explain the historical drivers behind the IPv4 address exhaustion crisis.",
       "Apply bitwise ANDing between IPv4 addresses and subnet masks to determine network IDs and route forwarding decisions.",
       "Master the step-by-step 'Magic Number' subnetting algorithm to compute network addresses, broadcast addresses, and usable host ranges (2^H - 2).",
-      "Categorize reserved IPv4 blocks: RFC 1918 private spaces (10/8, 172.16/12, 192.168/16), loopback (127/8), APIPA (169.254/16), and RFC 3021 /31 point-to-point links."
+      "Categorize reserved IPv4 blocks: RFC 1918 private spaces (10/8, 172.16/12, 192.168/16), loopback (127/8), APIPA (169.254/16), and RFC 3021 /31 point-to-point links.",
+      "Distinguish between the Layer 3 Host/Router ARP Table and the Layer 2 Switch MAC (CAM) Table.",
+      "Analyze Link-Layer MTU constraints and calculate IPv4 fragmentation offsets and flags (DF, MF) using the 8-byte alignment rule."
     ],
     "last_updated": "2026-10-13T00:00:00Z"
   },
@@ -342,7 +344,7 @@
       "Fast Retransmit",
       "Socket Programming"
     ],
-    "summary": "An exhaustive, rigorous masterclass on the Transport Layer. Covers process-to-process addressing via 16-bit ports, contrasting lightweight UDP with the Transmission Control Protocol (TCP). Deconstructs the TCP 3-way handshake, 4-way teardown, TIME_WAIT state, cumulative acknowledgment mathematics, sliding window flow control, Reno/Tahoe congestion control algorithms, and socket programming implementations.",
+    "summary": "An exhaustive, rigorous masterclass on the Transport Layer. Covers process-to-process addressing via 16-bit ports, contrasting lightweight UDP with the Transmission Control Protocol (TCP). Deconstructs the TCP 3-way handshake, 4-way teardown, TIME_WAIT state, cumulative acknowledgment mathematics, sliding window flow control, Reno/Tahoe congestion control algorithms, socket programming implementations, and an architectural feature-by-feature comparison matrix.",
     "learning_objectives": [
       "Explain the transport layer's role in process-to-process multiplexing and demultiplexing via port addressing.",
       "Compare TCP and UDP architectures, header structures, and design trade-offs across real-time and reliable applications.",
@@ -350,7 +352,8 @@
       "Analyze TCP 4-way termination, the half-closed state, and the engineering necessity of the 2MSL TIME_WAIT state.",
       "Model TCP reliability mechanisms: cumulative ACKs, Round-Trip Time (RTT) estimation, Retransmission Timeouts (RTO), and Fast Retransmit via 3 duplicate ACKs.",
       "Distinguish between Receiver Flow Control (sliding window rwnd) and Network Congestion Control (cwnd, Slow Start, AIMD).",
-      "Implement network client-server communication using low-level socket programming in Python (TCP stream and UDP datagram)."
+      "Implement network client-server communication using low-level socket programming in Python (TCP stream and UDP datagram).",
+      "Evaluate the comprehensive feature-by-feature matrix comparing TCP and UDP across connection state, reliability, ordering, header overhead, flow control, and application selection."
     ],
     "last_updated": "2026-10-14T00:00:00Z"
   },
@@ -440,15 +443,17 @@
       "Render Tree",
       "Critical Rendering Path"
     ],
-    "summary": "The capstone masterclass of the Computer Networks curriculum. Unifies every layer, protocol, algorithm, and device into a single, cohesive chronological trace: from the instant a user types an HTTPS URL and presses Enter, through browser caching, DNS traversal, default gateway ARP resolution, TCP 3-way handshake, TLS 1.3 ECDH cryptography, BGP core backbone transit, reverse proxy SSL offloading, server database query execution, response decompression, and browser Critical Rendering Path DOM/CSSOM pipeline.",
+    "summary": "The capstone masterclass of the Computer Networks curriculum. Unifies every layer, protocol, algorithm, and device into a single, cohesive chronological trace: from the instant a user types an HTTPS URL and presses Enter, through browser caching, DNS traversal, default gateway ARP resolution, TCP 3-way handshake, TLS 1.3 ECDH cryptography, 0-RTT resumption trade-offs, BGP core backbone transit, reverse proxy SSL offloading, server database query execution, response decompression, browser Critical Rendering Path DOM/CSSOM pipeline, and end-to-end troubleshooting diagnostics.",
     "learning_objectives": [
       "Synthesize all concepts from Computer Networks into a unified, chronological 9-phase end-to-end mental model.",
       "Trace browser cache verification, HTTP caching directives (Cache-Control, ETag), and HSTS security enforcement.",
       "Deconstruct the complete DNS resolution sequence from browser cache to iterative root, TLD, and authoritative servers.",
       "Analyze default gateway ARP resolution, Layer 2 frame reconstruction, and Layer 3 routing decision logic.",
       "Examine the cryptographic TLS 1.3 handshake, Server Name Indication (SNI), X.509 certificate chains, and Elliptic Curve Diffie-Hellman (ECDH) key exchange mathematics.",
+      "Explain why TLS cannot replace TCP and evaluate the security vs. latency trade-offs of TLS 1.3 0-RTT session resumption.",
       "Trace server-side infrastructure traversal: reverse proxies, SSL offloading, X-Forwarded-For headers, and database query processing.",
-      "Follow the browser Critical Rendering Path: HTML parsing, DOM tree, CSSOM tree, Render tree, Layout (reflow), and Paint."
+      "Follow the browser Critical Rendering Path: HTML parsing, DOM tree, CSSOM tree, Render tree, Layout (reflow), and Paint.",
+      "Diagnose end-to-end failure symptoms using the unified troubleshooting map and optimize Time to First Byte (TTFB)."
     ],
     "last_updated": "2026-10-14T00:00:00Z"
   }

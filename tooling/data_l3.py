@@ -16,16 +16,20 @@ L3_DATA = {
         "Critique legacy classful addressing (Classes A, B, C, D, E) and explain the historical drivers behind the IPv4 address exhaustion crisis.",
         "Apply bitwise ANDing between IPv4 addresses and subnet masks to determine network IDs and route forwarding decisions.",
         "Master the step-by-step 'Magic Number' subnetting algorithm to compute network addresses, broadcast addresses, and usable host ranges (2^H - 2).",
-        "Categorize reserved IPv4 blocks: RFC 1918 private spaces (10/8, 172.16/12, 192.168/16), loopback (127/8), APIPA (169.254/16), and RFC 3021 /31 point-to-point links."
+        "Categorize reserved IPv4 blocks: RFC 1918 private spaces (10/8, 172.16/12, 192.168/16), loopback (127/8), APIPA (169.254/16), and RFC 3021 /31 point-to-point links.",
+        "Distinguish between the Layer 3 Host/Router ARP Table and the Layer 2 Switch MAC (CAM) Table.",
+        "Analyze Link-Layer MTU constraints and calculate IPv4 fragmentation offsets and flags (DF, MF) using the 8-byte alignment rule."
     ],
-    "summary": "An exhaustive, rigorous masterclass in IPv4 architecture. Details binary numbering, classful history, CIDR prefix mechanics, bitwise AND operations, the mathematical foundations of subnetting, VLSM engineering, and RFC-reserved address spaces.",
+    "summary": "An exhaustive, rigorous masterclass in IPv4 architecture. Details binary numbering, classful history, CIDR prefix mechanics, bitwise AND operations, the mathematical foundations of subnetting, VLSM engineering, RFC-reserved address spaces, ARP vs CAM table distinctions, and MTU fragmentation mechanics.",
     "key_takeaways": [
         "Hierarchical IP addressing allows routers to summarize millions of endpoints into compact prefix entries, solving the global routing table explosion problem.",
         "An IPv4 address is an unsigned 32-bit integer divided into Network bits (N) and Host bits (H), where N + H = 32.",
         "A Subnet Mask is a contiguous sequence of N binary 1s followed by H binary 0s; routers perform a bitwise AND between destination IP and mask to extract the Network ID.",
         "Every standard IPv4 subnet reserves two addresses: the Network Address (all host bits 0) and the Broadcast Address (all host bits 1), yielding 2^H - 2 usable host addresses.",
         "RFC 3021 provides an exception for point-to-point links using /31 masks (H = 1), allowing both addresses to be assigned to router interfaces with zero wasted broadcast addresses.",
-        "RFC 1918 reserves three private address spaces (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) that are non-routable on the public Internet, requiring NAT/PAT for public access."
+        "RFC 1918 reserves three private address spaces (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) that are non-routable on the public Internet, requiring NAT/PAT for public access.",
+        "The ARP Table maps Layer 3 IP to Layer 2 MAC on hosts/routers, while the Switch MAC (CAM) Table maps MAC addresses to physical switch ports.",
+        "IPv4 Fragmentation uses the Identification field, MF (More Fragments) flag, and a 13-bit Fragment Offset measured strictly in 8-byte units (2^13 * 8 = 65,528 bytes)."
     ],
     "sections": [
         {
@@ -465,6 +469,188 @@ default via 10.0.4.1 dev eth0 proto dhcp metric 100
                 "RFC 1878 - Variable Length Subnet Table For IPv4",
                 "Kurose & Ross, Computer Networking: A Top-Down Approach (8th Ed), Chapter 4.3",
                 "Stevens, W. R., TCP/IP Illustrated, Volume 1: The Protocols"
+            ]
+        },
+        {
+            "section_id": "sec-07-arp-vs-mac-cam-table",
+            "heading": "7. Address Resolution & Tables: ARP Table vs. Switch MAC (CAM) Table",
+            "body": """### Demystifying Address Resolution: Host ARP vs. Switch CAM
+
+Students and network engineers frequently conflate two distinct mapping tables operating at adjacent layers of the networking stack: the **ARP Table** (Address Resolution Protocol) and the **Switch MAC Table** (Content-Addressable Memory or CAM Table).
+
+```text
++----------------------------------------------------------------------------------------------------+
+|                                      THE DUAL-TABLE TOPOLOGY                                       |
+|                                                                                                    |
+|  [ Host A: 192.168.1.5 ]                                            [ Host B: 192.168.1.20 ]       |
+|  MAC: aa:aa:aa:aa:aa:aa                                             MAC: bb:bb:bb:bb:bb:bb         |
+|         │                                                                  │                       |
+|         │ Port 1                                                    Port 2 │                       |
+|         └──────────────────────► [ Layer 2 Switch ] ◄──────────────────────┘                       |
+|                                         │                                                          |
+|       CAM Table (Switch Port to MAC):   │ Port 3                                                   |
+|       - aa:aa:aa:aa:aa:aa -> Port 1     ▼                                                          |
+|       - bb:bb:bb:bb:bb:bb -> Port 2  [ Default Gateway / Router: 192.168.1.1 ]                     |
+|       - cc:cc:cc:cc:cc:cc -> Port 3  MAC: cc:cc:cc:cc:cc:cc                                       |
+|                                      ARP Table: 192.168.1.5 -> aa:aa:aa:aa:aa:aa                   |
++----------------------------------------------------------------------------------------------------+
+```
+
+---
+
+### Architectural Comparison Matrix
+
+| Architectural Feature | ARP Table (Address Resolution Protocol) | Switch MAC Table (CAM Table) |
+| :--- | :--- | :--- |
+| **Operating Layer** | **Layer 3 (Network Layer) / Layer 2 Interface** | **Layer 2 (Data Link Layer)** |
+| **Residing Entity** | All IP Endpoints (**Hosts, Servers, and Routers**) | **Layer 2 Bridges and Ethernet Switches** |
+| **Address Mapping** | **IP Address $\\longrightarrow$ MAC Address** | **MAC Address $\\longrightarrow$ Physical Switch Port** |
+| **Concrete Entry Example** | `192.168.1.20 -> bb:bb:bb:bb:bb:bb (dynamic, TTL: 1200s)` | `bb:bb:bb:bb:bb:bb -> FastEthernet0/2 (VLAN 1)` |
+| **Fundamental Purpose** | Answers: *\"What hardware MAC address must I put in the Ethernet frame header to reach local IP X.X.X.X?\"* | Answers: *\"Which physical switch port/wire must I forward this Ethernet frame out of to reach destination MAC Y?\"* |
+| **Learning / Population Mechanism** | Active protocol exchange: Broadcast **ARP Request** (`Who has IP X? Tell Y`) followed by Unicast **ARP Reply**. | Passive data-plane inspection: Switch records the **Source MAC** of every incoming Ethernet frame and associates it with the ingress port. |
+| **Cache Miss Handling** | Generates an ARP Request broadcast packet; packets destined for that IP are temporarily queued in host memory. | **Unknown Unicast Flooding**: Switch floods the frame out of all ports except the port on which it was received. |
+| **Aging / Expiration** | Entries expire after an OS-specific timeout (typically 20 minutes on Windows, 60–300 seconds on Linux). | Entries age out after inactivity (typically 300 seconds / 5 minutes on standard switches). |
+
+---
+
+### Step-by-Step Flow: Sending a Packet on Local Subnet
+1. **Application Layer down to L3:** Host A generates a packet addressed to IP `192.168.1.20`.
+2. **ARP Lookup (Host A):** Host A inspects its local **ARP Table**.
+   - If present: Uses cached destination MAC `bb:bb:bb:bb:bb:bb`.
+   - If absent: Broadcasts an ARP Request frame (`FF:FF:FF:FF:FF:FF`). Host B replies with its MAC. Host A caches the entry.
+3. **Frame Construction:** Host A builds an Ethernet frame:
+   - Source MAC: `aa:aa:aa:aa:aa:aa`
+   - Destination MAC: `bb:bb:bb:bb:bb:bb`
+4. **Switch Forwarding (Switch CAM Table):** The switch receives the frame on Port 1.
+   - **Source Learning:** Switch updates CAM table: `aa:aa:aa:aa:aa:aa -> Port 1`.
+   - **Destination Lookup:** Switch queries CAM table for `bb:bb:bb:bb:bb:bb`. Finds Port 2. Forwards frame strictly out of Port 2 (zero broadcast pollution!).""",
+            "citations": [
+                "RFC 826 - An Ethernet Address Resolution Protocol",
+                "IEEE 802.1D - Standard for Local and metropolitan area networks: Media Access Control (MAC) Bridges",
+                "Kurose & Ross, Computer Networking: A Top-Down Approach (8th Ed), Chapter 5.4"
+            ]
+        },
+        {
+            "section_id": "sec-08-mtu-and-ipv4-fragmentation",
+            "heading": "8. Maximum Transmission Unit (MTU) & IPv4 Fragmentation",
+            "body": """### Maximum Transmission Unit (MTU) Across Link Technologies
+
+The **Maximum Transmission Unit (MTU)** specifies the largest Layer 3 Protocol Data Unit (including the IP header and payload, but excluding Layer 2 framing headers and trailers) that a network interface can transmit over a physical link without requiring fragmentation.
+
+Different physical layer and link layer technologies enforce distinct hardware and protocol MTU constraints:
+
+| Link Layer Technology | MTU Size | Typical Deployment Domain |
+| :--- | :---: | :--- |
+| **Standard Ethernet (IEEE 802.3)** | **1,500 Bytes** | Default standard for LANs, Campus Networks, and the Internet Backbone |
+| **Wi-Fi (IEEE 802.11)** | **1,500 Bytes** | Wireless Local Area Networks (standardized to Ethernet interop) |
+| **PPPoE (Point-to-Point over Ethernet)** | **1,492 Bytes** | DSL broadband connections (8 bytes consumed by PPPoE header) |
+| **Jumbo Frames** | **Up to 9,000 Bytes** | Enterprise Storage Area Networks (SANs), NVMe-oF, Data Center Fabrics |
+| **Host Loopback (`lo`)** | **65,536 Bytes** | Operating system internal inter-process communication (IPC) |
+
+---
+
+### IPv4 Fragmentation Header Fields
+
+When a router receives an IPv4 datagram whose total length exceeds the MTU of the egress link, the router must either **fragment the datagram** into smaller independent IPv4 packets or, if the **DF (Don't Fragment)** bit is set, drop the packet and transmit an ICMP Destination Unreachable message (`Type 3, Code 4: Fragmentation Needed and DF Set`).
+
+Three dedicated fields in the 20-byte IPv4 header govern fragmentation:
+
+```text
+ 0                   1                   2                   3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|        Identification         |Flags|      Fragment Offset    |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+                                 ▲ ▲ ▲
+                                 │ │ │
+             Bit 0: Reserved (0) ┘ │ └─ Bit 2: More Fragments (MF)
+             Bit 1: Don't Fragment (DF)
+```
+
+1. **Identification (16 bits):**
+   - A unique identifier assigned by the transmitting sender. All fragments originating from the same parent datagram carry the identical Identification value so the receiving destination host can group them together.
+2. **Flags (3 bits):**
+   - **Bit 0:** Reserved; must always be set to binary `0`.
+   - **Bit 1 (DF - Don't Fragment):** `1` = Do not fragment. If packet size > link MTU, router drops the packet. `0` = Fragmentation permitted.
+   - **Bit 2 (MF - More Fragments):** `1` = More fragments follow this one. `0` = This is the final fragment of the datagram (or the datagram was never fragmented).
+3. **Fragment Offset (13 bits):**
+   - Indicates the position of this fragment's data payload relative to the beginning of the original unfragmented IP payload.
+   - **The Golden 8-Byte Alignment Rule:** Because the Fragment Offset field is only 13 bits wide, it can only count from $0$ to $2^{13} - 1 = 8191$. Yet the maximum IPv4 datagram size is $65,535$ bytes. To bridge this gap, **the Fragment Offset is measured strictly in units of 8-byte (64-bit) blocks**:
+     $$\\mathbf{\\text{Offset Value Stored in Header}} = \\frac{\\text{Byte Offset Position}}{8}$$
+     Consequently, the payload data length of every intermediate fragment (where $\\text{MF} = 1$) **must be an exact integer multiple of 8 bytes**!
+
+---
+
+### Step-by-Step Worked Example: 4,200-Byte Payload
+
+Suppose an application process hands a **4,200-byte data payload** to the IPv4 stack. The original datagram includes a standard 20-byte IPv4 header, making the **Total Length = 4,220 bytes**.
+The packet must traverse an Ethernet link with **$\\text{MTU} = 1500\\text{ bytes}$**.
+
+#### Step 1: Compute Maximum Payload Capacity per Fragment
+$$\\text{Max Payload per Fragment} = \\text{MTU} - \\text{IP Header Length} = 1500 - 20 = 1480\\text{ bytes}$$
+Is $1480$ divisible by 8?
+$$\\frac{1480}{8} = 185 \\quad (\\text{Integer multiple: valid!})$$
+
+#### Step 2: Partition the 4,200-Byte Payload
+$$\\text{Number of fragments required} = \\left\\lceil \\frac{4200}{1480} \\right\\rceil = \\lceil 2.837 \\rceil = \\mathbf{3\\text{ fragments}}$$
+
+```text
+Original Datagram: [IP Header: 20B] [4,200 Bytes Application Data]
+Total Length: 4,220 Bytes (Identification: 0x9A4F, DF: 0, MF: 0, Offset: 0)
+
+                                       │
+                        Routed over MTU = 1500 link
+                                       ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ Fragment 1:                                                            │
+│ - Total Length: 1,500 Bytes (20B Header + 1,480B Payload)              │
+│ - Carried Bytes: Payload Bytes 0 to 1,479                              │
+│ - Identification: 0x9A4F                                               │
+│ - Flags: DF = 0, MF = 1 (More fragments follow)                        │
+│ - Fragment Offset: 0 / 8 = 0                                           │
+└────────────────────────────────────────────────────────────────────────┘
+                                       │
+┌────────────────────────────────────────────────────────────────────────┐
+│ Fragment 2:                                                            │
+│ - Total Length: 1,500 Bytes (20B Header + 1,480B Payload)              │
+│ - Carried Bytes: Payload Bytes 1,480 to 2,959                          │
+│ - Identification: 0x9A4F                                               │
+│ - Flags: DF = 0, MF = 1 (More fragments follow)                        │
+│ - Fragment Offset: 1,480 / 8 = 185                                     │
+└────────────────────────────────────────────────────────────────────────┘
+                                       │
+┌────────────────────────────────────────────────────────────────────────┐
+│ Fragment 3 (Final Fragment):                                           │
+│ - Total Length: 1,260 Bytes (20B Header + 1,240B Payload)              │
+│ - Carried Bytes: Payload Bytes 2,960 to 4,199 (4,200 - 2,960 = 1,240B) │
+│ - Identification: 0x9A4F                                               │
+│ - Flags: DF = 0, MF = 0 (Terminating fragment)                         │
+│ - Fragment Offset: 2,960 / 8 = 370                                     │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+#### Summary Calculation Table:
+
+| Fragment # | Header Length | Payload Bytes Carried | Total Packet Size | Identification | MF Flag | Fragment Offset (8-byte units) |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Fragment 1** | $20$ Bytes | Bytes $0$ to $1,479$ ($1,480$B) | $1,500$ Bytes | `0x9A4F` | **$1$** | **$0$** ($0 / 8$) |
+| **Fragment 2** | $20$ Bytes | Bytes $1,480$ to $2,959$ ($1,480$B) | $1,500$ Bytes | `0x9A4F` | **$1$** | **$185$** ($1480 / 8$) |
+| **Fragment 3** | $20$ Bytes | Bytes $2,960$ to $4,199$ ($1,240$B) | $1,260$ Bytes | `0x9A4F` | **$0$** | **$370$** ($2960 / 8$) |
+
+---
+
+### Critical Engineering Caveats of IPv4 Fragmentation
+1. **Reassembly Only at Destination Endpoint:**
+   - Intermediate routers never reassemble fragments; fragments travel independently through intermediate paths and are reassembled solely by the destination operating system kernel.
+2. **Fragility and Amplified Packet Loss:**
+   - If **any single fragment** is corrupted or dropped in transit, the destination host cannot reconstruct the parent datagram. It must discard all received fragments when its reassembly timer expires. In TCP, losing one fragment triggers a retransmission of the entire TCP segment!
+3. **Path MTU Discovery (PMTUD - RFC 1191):**
+   - Because fragmentation incurs high CPU overhead and throughput penalties, modern hosts routinely set `DF = 1` on all outgoing packets to discover the minimum MTU across the entire path (Path MTU Discovery) using ICMP Type 3 Code 4 responses, avoiding fragmentation entirely."""
+            ,
+            "citations": [
+                "RFC 791 - Internet Protocol Specification (Fragmentation)",
+                "RFC 1191 - Path MTU Discovery",
+                "Stevens, W. R., TCP/IP Illustrated, Volume 1: The Protocols, Chapter 11"
             ]
         }
     ],
