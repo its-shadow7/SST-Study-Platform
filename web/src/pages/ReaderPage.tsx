@@ -6,6 +6,7 @@ import { useBookmarks } from '@/context/BookmarkContext';
 import { useAuth } from '@/context/AuthContext';
 import { Sidebar } from '@/components/Sidebar';
 import { TableOfContents, MobileTableOfContents } from '@/components/TableOfContents';
+import { RightSidebar } from '@/components/RightSidebar';
 import { MarkdownViewer } from '@/components/MarkdownViewer';
 import { NoteSkeleton } from '@/components/NoteSkeleton';
 import { CommentSection } from '@/components/CommentSection';
@@ -489,9 +490,9 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
         </div>
       </main>
 
-      {/* 3. Right Island: Table of Contents (w-72, visible only in Notes mode) */}
+      {/* 3. Right Island: On This Page TOC & Student Scratchpad (visible only in Notes mode) */}
       {currentNote && currentNote.sections && activeTab === 'notes' && (
-        <TableOfContents sections={currentNote.sections} />
+        <RightSidebar noteId={currentNote.note_id} sections={currentNote.sections} />
       )}
     </div>
   );

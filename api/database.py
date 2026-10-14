@@ -66,6 +66,7 @@ def get_mongo_db():
         _mongo_db.bookmarks.create_index([("user_id", 1), ("created_at", -1)])
         _mongo_db.comments.create_index([("note_id", 1), ("created_at", -1)])
         _mongo_db.comments.create_index("user_id")
+        _mongo_db.scratchpads.create_index([("user_id", 1), ("note_id", 1)], unique=True)
 
         try:
             _mongo_db.nonces.create_index("nonce", unique=True)
@@ -93,6 +94,7 @@ class InMemoryStore:
         self.sessions: Dict[str, dict] = {}
         self.bookmarks: Dict[str, dict] = {} # key: f"{user_id}:{note_id}"
         self.comments: Dict[str, dict] = {} # key: comment_id
+        self.scratchpads: Dict[str, dict] = {} # key: f"{user_id}:{note_id}"
         self.audit_logs: List[dict] = []
         self.notifications: Dict[str, dict] = {}
 

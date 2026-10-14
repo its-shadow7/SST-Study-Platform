@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { NoteIndexItem } from '@/types/note';
 import { useBookmarks } from '@/context/BookmarkContext';
 import { useAuth } from '@/context/AuthContext';
+import { api } from '@/services/apiClient';
+import { ScratchpadSummary } from '@/types/scratchpad';
 import {
   ChevronDown,
   ChevronRight,
@@ -12,7 +14,8 @@ import {
   PanelLeftClose,
   X,
   Layers,
-  Sparkles
+  Sparkles,
+  PenLine
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -47,6 +50,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const maxAllowedTerm = isDevOrPrivileged ? 16 : (user?.max_allowed_term ?? 16);
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedSubjects, setExpandedSubjects] = useState<Record<string, boolean>>({});
+  const [scratchpadNoteIds, setScratchpadNoteIds] = useState<Set<string>>(new Set());
+
+  // Fetch summary of notes containing student's personal scratchpads
+  useEffect(() => {
+    if (!user) {
+      setScratchpadNoteIds(new Set());
+      return;
+    }
+
+    let isSubscribed = true;
+    api.get<ScratchpadSummary>('/api/scratchpads/summary')
+      .then((data) => {
+        if (isSubscribed && data?.note_ids) {
+          setScratchpadNoteIds(new Set(data.note_ids));
+        }
+      })
+      .catch(() => {
+        if (isSubscribed) {
+          setScratchpadNoteIds(new Set());
+        }
+      });
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [user, activeNoteId]);
 
   // Auto-expand current active subject
   useEffect(() => {
@@ -227,6 +256,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     {subjectNotes.map((note) => {
                       const isActive = note.note_id === activeNoteId;
                       const bookmarked = isBookmarked(note.note_id);
+                      const hasPersonalNotes = scratchpadNoteIds.has(note.note_id);
 
                       return (
                         <button
@@ -245,9 +275,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             <span className="truncate">{note.topic_title}</span>
                           </div>
 
-                          {bookmarked && (
-                            <BookmarkIcon className="w-3 h-3 text-amber-400 fill-amber-400 shrink-0" />
-                          )}
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            {hasPersonalNotes && (
+                              <span title="Contains personal study notes">
+                                <PenLine className="w-3 h-3 text-blue-400/90 group-hover:text-blue-300 transition-colors" />
+                              </span>
+                            )}
+                            {bookmarked && (
+                              <BookmarkIcon className="w-3 h-3 text-amber-400 fill-amber-400 shrink-0" />
+                            )}
+                          </div>
                         </button>
                       );
                     })}

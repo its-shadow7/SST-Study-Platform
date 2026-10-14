@@ -27,6 +27,7 @@ from api.dependencies import get_current_student, get_db_or_fail
 from api.comments import router as comments_router
 from api.moderation import router as moderation_router
 from api.notifications import router as notifications_router
+from api.scratchpad import router as scratchpad_router
 from api.rate_limiter import check_rate_limit, get_client_ip
 from api.auth import (
     generate_login_nonce,
@@ -854,9 +855,10 @@ async def get_protected_note_content(note_id: str, user: dict = Depends(get_curr
     with open(note_file, "r", encoding="utf-8") as f:
         return json.load(f)
 
-# Mount Comments, Moderation & Notifications Routers
+# Mount Comments, Moderation, Notifications & Scratchpad Routers
 app.include_router(comments_router)
 app.include_router(moderation_router)
 app.include_router(notifications_router)
+app.include_router(scratchpad_router)
 
 
