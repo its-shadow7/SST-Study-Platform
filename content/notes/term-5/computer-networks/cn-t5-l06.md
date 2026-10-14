@@ -75,7 +75,7 @@ While physical cable latency is always positive, edge metrics in software-define
 
 ---
 
-## Step-by-Step 8-Node MinHeap Dijkstra Execution Trace
+## Step-by-Step 8-Node MinHeap Dijkstra Execution Trace & Implementation
 ### Complete Trace of an 8-Router Enterprise Mesh Topology
 
 To observe how production Link State protocols (OSPF, IS-IS) execute Dijkstra using an optimized binary MinHeap, we trace the canonical 8-router network topology below with source router **A**:
@@ -104,7 +104,60 @@ To observe how production Link State protocols (OSPF, IS-IS) execute Dijkstra us
 - Router G connects to: $F$ (cost 6), $H$ (cost 3)
 - Router H connects to: $G$ (cost 3)
 
-#### Priority Queue Structure:
+### Python Implementation of Dijkstra's Algorithm (MinHeap SPF)
+
+The production Link State routing engine uses Dijkstra's algorithm with a binary priority queue (`heapq`) to achieve $O((|V| + |E|) \log |V|)$ time complexity:
+
+```python
+import heapq
+from typing import Dict, List, Tuple, Optional
+
+def dijkstra(graph: Dict[str, List[Tuple[str, int]]], source: str) -> Tuple[Dict[str, float], Dict[str, Optional[str]]]:
+    """
+    Dijkstra's Shortest Path First (SPF) algorithm using a binary min-heap.
+    
+    Arguments:
+        graph: Adjacency list mapping router_id -> list of (neighbor_id, link_cost) tuples.
+        source: Starting root router.
+        
+    Returns:
+        dist: Dictionary mapping each router to its minimum cumulative path cost.
+        prev: Predecessor map for reconstructing shortest path routes.
+    """
+    dist = {node: float('inf') for node in graph}
+    dist[source] = 0
+    prev = {node: None for node in graph}
+    
+    # Priority queue stores tuples of (tentative_distance, node)
+    pq = [(0, source)]
+    
+    while pq:
+        cost, node = heapq.heappop(pq)
+        
+        # Discard stale entry: if popped cost exceeds currently recorded distance, ignore
+        if cost > dist[node]:
+            continue
+            
+        for neighbor, weight in graph.get(node, []):
+            new_cost = cost + weight
+            if new_cost < dist[neighbor]:
+                dist[neighbor] = new_cost
+                prev[neighbor] = node
+                heapq.heappush(pq, (new_cost, neighbor))
+                
+    return dist, prev
+
+def reconstruct_path(prev: Dict[str, Optional[str]], target: str) -> List[str]:
+    """Reconstructs the optimal shortest path hop-by-hop from target back to source."""
+    path = []
+    curr = target
+    while curr is not None:
+        path.append(curr)
+        curr = prev[curr]
+    return list(reversed(path))
+```
+
+#### Priority Queue Structure & Initial State:
 MinHeap storing pairs `(distance, Node)`. Distance array initialized to:
 `dist = {A: 0, B: ∞, C: ∞, D: ∞, E: ∞, F: ∞, G: ∞, H: ∞}`. Initial push: `(0, A)`.
 
@@ -166,8 +219,28 @@ MinHeap storing pairs `(distance, Node)`. Distance array initialized to:
 | **G** | **10** | $A \to F \to G$ (Cost $4 + 6 = 10$) |
 | **H** | **13** | $A \to F \to G \to H$ (Cost $4 + 6 + 3 = 13$) |
 
+### Executable Verification on the 8-Router Topology
+
+```python
+enterprise_mesh = {
+    'A': [('B', 2), ('D', 3), ('F', 4), ('E', 6)],
+    'B': [('A', 2), ('E', 3), ('C', 9)],
+    'C': [('D', 6), ('B', 9)],
+    'D': [('A', 3), ('C', 6)],
+    'E': [('B', 3), ('A', 6), ('F', 5)],
+    'F': [('A', 4), ('E', 5), ('G', 6)],
+    'G': [('F', 6), ('H', 3)],
+    'H': [('G', 3)]
+}
+
+distances, predecessors = dijkstra(enterprise_mesh, source='A')
+# distances: {'A': 0, 'B': 2, 'D': 3, 'F': 4, 'E': 5, 'C': 9, 'G': 10, 'H': 13}
+# reconstruct_path(predecessors, 'H') -> ['A', 'F', 'G', 'H']
+```
+
 **Citations & References:**
 - RFC 2328: OSPF Version 2, Section 16 (Calculation of the Routing Table)
+- Introduction to Algorithms (Cormen, Leiserson, Rivest, Stein), Chapter 24.3: Dijkstra's algorithm
 - Network Routing: Algorithms, Protocols, and Architectures (Deepankar Medhi & Karthik Ramasamy), Chapter 3
 
 ---

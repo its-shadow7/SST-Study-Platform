@@ -202,7 +202,7 @@ Step 5: Pop Bangalore (Distance = 2 hops)
 
 ---
 
-## The Fundamental Architectural Limitation of Hop-Based Routing
+## The Fundamental Architectural Limitation of Hop-Based Routing & Dijkstra's Algorithm
 ### The Fatal Flaw of Hop Minimization
 
 While BFS provides an elegant, optimal solution for minimizing edge counts, **hop count is a disastrous metric for real-world production networks**.
@@ -233,9 +233,111 @@ The original **Routing Information Protocol (RIP / RFC 1058)** used pure hop cou
 
 For enterprise and internet-scale routing, hop-count algorithms were superseded by cost-based link-state routing (**Dijkstra's Algorithm in OSPF/IS-IS**).
 
+---
+
+### Dijkstra's Shortest Path First (SPF) Algorithm
+
+To solve the fundamental failure of unweighted BFS, modern Interior Gateway Protocols (such as OSPF and IS-IS) deploy **Dijkstra's Algorithm** to compute the **minimum cumulative cost path** from a source router to all reachable destinations in the network.
+
+#### Key Architectural Properties
+- **Data Structure**: Min-Priority Queue (**MinHeap**) storing tuples of `(distance, node)`.
+- **Greedy Invariant**: At each step, Dijkstra extracts the unfinished node with the absolute lowest tentative distance and finalizes its shortest path.
+- **Weight Constraint**: Requires **strictly non-negative edge weights** ($w(e) \ge 0$).
+- **Time Complexity**: $O((|V| + |E|) \log |V|)$ using a binary min-heap.
+
+### Production Python Implementation
+
+```python
+import heapq
+from typing import Dict, List, Tuple, Optional
+
+def dijkstra(graph: Dict[str, List[Tuple[str, int]]], source: str) -> Tuple[Dict[str, float], Dict[str, Optional[str]]]:
+    """
+    Computes minimum cost paths from source to all nodes using a binary min-heap.
+    Returns:
+      dist: Mapping of node -> shortest distance metric
+      prev: Mapping of node -> predecessor pointer for route reconstruction
+    """
+    # Step 1: Initialize all distances to infinity
+    dist = {node: float('inf') for node in graph}
+    dist[source] = 0
+    prev = {node: None for node in graph}
+    
+    # Min-heap stores (tentative_cost, node)
+    pq = [(0, source)]
+    
+    while pq:
+        cost, node = heapq.heappop(pq)
+        
+        # Skip stale entries if a cheaper path was already finalized
+        if cost > dist[node]:
+            continue
+            
+        # Relax all outgoing edges
+        for neighbor, weight in graph.get(node, []):
+            new_cost = cost + weight
+            if new_cost < dist[neighbor]:
+                dist[neighbor] = new_cost
+                prev[neighbor] = node
+                heapq.heappush(pq, (new_cost, neighbor))
+                
+    return dist, prev
+
+def reconstruct_path(prev: Dict[str, Optional[str]], target: str) -> List[str]:
+    """Reconstructs the optimal shortest path hop-by-hop from target back to source."""
+    path = []
+    node = target
+    while node is not None:
+        path.append(node)
+        node = prev[node]
+    return list(reversed(path))
+```
+
+### Dijkstra Execution Trace: Mumbai to All Destination Cities
+
+Applying Dijkstra on our 5-city network topology with source **Mumbai**:
+
+```python
+network_graph = {
+    'Delhi':     [('Mumbai', 5), ('Hyderabad', 2), ('Chennai', 8)],
+    'Mumbai':    [('Delhi', 5), ('Hyderabad', 3)],
+    'Hyderabad': [('Delhi', 2), ('Mumbai', 3), ('Bangalore', 2)],
+    'Bangalore': [('Hyderabad', 2), ('Chennai', 4)],
+    'Chennai':   [('Delhi', 8), ('Bangalore', 4)]
+}
+```
+
+| Step | Expanded Node | dist[Mumbai] | dist[Delhi] | dist[Hyderabad] | dist[Chennai] | dist[Bangalore] |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Init** | — | **0** | $\infty$ | $\infty$ | $\infty$ | $\infty$ |
+| **1** | **Mumbai** | **0** | 5 | 3 | $\infty$ | $\infty$ |
+| **2** | **Hyderabad** | **0** | 5 | **3** | $\infty$ | 5 |
+| **3** | **Delhi** | **0** | **5** | **3** | 13 | 5 |
+| **4** | **Bangalore** | **0** | **5** | **3** | 9 | **5** |
+| **5** | **Chennai** | **0** | **5** | **3** | **9** | **5** |
+
+#### Final Routing Table Computed from Mumbai:
+- **Mumbai $\to$ Delhi**: Minimum Cost **5** (Direct link: `Mumbai -> Delhi`)
+- **Mumbai $\to$ Hyderabad**: Minimum Cost **3** (Direct link: `Mumbai -> Hyderabad`)
+- **Mumbai $\to$ Bangalore**: Minimum Cost **5** (`Mumbai -> Hyderabad -> Bangalore`)
+- **Mumbai $\to$ Chennai**: Minimum Cost **9** (`Mumbai -> Hyderabad -> Bangalore -> Chennai`)
+
+### Comprehensive Algorithm Comparison: BFS vs. DFS vs. Dijkstra
+
+| Algorithmic Dimension | Breadth-First Search (BFS) | Depth-First Search (DFS) | Dijkstra's Algorithm |
+| :--- | :--- | :--- | :--- |
+| **Primary Data Structure** | Queue (FIFO) | Stack / System Recursion | Priority Queue (MinHeap) |
+| **Optimization Goal** | Minimum hop count (unweighted) | Any path / Deep exploration | Minimum cumulative metric cost |
+| **Asymptotic Complexity** | $O(|V| + |E|)$ | $O(|V| + |E|)$ | $O((|V| + |E|) \log |V|)$ |
+| **Weighted Graphs** | No (ignores weights, treats all as 1) | No (ignores weights) | **Yes** (accumulates weights) |
+| **Negative Edge Weights** | Not applicable | Not applicable | **No** (fails on negative links) |
+| **Operational Protocol** | **RIP** (hop-count vectors) | **STP** (cycle detection) | **OSPF, IS-IS** (link-state SPF) |
+
 **Citations & References:**
 - RFC 1058: Routing Information Protocol
 - RFC 2453: RIP Version 2
+- RFC 2328: OSPF Version 2, Section 16 (Calculation of the Routing Table)
+- Introduction to Algorithms (Cormen et al.), Chapter 24.3: Dijkstra's Algorithm
 - Computer Networks: A Systems Approach, Chapter 3.3: Routing Algorithms
 
 ---
