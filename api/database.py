@@ -67,6 +67,14 @@ def get_mongo_db():
         _mongo_db.comments.create_index([("note_id", 1), ("created_at", -1)])
         _mongo_db.comments.create_index("user_id")
 
+        try:
+            _mongo_db.nonces.create_index("nonce", unique=True)
+            _mongo_db.nonces.create_index("created_at", expireAfterSeconds=300)
+            _mongo_db.csrf_tokens.create_index("token", unique=True)
+            _mongo_db.csrf_tokens.create_index("expires_at", expireAfterSeconds=0)
+        except Exception as e_idx:
+            logger.warning("Could not create TTL index on nonces/csrf_tokens: %s", e_idx)
+
         logger.info("MongoDB Atlas connected and indexes verified.")
         return _mongo_db
     except Exception as e:

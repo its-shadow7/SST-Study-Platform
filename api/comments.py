@@ -1,4 +1,5 @@
 import logging
+import os
 import re
 from datetime import datetime, timezone, timedelta
 from typing import List, Optional
@@ -31,37 +32,26 @@ router = APIRouter(tags=["comments"])
 
 def sanitize_comment_content(raw_text: str) -> str:
     """
-    Sanitizes comment text to prevent basic XSS while allowing safe text & markdown formatting.
-    Strips dangerous HTML tags, inline event listeners, and script protocols.
+    Sanitizes comment text to prevent stored XSS and HTML injection.
+    Treats comments strictly as safe text / Markdown.
+    Disallows raw HTML tags completely and strips dangerous link protocols (javascript:, data:, vbscript:).
     """
     if not raw_text:
         return ""
     # Strip null bytes
     cleaned = raw_text.replace("\x00", "")
-    # Remove script, iframe, object, embed, style, form, input, button tags and content
+    # Remove script, style, iframe, object, embed tags and their contents completely
     cleaned = re.sub(
-        r"<\s*(?:script|iframe|object|embed|style|meta|link)[^>]*>.*?<\s*/\s*(?:script|iframe|object|embed|style|meta|link)\s*>",
+        r"<\s*(?:script|style|iframe|object|embed)[^>]*>.*?<\s*/\s*(?:script|style|iframe|object|embed)\s*>",
         "",
         cleaned,
         flags=re.DOTALL | re.IGNORECASE,
     )
-    # Remove self-closing or remaining dangerous tags
-    cleaned = re.sub(
-        r"<\s*/?\s*(?:script|iframe|object|embed|style|meta|link|base|form|input|button|svg|math)[^>]*>",
-        "",
-        cleaned,
-        flags=re.IGNORECASE,
-    )
-    # Strip inline event handlers like onerror=, onclick=, onload=
-    cleaned = re.sub(
-        r"\bon[a-zA-Z]+\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s>]+)",
-        "",
-        cleaned,
-        flags=re.IGNORECASE,
-    )
-    # Strip dangerous URL schemes: javascript:, vbscript:, data:
-    cleaned = re.sub(r"(?:javascript|vbscript|data):", "", cleaned, flags=re.IGNORECASE)
-    return cleaned.strip()
+    # Strip all remaining HTML tags (<...>) so comments cannot inject arbitrary HTML
+    cleaned = re.sub(r"<[^>]*>", "", cleaned)
+    # Strip dangerous URI schemes in markdown links or plain text
+    cleaned = re.sub(r"(?i)\b(?:javascript|vbscript|data)\s*:", "", cleaned)
+    return cleaned.strip()[:1000]
 
 
 def check_comment_rate_limit(user_id: str) -> None:
@@ -75,18 +65,23 @@ def check_comment_rate_limit(user_id: str) -> None:
     window_seconds = getattr(settings, "RATE_LIMIT_COMMENT_WINDOW", 60)
 
     allowed = True
+    is_prod = getattr(settings, "ENVIRONMENT", "").lower() == "production" or os.getenv("VERCEL_ENV", "").lower() == "production"
+
     if settings.UPSTASH_REDIS_REST_URL and settings.UPSTASH_REDIS_REST_TOKEN:
         try:
             allowed = check_upstash_rate_limit(limiter_key, max_requests, window_seconds)
         except HTTPException:
-            if (
-                getattr(settings, "ENVIRONMENT", "").lower() != "production"
-                and os.getenv("VERCEL_ENV", "").lower() != "production"
-            ):
+            if not is_prod:
                 allowed = check_in_memory_rate_limit(limiter_key, max_requests, window_seconds)
             else:
                 raise
     else:
+        if is_prod:
+            logger.critical("Production requires UPSTASH_REDIS configuration for distributed comment rate limiting. Enforcing fail-closed 503.")
+            raise HTTPException(
+                status_code=503,
+                detail="Rate limit service temporarily unavailable. Please try again shortly."
+            )
         allowed = check_in_memory_rate_limit(limiter_key, max_requests, window_seconds)
 
     if not allowed:

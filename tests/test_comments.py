@@ -537,3 +537,74 @@ def test_moderation_queue_rbac_and_resolution():
     assert delete_res.json()["status"] == "deleted"
 
 
+def test_comment_rate_limiting_upstash_failure_dev_fallback(monkeypatch):
+    """
+    Reliability check: When Upstash Redis fails in local development,
+    the fallback path calls os.getenv without raising NameError and uses the
+    in-memory limiter.
+    """
+    from api.comments import check_comment_rate_limit
+    from fastapi import HTTPException
+
+    # Simulate Upstash failure
+    def mock_upstash_fail(*args, **kwargs):
+        raise HTTPException(status_code=503, detail="Simulated Upstash connection outage")
+
+    monkeypatch.setattr("api.comments.check_upstash_rate_limit", mock_upstash_fail)
+    monkeypatch.setattr(settings, "UPSTASH_REDIS_REST_URL", "https://mock-redis.upstash.io")
+    monkeypatch.setattr(settings, "UPSTASH_REDIS_REST_TOKEN", "mock-token")
+    monkeypatch.setattr(settings, "ENVIRONMENT", "development")
+    monkeypatch.delenv("VERCEL_ENV", raising=False)
+
+    # In dev mode, this should fall back to memory without raising NameError or unhandled exception
+    try:
+        check_comment_rate_limit("test-user-dev-fallback")
+    except NameError as ne:
+        pytest.fail(f"NameError raised during Upstash fallback: {ne}")
+    except HTTPException as he:
+        pytest.fail(f"HTTPException raised instead of falling back in dev mode: {he}")
+
+
+def test_comment_sanitization_adversarial_xss():
+    """
+    Security check: Adversarial HTML, script tags, event listeners, and dangerous URL protocols
+    are stripped from comment bodies.
+    """
+    from api.comments import sanitize_comment_content
+
+    # 1. Script tag with body
+    s1 = sanitize_comment_content("<script>alert('xss')</script>Hello World")
+    assert "<script>" not in s1
+    assert "alert" not in s1
+    assert "Hello World" in s1
+
+    # 2. Img tag with onerror
+    s2 = sanitize_comment_content('<img src="x" onerror="alert(document.cookie)">Good explanation!')
+    assert "<img" not in s2
+    assert "onerror" not in s2
+    assert "alert" not in s2
+    assert "Good explanation!" in s2
+
+    # 3. SVG with onload
+    s3 = sanitize_comment_content("<svg onload=alert(1)>Nice note")
+    assert "<svg" not in s3
+    assert "onload" not in s3
+    assert "Nice note" in s3
+
+    # 4. Iframe injection
+    s4 = sanitize_comment_content("<iframe src='https://malicious.site'></iframe>Great study material")
+    assert "<iframe" not in s4
+    assert "malicious" not in s4
+    assert "Great study material" in s4
+
+    # 5. Markdown with javascript: protocol
+    s5 = sanitize_comment_content("[Click here](javascript:alert(1))")
+    assert "javascript:" not in s5
+
+    # 6. Preserves legitimate markdown formatting
+    s6 = sanitize_comment_content("**Bold Title** and `code_snippet()`")
+    assert "**Bold Title**" in s6
+    assert "`code_snippet()`" in s6
+
+
+

@@ -128,17 +128,25 @@ def check_rate_limit(
     limiter_key = f"rate_limit:{action}:{hashed_id}"
 
     allowed = True
+    is_prod = getattr(settings, "ENVIRONMENT", "").lower() == "production" or os.getenv("VERCEL_ENV", "").lower() == "production"
+
     if settings.UPSTASH_REDIS_REST_URL and settings.UPSTASH_REDIS_REST_TOKEN:
         try:
             allowed = check_upstash_rate_limit(limiter_key, max_requests, window_seconds)
         except HTTPException:
             # In local development, fall back to in-memory limiter if Upstash is unreachable
-            if getattr(settings, "ENVIRONMENT", "").lower() != "production" and os.getenv("VERCEL_ENV", "").lower() != "production":
+            if not is_prod:
                 logger.warning("Upstash unavailable in local dev; falling back to in-memory rate limiter.")
                 allowed = check_in_memory_rate_limit(limiter_key, max_requests, window_seconds)
             else:
                 raise
     else:
+        if is_prod:
+            logger.critical("Production requires UPSTASH_REDIS configuration for distributed rate limiting. Enforcing fail-closed 503.")
+            raise HTTPException(
+                status_code=503,
+                detail="Rate limit service temporarily unavailable. Please try again shortly."
+            )
         allowed = check_in_memory_rate_limit(limiter_key, max_requests, window_seconds)
 
     if not allowed:

@@ -153,39 +153,6 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 _get_db_or_fail = get_db_or_fail
 
 
-# --- Dependency: Authenticate Student from Access Cookie or Bearer Token ---
-async def get_current_student(request: Request) -> dict:
-    access_token = request.cookies.get("access_token")
-    if not access_token:
-        # Fallback to Authorization: Bearer for automated test runners / dev
-        auth_hdr = request.headers.get("authorization")
-        if auth_hdr and auth_hdr.startswith("Bearer "):
-            access_token = auth_hdr.split(" ")[1]
-
-    if not access_token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Authentication required: No access token provided."
-        )
-
-    claims = decode_access_jwt(access_token)
-    sub = claims.get("sub")
-
-    db = _get_db_or_fail()
-    if db is not None:
-        user = db.users.find_one({"google_sub_id": sub})
-        if not user or user.get("status") != "active":
-            raise HTTPException(status_code=401, detail="User account is inactive or not found.")
-        user["user_id"] = str(user["_id"])
-        return user
-    else:
-        user = in_memory_store.get_user_by_sub(sub)
-        if not user or user.get("status") != "active":
-            raise HTTPException(status_code=401, detail="User account is inactive or not found.")
-        user["user_id"] = user["_id"]
-        return user
-
-
 # ==============================================================================
 # Authentication Endpoints
 # ==============================================================================

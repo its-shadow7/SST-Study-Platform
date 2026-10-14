@@ -1,4 +1,5 @@
 import hashlib
+import logging
 import os
 import re
 import secrets
@@ -6,10 +7,33 @@ import time
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple
 import jwt
+import requests
 from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token as google_id_token
 from fastapi import HTTPException, Request, Response
 from api.config import settings
+
+logger = logging.getLogger("api.auth")
+_auth_http_session = requests.Session()
+
+
+def _upstash_exec(cmd: list) -> any:
+    """Execute a single Redis command via Upstash REST API."""
+    if not (settings.UPSTASH_REDIS_REST_URL and settings.UPSTASH_REDIS_REST_TOKEN):
+        return None
+    try:
+        url = f"{settings.UPSTASH_REDIS_REST_URL.rstrip('/')}/"
+        resp = _auth_http_session.post(
+            url,
+            json=cmd,
+            headers={"Authorization": f"Bearer {settings.UPSTASH_REDIS_REST_TOKEN}"},
+            timeout=3.0
+        )
+        if resp.status_code == 200:
+            return resp.json().get("result")
+    except Exception as e:
+        logger.warning("Upstash command error: %s", e)
+    return None
 
 def get_special_emails() -> set:
     raw = getattr(settings, "SPECIAL_EMAILS", "") or ""
@@ -73,15 +97,14 @@ def extract_batch_info(email: str, ref_date: Optional[datetime] = None) -> Optio
     }
 
 # ---------------------------------------------------------------------------
-# One-time nonce store (in-memory; suitable for single-process / serverless)
-# Each nonce is stored with its creation timestamp so we can expire old ones.
+# One-time nonce store (Distributed across Upstash Redis / MongoDB with in-memory fallback)
 # ---------------------------------------------------------------------------
 _nonce_store: Dict[str, float] = {}
 _NONCE_TTL_SECONDS = 300  # 5 minutes - must be consumed before this elapses
 
 
 def _purge_expired_nonces() -> None:
-    """Remove nonces older than TTL to prevent unbounded growth."""
+    """Remove nonces older than TTL to prevent unbounded growth in local fallback."""
     cutoff = time.time() - _NONCE_TTL_SECONDS
     expired = [k for k, v in _nonce_store.items() if v < cutoff]
     for k in expired:
@@ -91,19 +114,72 @@ def _purge_expired_nonces() -> None:
 def generate_login_nonce() -> str:
     """
     Create a cryptographically random one-time nonce for Google login.
-    The nonce is stored server-side and must be presented back in the ID token.
+    Stored distributedly across Upstash Redis and MongoDB with local in-memory safety.
     """
     _purge_expired_nonces()
     nonce = secrets.token_hex(24)
     _nonce_store[nonce] = time.time()
+
+    # 1. Upstash Redis
+    _upstash_exec(["SET", f"nonce:{nonce}", "1", "EX", str(_NONCE_TTL_SECONDS)])
+
+    # 2. MongoDB Atlas
+    try:
+        from api.database import get_mongo_db
+        db = get_mongo_db()
+        if db is not None:
+            db.nonces.update_one(
+                {"nonce": nonce},
+                {"$set": {"nonce": nonce, "created_at": datetime.now(timezone.utc)}},
+                upsert=True
+            )
+    except Exception as e:
+        logger.warning("Could not persist nonce to MongoDB: %s", e)
+
     return nonce
 
 
 def consume_login_nonce(nonce: str) -> bool:
     """
-    Validate and atomically consume a nonce.
+    Validate and atomically consume a nonce across distributed instances.
     Returns True if the nonce was valid and unused; False otherwise.
     """
+    if not nonce:
+        return False
+
+    # 1. Try Upstash Redis atomic DEL
+    upstash_res = _upstash_exec(["DEL", f"nonce:{nonce}"])
+    if upstash_res is not None:
+        if upstash_res == 1:
+            _nonce_store.pop(nonce, None)
+            return True
+        if settings.UPSTASH_REDIS_REST_URL and settings.UPSTASH_REDIS_REST_TOKEN:
+            _nonce_store.pop(nonce, None)
+            return False
+
+    # 2. Try MongoDB Atlas atomic find_one_and_delete
+    try:
+        from api.database import get_mongo_db
+        db = get_mongo_db()
+        if db is not None:
+            doc = db.nonces.find_one_and_delete({"nonce": nonce})
+            if doc is not None:
+                _nonce_store.pop(nonce, None)
+                created_at = doc.get("created_at")
+                if created_at:
+                    if created_at.tzinfo is None:
+                        created_at = created_at.replace(tzinfo=timezone.utc)
+                    if (datetime.now(timezone.utc) - created_at).total_seconds() <= _NONCE_TTL_SECONDS:
+                        return True
+                    return False
+                return True
+            if settings.MONGODB_URI:
+                _nonce_store.pop(nonce, None)
+                return False
+    except Exception as e:
+        logger.warning("Could not consume nonce from MongoDB: %s", e)
+
+    # 3. Fallback to process-local in-memory store
     _purge_expired_nonces()
     ts = _nonce_store.pop(nonce, None)
     if ts is None:
@@ -132,10 +208,14 @@ def _derive_kid() -> str:
 def is_dev_mock_login_allowed() -> bool:
     """
     Mock login is ONLY permitted in local development when ALLOW_DEV_MOCK_LOGIN is true.
-    In production environments (e.g. VERCEL_ENV=production or ENVIRONMENT=production),
-    mock tokens are strictly rejected.
+    In deployed environments (e.g. VERCEL_ENV set to preview or production, or VERCEL set)
+    or when ENVIRONMENT is not 'development', mock tokens are strictly rejected.
     """
-    if os.getenv("VERCEL_ENV", "").lower() == "production" or getattr(settings, "ENVIRONMENT", "").lower() == "production":
+    vercel_env = os.getenv("VERCEL_ENV", "").lower()
+    is_vercel = bool(os.getenv("VERCEL")) or bool(vercel_env)
+    env = getattr(settings, "ENVIRONMENT", "").lower()
+
+    if is_vercel or env != "development":
         return False
     return bool(settings.ALLOW_DEV_MOCK_LOGIN)
 
@@ -341,7 +421,7 @@ def hash_token(token: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# CSRF - session-bound tokens stored in a server-side mapping
+# CSRF - session-bound tokens stored in a distributed mapping
 # Maps csrf_token -> (sub, expiry_timestamp)
 # ---------------------------------------------------------------------------
 _csrf_store: Dict[str, Tuple[str, float]] = {}
@@ -358,20 +438,40 @@ def _purge_expired_csrf() -> None:
 def generate_csrf_token(sub: str = "") -> str:
     """
     Generate and store a CSRF token bound to the given subject (user identity).
+    Stored distributedly across Upstash Redis and MongoDB Atlas with memory fallback.
     Returns the opaque token the client must echo in the X-CSRF-Token header.
     """
     _purge_expired_csrf()
     token = secrets.token_hex(24)
     expiry = time.time() + _CSRF_TTL_SECONDS
     _csrf_store[token] = (sub, expiry)
+
+    # 1. Upstash Redis
+    _upstash_exec(["SET", f"csrf:{token}", sub or "anonymous", "EX", str(_CSRF_TTL_SECONDS)])
+
+    # 2. MongoDB Atlas
+    try:
+        from api.database import get_mongo_db
+        db = get_mongo_db()
+        if db is not None:
+            exp_dt = datetime.now(timezone.utc) + timedelta(seconds=_CSRF_TTL_SECONDS)
+            db.csrf_tokens.update_one(
+                {"token": token},
+                {"$set": {"token": token, "sub": sub, "expires_at": exp_dt}},
+                upsert=True
+            )
+    except Exception as e:
+        logger.warning("Could not persist CSRF token to MongoDB: %s", e)
+
     return token
 
 
-def validate_csrf(request: Request, require_token: bool = True) -> None:
+def validate_csrf(request: Request, require_token: bool = True, expected_sub: Optional[str] = None) -> None:
     """
     Validates Origin and the CSRF header on state-changing requests.
-    Also confirms the CSRF token exists in the server-side store
-    (session-bound check) and has not expired.
+    Confirms the CSRF token exists in the shared distributed store and has not expired.
+    Enforces user binding: verifies that the CSRF token was issued to the same
+    student identity making the request.
     """
     origin = request.headers.get("origin", "")
 
@@ -402,24 +502,94 @@ def validate_csrf(request: Request, require_token: bool = True) -> None:
     if not csrf_header:
         raise HTTPException(status_code=403, detail="Forbidden: Missing CSRF token.")
 
-    # Session-bound lookup
-    _purge_expired_csrf()
-    entry = _csrf_store.get(csrf_header)
-    if entry is None:
-        in_dev_mode = is_dev_mock_login_allowed()
-        if in_dev_mode and csrf_header == "mock_csrf_dev":
-            return
+    in_dev_mode = is_dev_mock_login_allowed()
+    if in_dev_mode and csrf_header == "mock_csrf_dev":
+        return
+
+    token_sub: Optional[str] = None
+    token_found = False
+
+    # 1. Lookup in Upstash Redis
+    upstash_val = _upstash_exec(["GET", f"csrf:{csrf_header}"])
+    if upstash_val is not None:
+        token_found = True
+        token_sub = upstash_val if upstash_val != "anonymous" else ""
+
+    # 2. Lookup in MongoDB Atlas
+    if not token_found:
+        try:
+            from api.database import get_mongo_db
+            db = get_mongo_db()
+            if db is not None:
+                doc = db.csrf_tokens.find_one({"token": csrf_header})
+                if doc:
+                    exp_dt = doc.get("expires_at")
+                    if exp_dt:
+                        if exp_dt.tzinfo is None:
+                            exp_dt = exp_dt.replace(tzinfo=timezone.utc)
+                        if exp_dt < datetime.now(timezone.utc):
+                            db.csrf_tokens.delete_one({"token": csrf_header})
+                            raise HTTPException(status_code=403, detail="Forbidden: CSRF token has expired.")
+                    token_found = True
+                    token_sub = doc.get("sub", "")
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.warning("Could not lookup CSRF token in MongoDB: %s", e)
+
+    # 3. Lookup in local in-memory store
+    if not token_found:
+        _purge_expired_csrf()
+        entry = _csrf_store.get(csrf_header)
+        if entry is not None:
+            t_sub, exp_ts = entry
+            if time.time() > exp_ts:
+                del _csrf_store[csrf_header]
+                raise HTTPException(status_code=403, detail="Forbidden: CSRF token has expired.")
+            token_found = True
+            token_sub = t_sub
+
+    if not token_found:
         raise HTTPException(status_code=403, detail="Forbidden: Unrecognised CSRF token.")
 
-    _, expiry = entry
-    if time.time() > expiry:
-        del _csrf_store[csrf_header]
-        raise HTTPException(status_code=403, detail="Forbidden: CSRF token has expired.")
+    # --- Enforce CSRF User Binding ---
+    caller_sub = expected_sub
+    if not caller_sub:
+        raw_jwt = request.cookies.get("access_token")
+        if not raw_jwt:
+            auth_hdr = request.headers.get("authorization", "")
+            if auth_hdr.startswith("Bearer "):
+                raw_jwt = auth_hdr.split(" ")[1]
+        if raw_jwt:
+            try:
+                claims = decode_access_jwt(raw_jwt)
+                caller_sub = claims.get("sub")
+            except Exception:
+                pass
+
+    if token_sub and caller_sub and token_sub != caller_sub:
+        logger.warning(
+            "CSRF subject mismatch: token bound to '%s', request made by '%s'",
+            token_sub,
+            caller_sub
+        )
+        raise HTTPException(
+            status_code=403,
+            detail="Forbidden: CSRF token does not match authenticated user."
+        )
 
 
 def invalidate_csrf_token(token: str) -> None:
-    """Remove a CSRF token from the server-side store (e.g. on logout)."""
+    """Remove a CSRF token from all shared stores (e.g. on logout or account deletion)."""
     _csrf_store.pop(token, None)
+    _upstash_exec(["DEL", f"csrf:{token}"])
+    try:
+        from api.database import get_mongo_db
+        db = get_mongo_db()
+        if db is not None:
+            db.csrf_tokens.delete_one({"token": token})
+    except Exception as e:
+        logger.warning("Could not delete CSRF token from MongoDB: %s", e)
 
 
 # ---------------------------------------------------------------------------

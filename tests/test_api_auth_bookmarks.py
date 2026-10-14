@@ -484,3 +484,65 @@ def test_rate_limit_exceeded_429(dev_client, monkeypatch):
     assert data["error"] == "TOO_MANY_REQUESTS"
     assert "request_id" in data
 
+
+def test_csrf_token_cross_user_rejection(dev_client):
+    """
+    Security check: A CSRF token issued to User A must be rejected with 403 Forbidden
+    when attempted by User B on an authenticated state-changing endpoint.
+    """
+    # 1. Login User A (Alice) and get her CSRF token
+    resp_a = dev_client.post("/api/auth/google", json={"id_token": "mock:alice.25bcs10001@sst.scaler.com"})
+    assert resp_a.status_code == 200
+    csrf_token_a = resp_a.json()["csrf_token"]
+
+    # 2. Login User B (Bob) and get his session cookies and CSRF token
+    resp_b = dev_client.post("/api/auth/google", json={"id_token": "mock:bob.25bcs10002@sst.scaler.com"})
+    assert resp_b.status_code == 200
+    cookies_b = resp_b.cookies
+    csrf_token_b = resp_b.json()["csrf_token"]
+
+    assert csrf_token_a != csrf_token_b
+
+    # 3. User B attempts to perform a state-changing operation with User A's CSRF token
+    attack_resp = dev_client.patch(
+        "/api/users/me",
+        json={"bio": "Unauthorized profile modification attempt"},
+        headers={"x-csrf-token": csrf_token_a},
+        cookies=cookies_b
+    )
+    assert attack_resp.status_code == 403
+    err_body = attack_resp.json()
+    assert "Forbidden" in err_body["message"]
+    assert "CSRF" in err_body["message"]
+
+
+def test_mock_login_blocked_in_preview_environment(dev_client, monkeypatch):
+    """
+    Security check: Even if ALLOW_DEV_MOCK_LOGIN is True, running inside Vercel Preview
+    (VERCEL_ENV=preview) must strictly block mock authentication with 401 Unauthorized.
+    """
+    monkeypatch.setenv("VERCEL_ENV", "preview")
+    monkeypatch.setattr(settings, "ALLOW_DEV_MOCK_LOGIN", True)
+    monkeypatch.setattr(settings, "ENVIRONMENT", "development")
+
+    payload = {"id_token": "mock:student@sst.scaler.com"}
+    response = dev_client.post("/api/auth/google", json=payload)
+    assert response.status_code == 401
+    assert response.json()["error"] == "UNAUTHORIZED"
+
+
+def test_rate_limiter_production_missing_upstash_fails_closed(prod_client, monkeypatch):
+    """
+    Reliability check: In production, if Upstash Redis credentials are unset or empty,
+    rate-limited endpoints must fail closed with 503 instead of silent in-memory fallback.
+    """
+    monkeypatch.setattr(settings, "ENVIRONMENT", "production")
+    monkeypatch.setattr(settings, "UPSTASH_REDIS_REST_URL", "")
+    monkeypatch.setattr(settings, "UPSTASH_REDIS_REST_TOKEN", "")
+
+    resp = prod_client.get("/api/auth/nonce")
+    assert resp.status_code == 503
+    data = resp.json()
+    assert data["error"] == "SERVICE_UNAVAILABLE"
+
+
