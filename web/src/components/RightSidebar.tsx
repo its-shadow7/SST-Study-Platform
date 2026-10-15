@@ -86,11 +86,10 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ noteId, sections }) 
 
   return (
     <aside
-      className={`shrink-0 sticky top-14 h-[calc(100vh-3.5rem)] hidden xl:flex flex-col select-none transition-all duration-200 ${
-        isExpanded && activeTab === 'notes'
+      className={`shrink-0 sticky top-14 h-[calc(100vh-3.5rem)] hidden xl:flex flex-col select-none transition-all duration-200 ${isExpanded && activeTab === 'notes'
           ? 'w-[480px] z-30 bg-[#09090b] border-l border-white/10 shadow-2xl'
           : 'w-72 border-l border-white/[0.08] bg-[#09090b]/80 backdrop-blur-sm'
-      }`}
+        }`}
       aria-label="Sidebar utility island"
     >
       {/* 1. Header: Segmented Control [ On This Page | My Notes ] & Expand Button */}
@@ -98,11 +97,10 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ noteId, sections }) 
         <div className="flex items-center p-0.5 rounded-lg bg-white/[0.04] border border-white/10 text-xs">
           <button
             onClick={() => setActiveTab('toc')}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all ${
-              activeTab === 'toc'
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all ${activeTab === 'toc'
                 ? 'bg-white/10 text-zinc-100 shadow-sm font-medium'
                 : 'text-zinc-400 hover:text-zinc-200'
-            }`}
+              }`}
           >
             <AlignLeft className="w-3.5 h-3.5" />
             <span>On This Page</span>
@@ -110,11 +108,10 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ noteId, sections }) 
 
           <button
             onClick={() => setActiveTab('notes')}
-            className={`relative flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all ${
-              activeTab === 'notes'
+            className={`relative flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all ${activeTab === 'notes'
                 ? 'bg-white/10 text-zinc-100 shadow-sm font-medium'
                 : 'text-zinc-400 hover:text-zinc-200'
-            }`}
+              }`}
           >
             <PenLine className="w-3.5 h-3.5" />
             <span>My Notes</span>
@@ -151,11 +148,10 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ noteId, sections }) 
                 <button
                   key={sec.section_id}
                   onClick={() => scrollToSection(sec.section_id)}
-                  className={`group flex items-start text-left py-1.5 pl-3 -ml-px transition-all duration-150 border-l ${
-                    isActive
+                  className={`group flex items-start text-left py-1.5 pl-3 -ml-px transition-all duration-150 border-l ${isActive
                       ? 'border-blue-500 text-zinc-100 font-medium'
                       : 'border-transparent text-zinc-400 hover:text-zinc-200 hover:border-white/20'
-                  }`}
+                    }`}
                 >
                   <span className="line-clamp-2 leading-snug text-[13px]">
                     {sec.heading}

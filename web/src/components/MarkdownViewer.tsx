@@ -9,9 +9,14 @@ import { Check, Copy } from 'lucide-react';
 
 interface MarkdownViewerProps {
   content: string;
+  isCompact?: boolean;
 }
 
-const CodeBlock: React.FC<{ language: string; value: string }> = ({ language, value }) => {
+const CodeBlock: React.FC<{ language: string; value: string; isCompact?: boolean }> = ({
+  language,
+  value,
+  isCompact = true,
+}) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -25,9 +30,17 @@ const CodeBlock: React.FC<{ language: string; value: string }> = ({ language, va
   };
 
   return (
-    <div className="relative group my-6 rounded-lg overflow-hidden border border-white/10 bg-[#0c0c0f]">
+    <div
+      className={`relative group ${
+        isCompact ? 'my-3.5' : 'my-6'
+      } rounded-lg overflow-hidden border border-white/10 bg-[#0c0c0f]`}
+    >
       {/* Code Header bar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-white/[0.04] border-b border-white/[0.08] text-xs text-zinc-400 font-mono select-none">
+      <div
+        className={`flex items-center justify-between ${
+          isCompact ? 'px-3.5 py-1.5' : 'px-4 py-2'
+        } bg-white/[0.04] border-b border-white/[0.08] text-xs text-zinc-400 font-mono select-none`}
+      >
         <span className="uppercase tracking-wider text-[11px] font-semibold text-zinc-400">
           {language || 'text'}
         </span>
@@ -51,7 +64,7 @@ const CodeBlock: React.FC<{ language: string; value: string }> = ({ language, va
       </div>
 
       {/* Code Content */}
-      <div className="p-4 overflow-x-auto text-[0.875rem]">
+      <div className={`${isCompact ? 'p-3' : 'p-4'} overflow-x-auto text-[0.875rem]`}>
         <SyntaxHighlighter
           language={language || 'text'}
           style={vscDarkPlus}
@@ -59,8 +72,8 @@ const CodeBlock: React.FC<{ language: string; value: string }> = ({ language, va
             background: 'transparent',
             padding: 0,
             margin: 0,
-            fontSize: '0.875rem',
-            lineHeight: '1.65',
+            fontSize: isCompact ? '0.84rem' : '0.875rem',
+            lineHeight: isCompact ? '1.55' : '1.65',
             fontFamily: 'JetBrains Mono, monospace',
           }}
           wrapLongLines={false}
@@ -72,9 +85,51 @@ const CodeBlock: React.FC<{ language: string; value: string }> = ({ language, va
   );
 };
 
-export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ content }) => {
+export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ content, isCompact = true }) => {
+  const pClass = isCompact
+    ? 'mb-3.5 leading-[1.62] text-zinc-300 font-normal'
+    : 'mb-6 leading-[1.85] text-zinc-300 font-normal';
+
+  const h1Class = isCompact
+    ? 'text-xl font-bold tracking-tight text-zinc-100 mt-5 mb-2.5 border-b border-white/10 pb-1.5'
+    : 'text-2xl font-bold tracking-tight text-zinc-100 mt-8 mb-4 border-b border-white/10 pb-2';
+
+  const h2Class = isCompact
+    ? 'text-lg font-semibold tracking-tight text-zinc-100 mt-4.5 mb-2'
+    : 'text-xl font-semibold tracking-tight text-zinc-100 mt-7 mb-3';
+
+  const h3Class = isCompact
+    ? 'text-base font-medium text-zinc-200 mt-3.5 mb-1.5'
+    : 'text-lg font-medium text-zinc-200 mt-6 mb-2';
+
+  const listClass = isCompact
+    ? 'pl-5 mb-3.5 space-y-1 text-zinc-300'
+    : 'pl-6 mb-6 space-y-2 text-zinc-300';
+
+  const blockquoteClass = isCompact
+    ? 'border-l-2 border-blue-500/80 bg-blue-500/5 px-3 py-1.5 rounded-r my-3.5 text-zinc-300 italic'
+    : 'border-l-2 border-blue-500/80 bg-blue-500/5 px-4 py-2 rounded-r my-6 text-zinc-300 italic';
+
+  const tableContainerClass = isCompact
+    ? 'overflow-x-auto my-3.5 rounded-lg border border-white/10'
+    : 'overflow-x-auto my-6 rounded-lg border border-white/10';
+
+  const thClass = isCompact
+    ? 'px-3.5 py-2 bg-white/[0.03] border-b border-white/10 text-zinc-200 font-semibold text-xs uppercase tracking-wider'
+    : 'px-4 py-2.5 bg-white/[0.03] border-b border-white/10 text-zinc-200 font-semibold text-xs uppercase tracking-wider';
+
+  const tdClass = isCompact
+    ? 'px-3.5 py-2 border-b border-white/5 text-zinc-300 text-sm'
+    : 'px-4 py-2.5 border-b border-white/5 text-zinc-300';
+
   return (
-    <div className="markdown-body text-zinc-300 leading-markdown text-[1.0625rem]">
+    <div
+      className={`markdown-body text-zinc-300 ${
+        isCompact
+          ? 'density-compact text-[0.9375rem] leading-[1.62]'
+          : 'text-[1.0625rem] leading-markdown'
+      } transition-all`}
+    >
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[[rehypeKatex, { trust: false }]]}
@@ -82,32 +137,32 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ content }) => {
         components={{
           // Off-white headings with tight letter-spacing
           h1: ({ children, ...props }) => (
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-100 mt-8 mb-4 border-b border-white/10 pb-2" {...props}>
+            <h1 className={h1Class} {...props}>
               {children}
             </h1>
           ),
           h2: ({ children, ...props }) => (
-            <h2 className="text-xl font-semibold tracking-tight text-zinc-100 mt-7 mb-3" {...props}>
+            <h2 className={h2Class} {...props}>
               {children}
             </h2>
           ),
           h3: ({ children, ...props }) => (
-            <h3 className="text-lg font-medium text-zinc-200 mt-6 mb-2" {...props}>
+            <h3 className={h3Class} {...props}>
               {children}
             </h3>
           ),
           p: ({ children, ...props }) => (
-            <p className="mb-6 leading-[1.85] text-zinc-300 font-normal" {...props}>
+            <p className={pClass} {...props}>
               {children}
             </p>
           ),
           ul: ({ children, ...props }) => (
-            <ul className="list-disc pl-6 mb-6 space-y-2 text-zinc-300" {...props}>
+            <ul className={`list-disc ${listClass}`} {...props}>
               {children}
             </ul>
           ),
           ol: ({ children, ...props }) => (
-            <ol className="list-decimal pl-6 mb-6 space-y-2 text-zinc-300" {...props}>
+            <ol className={`list-decimal ${listClass}`} {...props}>
               {children}
             </ol>
           ),
@@ -117,24 +172,24 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ content }) => {
             </li>
           ),
           blockquote: ({ children, ...props }) => (
-            <blockquote className="border-l-2 border-blue-500/80 bg-blue-500/5 px-4 py-2 rounded-r my-6 text-zinc-300 italic" {...props}>
+            <blockquote className={blockquoteClass} {...props}>
               {children}
             </blockquote>
           ),
           table: ({ children, ...props }) => (
-            <div className="overflow-x-auto my-6 rounded-lg border border-white/10">
+            <div className={tableContainerClass}>
               <table className="w-full text-left text-sm border-collapse" {...props}>
                 {children}
               </table>
             </div>
           ),
           th: ({ children, ...props }) => (
-            <th className="px-4 py-2.5 bg-white/[0.03] border-b border-white/10 text-zinc-200 font-semibold text-xs uppercase tracking-wider" {...props}>
+            <th className={thClass} {...props}>
               {children}
             </th>
           ),
           td: ({ children, ...props }) => (
-            <td className="px-4 py-2.5 border-b border-white/5 text-zinc-300" {...props}>
+            <td className={tdClass} {...props}>
               {children}
             </td>
           ),

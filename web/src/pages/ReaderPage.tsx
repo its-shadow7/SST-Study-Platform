@@ -24,7 +24,9 @@ import {
   AlertTriangle,
   RotateCcw,
   HelpCircle,
-  ArrowRight
+  ArrowRight,
+  AlignJustify,
+  AlignLeft
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -66,6 +68,13 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
   const [loadError, setLoadError] = useState<string | null>(null);
   const [isZenMode, setIsZenMode] = useState<boolean>(false);
   const [linkCopied, setLinkCopied] = useState<boolean>(false);
+  const [density, setDensity] = useState<'compact' | 'comfortable'>(() => {
+    return (localStorage.getItem('sst_reader_density') as 'compact' | 'comfortable') || 'compact';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('sst_reader_density', density);
+  }, [density]);
 
   const { isBookmarked, toggleBookmark } = useBookmarks();
   const { user } = useAuth();
@@ -367,23 +376,31 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
                       </span>
                     </div>
 
-                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-100">
+                    <h1
+                      className={`${
+                        density === 'compact' ? 'text-2xl sm:text-3xl' : 'text-3xl sm:text-4xl'
+                      } font-bold tracking-tight text-zinc-100 transition-all`}
+                    >
                       {currentNote.topic_title}
                     </h1>
 
                     {/* Summary Abstract */}
-                    <p className="text-base text-zinc-300 leading-relaxed bg-white/[0.02] border border-white/[0.06] p-4 rounded-xl">
+                    <p
+                      className={`${
+                        density === 'compact' ? 'text-sm p-3' : 'text-base p-4'
+                      } text-zinc-300 leading-relaxed bg-white/[0.02] border border-white/[0.06] rounded-xl transition-all`}
+                    >
                       {currentNote.summary}
                     </p>
 
-                    {/* Action Bar: Bookmark & Share */}
+                    {/* Action Bar: Bookmark, Share & Density Toggle */}
                     <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => toggleBookmark(currentNote.note_id, currentNote.topic_title)}
                           className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg border text-xs font-medium transition-all ${bookmarked
-                              ? 'border-amber-500/40 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 shadow-sm'
-                              : 'border-white/10 bg-white/5 hover:bg-white/10 text-zinc-300'
+                            ? 'border-amber-500/40 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 shadow-sm'
+                            : 'border-white/10 bg-white/5 hover:bg-white/10 text-zinc-300'
                             }`}
                         >
                           <BookmarkIcon
@@ -411,9 +428,41 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
                         </button>
                       </div>
 
-                      <div className="flex items-center gap-2 text-xs text-zinc-400 font-mono">
-                        <Calendar className="w-3.5 h-3.5 text-zinc-400" />
-                        <span>Updated {currentNote.last_updated}</span>
+                      <div className="flex items-center gap-3">
+                        {/* Spacing Density Segmented Pill */}
+                        <div className="flex items-center p-0.5 rounded-lg bg-white/[0.04] border border-white/10 text-xs shadow-sm">
+                          <button
+                            onClick={() => setDensity('compact')}
+                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all ${
+                              density === 'compact'
+                                ? 'bg-blue-600/25 text-blue-400 border border-blue-500/30 font-semibold shadow-sm'
+                                : 'text-zinc-400 hover:text-zinc-200'
+                            }`}
+                            title="Compact density: tighter line height & spacing to read more content at once"
+                            aria-label="Compact reading density"
+                          >
+                            <AlignJustify className="w-3.5 h-3.5" />
+                            <span>Compact</span>
+                          </button>
+                          <button
+                            onClick={() => setDensity('comfortable')}
+                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all ${
+                              density === 'comfortable'
+                                ? 'bg-white/10 text-zinc-100 font-semibold shadow-sm'
+                                : 'text-zinc-400 hover:text-zinc-200'
+                            }`}
+                            title="Comfortable density: standard relaxed reading spacing"
+                            aria-label="Comfortable reading density"
+                          >
+                            <AlignLeft className="w-3.5 h-3.5" />
+                            <span>Comfortable</span>
+                          </button>
+                        </div>
+
+                        <div className="hidden sm:flex items-center gap-2 text-xs text-zinc-400 font-mono">
+                          <Calendar className="w-3.5 h-3.5 text-zinc-400" />
+                          <span>Updated {currentNote.last_updated}</span>
+                        </div>
                       </div>
                     </div>
 
@@ -434,14 +483,20 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
                   </div>
 
                   {/* Note Content Sections */}
-                  <div className="space-y-12">
+                  <div className={density === 'compact' ? 'space-y-6' : 'space-y-12'}>
                     {currentNote.sections.map((section, idx) => (
                       <section
                         key={section.section_id}
                         id={section.section_id}
                         className="scroll-mt-20 pt-2"
                       >
-                        <h2 className="text-2xl font-bold tracking-tight text-zinc-100 mb-4 pb-2 border-b border-white/[0.08] flex items-center gap-3">
+                        <h2
+                          className={`${
+                            density === 'compact'
+                              ? 'text-xl font-bold mb-3 pb-1.5'
+                              : 'text-2xl font-bold mb-4 pb-2'
+                          } tracking-tight text-zinc-100 border-b border-white/[0.08] flex items-center gap-3 transition-all`}
+                        >
                           <span className="text-xs font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
                             {String(idx + 1).padStart(2, '0')}
                           </span>
@@ -449,11 +504,15 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
                         </h2>
 
                         {/* Section Markdown Body */}
-                        <MarkdownViewer content={section.body} />
+                        <MarkdownViewer content={section.body} isCompact={density === 'compact'} />
 
                         {/* Citations / References if any */}
                         {section.citations && section.citations.length > 0 && (
-                          <div className="mt-4 pt-3 border-t border-white/[0.04] text-xs text-zinc-500">
+                          <div
+                            className={`${
+                              density === 'compact' ? 'mt-3 pt-2' : 'mt-4 pt-3'
+                            } border-t border-white/[0.04] text-xs text-zinc-500`}
+                          >
                             <span className="font-semibold text-zinc-400 mr-2">Citations:</span>
                             {section.citations.join('; ')}
                           </div>
@@ -464,7 +523,11 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
 
                   {/* Key Takeaways Bottom Card */}
                   {currentNote.key_takeaways && currentNote.key_takeaways.length > 0 && (
-                    <div className="mt-12 p-6 rounded-xl border border-blue-500/20 bg-blue-500/[0.03] space-y-3">
+                    <div
+                      className={`${
+                        density === 'compact' ? 'mt-8 p-4.5 space-y-2.5' : 'mt-12 p-6 space-y-3'
+                      } rounded-xl border border-blue-500/20 bg-blue-500/[0.03] transition-all`}
+                    >
                       <h3 className="text-base font-semibold text-blue-400 flex items-center gap-2">
                         <CheckCircle className="w-4 h-4" />
                         Key Takeaways

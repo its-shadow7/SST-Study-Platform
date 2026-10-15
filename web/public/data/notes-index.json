@@ -20,6 +20,171 @@
     "last_updated": "2026-10-07T10:30:00Z"
   },
   {
+    "note_id": "cml-t5-l01",
+    "term": "Term 5",
+    "subject_code": "CML",
+    "topic_title": "1. Foundations of Machine Learning, Paradigms & Problem Formulation",
+    "tags": [
+      "Machine Learning",
+      "Mitchell Framework",
+      "Supervised Learning",
+      "Unsupervised Learning",
+      "Classification",
+      "Regression",
+      "Mathematical Foundations",
+      "EDA"
+    ],
+    "summary": "An exhaustive, rigorous foundation for Classical Machine Learning. Covers the fundamental paradigm shift from rule-based software engineering to statistical learning, Tom Mitchell's formal ETP framework, the mathematical boundary between classification and regression, a complete taxonomy of machine learning paradigms, exploratory data analysis foundations, and concrete synthetic implementations.",
+    "learning_objectives": [
+      "Master the transition from classical deterministic programming to empirical machine learning.",
+      "Formalize learning problems using Tom Mitchell's Task-Experience-Performance (T-E-P) framework.",
+      "Differentiate classification and regression tasks based on target topology, loss functions, and evaluation metrics.",
+      "Distinguish supervised, unsupervised, semi-supervised, and reinforcement learning paradigms.",
+      "Select optimal visualization techniques (histograms, bar plots, scatter plots, line charts) for exploratory feature analysis."
+    ],
+    "last_updated": "2026-10-16T00:00:00Z"
+  },
+  {
+    "note_id": "cml-t5-l02",
+    "term": "Term 5",
+    "subject_code": "CML",
+    "topic_title": "2. Data Preparation, Feature Preprocessing & Leakage Prevention Pipelines",
+    "tags": [
+      "Data Preprocessing",
+      "Data Leakage",
+      "Feature Scaling",
+      "Categorical Encoding",
+      "Imputation",
+      "Scikit-Learn",
+      "Pipelines",
+      "ColumnTransformer"
+    ],
+    "summary": "An exhaustive, rigorous masterclass on machine learning data preparation. Covers the mathematical necessity of preprocessing, the insidious 'fake-good scores' phenomenon of data leakage, nominal vs. ordinal encoding mechanics, the Dummy Variable Trap, numerical scaling mathematics and gradient descent geometry, missingness mechanisms (MCAR, MAR, MNAR), and industrial pipeline architecture using Scikit-Learn's ColumnTransformer and Pipeline.",
+    "learning_objectives": [
+      "Diagnose and eliminate all forms of data leakage (preprocessing, target, temporal, and group leakage).",
+      "Enforce strict train/test hygiene by partitioning data before computing any statistical parameters.",
+      "Implement optimal categorical encoding strategies for nominal and ordinal feature spaces.",
+      "Select and apply numerical scaling transformations (StandardScaler, MinMaxScaler, RobustScaler) based on feature geometry and algorithm sensitivity.",
+      "Handle missing data via robust statistical imputation and missing indicator mechanisms.",
+      "Construct modular, leakage-proof machine learning pipelines using Scikit-Learn ColumnTransformer and Pipeline."
+    ],
+    "last_updated": "2026-10-16T00:00:00Z"
+  },
+  {
+    "note_id": "cml-t5-l03",
+    "term": "Term 5",
+    "subject_code": "CML",
+    "topic_title": "3. Linear Regression Deep Dive: Ordinary Least Squares, Normal Equations & Optimization",
+    "tags": [
+      "Linear Regression",
+      "Ordinary Least Squares",
+      "Normal Equation",
+      "Gradient Descent",
+      "Cost Functions",
+      "Evaluation Metrics",
+      "R-squared",
+      "Residuals"
+    ],
+    "summary": "An exhaustive, mathematically rigorous deep dive into Linear Regression. Covers vector formulation with the intercept trick, geometric projection in column space, calculus derivation of the Normal Equation, Batch vs. Stochastic Gradient Descent dynamics, feature scaling condition numbers, comprehensive holdout evaluation metrics (MAE, MSE, RMSE, R^2, Adjusted R^2), coefficient interpretation pitfalls, and complete scikit-learn pipeline implementations.",
+    "learning_objectives": [
+      "1. Master the mathematical formulation of linear regression using vector dot products and the intercept trick.",
+      "2. Formulate the Ordinary Least Squares (OLS) objective function J(theta) and understand its convex quadratic geometry.",
+      "3. Derive the closed-form Normal Equation theta = (X^T X)^(-1) X^T y via matrix calculus and geometric projection.",
+      "4. Differentiate Batch Gradient Descent, Stochastic Gradient Descent (SGD), and Mini-Batch Gradient Descent update rules.",
+      "5. Explain how feature scaling spherizes the loss surface contours to accelerate gradient descent convergence.",
+      "6. Compute, interpret, and compare evaluation metrics: MAE, MSE, RMSE, R^2, and Adjusted R^2 on unseen holdout datasets.",
+      "7. Interpret regression weights as partial slopes under ceteris paribus conditions, distinguishing association from causation."
+    ],
+    "last_updated": "2026-10-16T00:00:00Z"
+  },
+  {
+    "note_id": "cml-t5-l04",
+    "term": "Term 5",
+    "subject_code": "CML",
+    "topic_title": "4. Linear Regression Assumptions, Residual Diagnostics & Multicollinearity",
+    "tags": [
+      "Linear Regression",
+      "Gauss-Markov Assumptions",
+      "Residual Diagnostics",
+      "Heteroscedasticity",
+      "Multicollinearity",
+      "VIF",
+      "Q-Q Plot",
+      "Durbin-Watson"
+    ],
+    "summary": "An exhaustive, rigorous masterclass on Linear Regression assumptions and diagnostic validation. Covers the crucial divide between predictive accuracy and statistical inference, the full LINE+ Gauss-Markov framework, residual analysis geometry, statistical hypothesis tests (Breusch-Pagan, Durbin-Watson, Jarque-Bera), mathematical derivation and interpretation of Variance Inflation Factor (VIF), influential observation analysis (Leverage and Cook's Distance), and complete hands-on diagnostic workflows in Python.",
+    "learning_objectives": [
+      "1. Differentiate pure predictive performance (holdout RMSE) from inferential validity and coefficient interpretability.",
+      "2. Formulate and verify all five classical Gauss-Markov and regression assumptions using the LINE+ framework.",
+      "3. Conduct comprehensive residual diagnostics using Residuals vs. Fitted, Normal Q-Q, Scale-Location, and Cook's Distance plots.",
+      "4. Diagnose and remediate non-linearity through feature transformations, splines, and polynomial expansion.",
+      "5. Detect heteroscedasticity via the Breusch-Pagan test and resolve it using log-target transformations and White robust standard errors.",
+      "6. Evaluate error autocorrelation in sequential data using the Durbin-Watson statistic.",
+      "7. Derive the Variance Inflation Factor (VIF) mathematically, quantify multicollinearity inflation on standard errors, and deploy engineering remedies."
+    ],
+    "last_updated": "2026-10-16T00:00:00Z"
+  },
+  {
+    "note_id": "cml-t5-l05",
+    "term": "Term 5",
+    "subject_code": "CML",
+    "topic_title": "5. Gradient Descent Optimization: Batch, Stochastic, Mini-Batch & Convergence Dynamics",
+    "tags": [
+      "Optimization",
+      "Gradient Descent",
+      "Batch Gradient Descent",
+      "Stochastic Gradient Descent",
+      "Mini-Batch Gradient Descent",
+      "Learning Rate",
+      "Loss Landscape",
+      "Feature Scaling",
+      "Convergence Diagnostics"
+    ],
+    "summary": "An exhaustive, mathematically rigorous, and production-oriented masterclass on Gradient Descent optimization for machine learning. Explores why closed-form matrix inversions fail at enterprise scale, formalizes the calculus and multivariate geometry of gradient operators on convex MSE surfaces, proves the exact scalar and vectorized gradient update rules, diagnoses learning rate dynamics (understepping, critical stability thresholds, and numerical explosion), contrasts Batch, Stochastic, and Mini-Batch variants across variance-computation trade-offs, analyzes loss surface conditioning and ravine oscillation, investigates modern learning rate schedules, and implements high-throughput NumPy and Scikit-Learn optimizers.",
+    "learning_objectives": [
+      "1. Explain why closed-form OLS fails for large sample sizes or high feature dimensions, necessitating iterative first-order optimization.",
+      "2. Geometrically and mathematically interpret the gradient vector as the direction of steepest ascent on convex loss surfaces.",
+      "3. Derive both scalar and vectorized gradient formulas for Mean Squared Error loss.",
+      "4. Analyze the stability bounds of learning rate eta based on Hessian Lipschitz smoothness to prevent explosive divergence.",
+      "5. Compare computational complexity, trajectory geometry, and memory requirements of Batch, Stochastic, and Mini-Batch Gradient Descent.",
+      "6. Diagnose how unscaled features distort the loss landscape into elongated ravines and induce severe orthogonal bouncing.",
+      "7. Implement automated stopping criteria and dynamic learning rate decay schedules (step decay, exponential, cosine annealing).",
+      "8. Construct high-throughput vectorized solvers in NumPy and robust production pipelines with Scikit-Learn SGDRegressor."
+    ],
+    "last_updated": "2026-10-16T00:00:00Z"
+  },
+  {
+    "note_id": "cml-t5-l06",
+    "term": "Term 5",
+    "subject_code": "CML",
+    "topic_title": "6. Polynomial Regression, Model Complexity & The Bias-Variance Tradeoff",
+    "tags": [
+      "Polynomial Regression",
+      "Non-Linear Modeling",
+      "Basis Expansion",
+      "Bias-Variance Tradeoff",
+      "Underfitting",
+      "Overfitting",
+      "Adjusted R-squared",
+      "Occam's Razor",
+      "Vandermonde Matrix",
+      "Model Selection"
+    ],
+    "summary": "A comprehensive, mathematically rigorous deep dive into Polynomial Regression, model generalization, and the Bias-Variance Tradeoff. Investigates how non-linear hypotheses are formulated through linear parameterizations via basis expansions, proves why raw R-squared monotonically fails as an evaluation metric on training sets, derives the exact mathematical formulation of Adjusted R-squared, formalizes Occam's Razor across the model complexity spectrum (degrees 1 through 99), delivers a complete step-by-step mathematical proof of the Bias-Variance-Noise decomposition of expected Mean Squared Error, visualizes variance dynamics using the classical dartboard analogy, analyzes numerical instability in high-degree Vandermonde design matrices, and builds robust Scikit-Learn evaluation pipelines.",
+    "learning_objectives": [
+      "1. Motivate the need for non-linear modeling on curved data while maintaining the computational benefits of linear-in-parameter estimation.",
+      "2. Formulate polynomial feature expansion mathematically and evaluate the combinatorial growth of interaction terms.",
+      "3. Prove mathematically why raw training R-squared can never decrease when higher polynomial powers are added.",
+      "4. Derive and interpret Adjusted R-squared, utilizing its degree-of-freedom penalty to evaluate model fit fairly.",
+      "5. Apply Occam's Razor to choose parsimonious, robust models among competing hypotheses with comparable test accuracy.",
+      "6. Prove the Bias-Variance-Noise decomposition of expected out-of-sample prediction error step-by-step.",
+      "7. Map underfitting and overfitting states to high bias vs. high variance using the classical dartboard analogy.",
+      "8. Diagnose numerical hazards including structural multicollinearity and Vandermonde matrix ill-conditioning.",
+      "9. Build end-to-end, leakage-free Scikit-Learn pipelines utilizing PolynomialFeatures, StandardScaler, and validation sweeps."
+    ],
+    "last_updated": "2026-10-16T00:00:00Z"
+  },
+  {
     "note_id": "cn-lecture-01-introduction",
     "term": "Term 3",
     "subject_code": "CN",
