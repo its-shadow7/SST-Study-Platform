@@ -11,6 +11,7 @@ import {
   ArrowLeft,
   Settings as SettingsIcon,
   BookOpen,
+  Target,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/services/apiClient';
@@ -177,6 +178,46 @@ export const ProfilePage: React.FC = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Quiz Performance Card */}
+              {profile.quiz_stats && profile.quiz_stats.quizzes_attempted > 0 && (
+                <div className="p-4 rounded-xl border border-blue-500/20 bg-blue-500/[0.03] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center">
+                        <Target className="w-4 h-4" />
+                      </div>
+                      <h3 className="text-xs font-bold text-zinc-200 uppercase tracking-wider font-mono">
+                        Topic Quiz Mastery
+                      </h3>
+                    </div>
+                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                      {profile.quiz_stats.accuracy}% Avg Accuracy
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2.5 pt-1 text-center font-mono">
+                    <div className="p-2.5 rounded-lg bg-black/40 border border-white/[0.06]">
+                      <span className="text-sm font-bold text-zinc-100">
+                        {profile.quiz_stats.quizzes_completed}
+                      </span>
+                      <p className="text-[10px] text-zinc-400">Quizzes Completed</p>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-black/40 border border-white/[0.06]">
+                      <span className="text-sm font-bold text-zinc-100">
+                        {profile.quiz_stats.total_questions_answered}
+                      </span>
+                      <p className="text-[10px] text-zinc-400">Questions Solved</p>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-black/40 border border-white/[0.06]">
+                      <span className="text-sm font-bold text-emerald-400">
+                        {profile.quiz_stats.total_correct}
+                      </span>
+                      <p className="text-[10px] text-zinc-400">Correct Answers</p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Badges Showcase */}
               {profile.badges.length > 0 && (

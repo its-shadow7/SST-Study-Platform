@@ -67,6 +67,7 @@ def get_mongo_db():
         _mongo_db.comments.create_index([("note_id", 1), ("created_at", -1)])
         _mongo_db.comments.create_index("user_id")
         _mongo_db.scratchpads.create_index([("user_id", 1), ("note_id", 1)], unique=True)
+        _mongo_db.quiz_attempts.create_index([("user_id", 1), ("note_id", 1)], unique=True)
 
         try:
             _mongo_db.nonces.create_index("nonce", unique=True)
@@ -97,6 +98,7 @@ class InMemoryStore:
         self.scratchpads: Dict[str, dict] = {} # key: f"{user_id}:{note_id}"
         self.audit_logs: List[dict] = []
         self.notifications: Dict[str, dict] = {}
+        self.quiz_attempts: Dict[str, dict] = {} # key: f"{user_id}:{note_id}"
 
     def upsert_user(self, google_sub: str, email: str, display_name: str, avatar_url: Optional[str] = None, is_special: bool = False) -> dict:
         import re
@@ -546,6 +548,52 @@ class InMemoryStore:
                 n["read"] = True
                 count += 1
         return count
+
+    # ---------------------------------------------------------------------------
+    # Quiz Attempt Persistence
+    # ---------------------------------------------------------------------------
+    def get_quiz_attempt(self, user_id: str, note_id: str) -> Optional[dict]:
+        key = f"{user_id}:{note_id}"
+        return self.quiz_attempts.get(key)
+
+    def save_quiz_attempt(self, user_id: str, note_id: str, data: dict) -> dict:
+        key = f"{user_id}:{note_id}"
+        now_str = datetime.now(timezone.utc).isoformat()
+        doc = {
+            "user_id": user_id,
+            "note_id": note_id,
+            "selected_answers": data.get("selected_answers", {}),
+            "checked_questions": data.get("checked_questions", {}),
+            "is_completed": data.get("is_completed", False),
+            "score": data.get("score", 0),
+            "total_questions": data.get("total_questions", 0),
+            "percentage": data.get("percentage", 0),
+            "updated_at": now_str,
+        }
+        self.quiz_attempts[key] = doc
+        return doc
+
+    def delete_quiz_attempt(self, user_id: str, note_id: str) -> bool:
+        key = f"{user_id}:{note_id}"
+        if key in self.quiz_attempts:
+            del self.quiz_attempts[key]
+            return True
+        return False
+
+    def get_user_quiz_stats(self, user_id: str) -> dict:
+        user_attempts = [a for a in self.quiz_attempts.values() if a.get("user_id") == user_id]
+        total_attempted = len(user_attempts)
+        total_completed = sum(1 for a in user_attempts if a.get("is_completed"))
+        total_questions = sum(a.get("total_questions", 0) for a in user_attempts)
+        total_correct = sum(a.get("score", 0) for a in user_attempts)
+        accuracy = round((total_correct / total_questions) * 100) if total_questions > 0 else 0
+        return {
+            "quizzes_attempted": total_attempted,
+            "quizzes_completed": total_completed,
+            "total_questions_answered": total_questions,
+            "total_correct": total_correct,
+            "accuracy": accuracy,
+        }
 
 in_memory_store = InMemoryStore()
 

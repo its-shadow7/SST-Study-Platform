@@ -322,94 +322,12 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
                 <MobileTableOfContents sections={currentNote.sections} />
               )}
 
-              {/* Note Header Metadata & Badges */}
-              <div className="space-y-4 border-b border-white/[0.08] pb-6">
-                <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span className="px-2.5 py-0.5 rounded-md font-mono font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                    {currentNote.subject_code}
-                  </span>
-                  <span className="px-2.5 py-0.5 rounded-md bg-white/5 text-zinc-300 border border-white/10 font-mono">
-                    {currentNote.term}
-                  </span>
-                  <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
-                    <CheckCircle className="w-3.5 h-3.5" />
-                    <span>Reviewed & Approved</span>
-                  </span>
-                </div>
-
-                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-100">
-                  {currentNote.topic_title}
-                </h1>
-
-                {/* Summary Abstract */}
-                <p className="text-base text-zinc-300 leading-relaxed bg-white/[0.02] border border-white/[0.06] p-4 rounded-xl">
-                  {currentNote.summary}
-                </p>
-
-                {/* Action Bar: Bookmark & Share */}
-                <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => toggleBookmark(currentNote.note_id, currentNote.topic_title)}
-                      className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg border text-xs font-medium transition-all ${bookmarked
-                          ? 'border-amber-500/40 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 shadow-sm'
-                          : 'border-white/10 bg-white/5 hover:bg-white/10 text-zinc-300'
-                        }`}
-                    >
-                      <BookmarkIcon
-                        className={`w-4 h-4 ${bookmarked ? 'fill-amber-400 text-amber-400' : ''}`}
-                      />
-                      <span>{bookmarked ? 'Bookmarked' : 'Bookmark Note'}</span>
-                    </button>
-
-                    <button
-                      onClick={handleCopyLink}
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-xs text-zinc-300 transition-colors"
-                      title="Copy link to note"
-                    >
-                      {linkCopied ? (
-                        <>
-                          <Check className="w-4 h-4 text-emerald-400" />
-                          <span className="text-emerald-400">Copied!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Share2 className="w-4 h-4 text-zinc-400" />
-                          <span>Share</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-xs text-zinc-400 font-mono">
-                    <Calendar className="w-3.5 h-3.5 text-zinc-400" />
-                    <span>Updated {currentNote.last_updated}</span>
-                  </div>
-                </div>
-
-                {/* Tags */}
-                {currentNote.tags && currentNote.tags.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                    <Tag className="w-3.5 h-3.5 text-zinc-400 mr-1" />
-                    {currentNote.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-[11px] font-mono px-2 py-0.5 rounded bg-white/[0.04] text-zinc-400 border border-white/[0.06]"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-
-
-              {/* Tab 1: Topic Quiz View */}
+              {/* Tab 1: Topic Quiz View (Full Clean Canvas without Note Header) */}
               {activeTab === 'quiz' && (
                 currentNote.quiz ? (
                   <QuizSection
                     quiz={currentNote.quiz}
+                    noteId={currentNote.note_id}
                     onSwitchToNotes={() => handleTabChange('notes')}
                   />
                 ) : (
@@ -434,6 +352,87 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
               {/* Tab 2: Notes & Markdown View */}
               {activeTab === 'notes' && (
                 <>
+                  {/* Note Header Metadata & Badges */}
+                  <div className="space-y-4 border-b border-white/[0.08] pb-6">
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                      <span className="px-2.5 py-0.5 rounded-md font-mono font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                        {currentNote.subject_code}
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-md bg-white/5 text-zinc-300 border border-white/10 font-mono">
+                        {currentNote.term}
+                      </span>
+                      <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
+                        <CheckCircle className="w-3.5 h-3.5" />
+                        <span>Reviewed & Approved</span>
+                      </span>
+                    </div>
+
+                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-100">
+                      {currentNote.topic_title}
+                    </h1>
+
+                    {/* Summary Abstract */}
+                    <p className="text-base text-zinc-300 leading-relaxed bg-white/[0.02] border border-white/[0.06] p-4 rounded-xl">
+                      {currentNote.summary}
+                    </p>
+
+                    {/* Action Bar: Bookmark & Share */}
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => toggleBookmark(currentNote.note_id, currentNote.topic_title)}
+                          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg border text-xs font-medium transition-all ${bookmarked
+                              ? 'border-amber-500/40 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 shadow-sm'
+                              : 'border-white/10 bg-white/5 hover:bg-white/10 text-zinc-300'
+                            }`}
+                        >
+                          <BookmarkIcon
+                            className={`w-4 h-4 ${bookmarked ? 'fill-amber-400 text-amber-400' : ''}`}
+                          />
+                          <span>{bookmarked ? 'Bookmarked' : 'Bookmark Note'}</span>
+                        </button>
+
+                        <button
+                          onClick={handleCopyLink}
+                          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-xs text-zinc-300 transition-colors"
+                          title="Copy link to note"
+                        >
+                          {linkCopied ? (
+                            <>
+                              <Check className="w-4 h-4 text-emerald-400" />
+                              <span className="text-emerald-400">Copied!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Share2 className="w-4 h-4 text-zinc-400" />
+                              <span>Share</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      <div className="flex items-center gap-2 text-xs text-zinc-400 font-mono">
+                        <Calendar className="w-3.5 h-3.5 text-zinc-400" />
+                        <span>Updated {currentNote.last_updated}</span>
+                      </div>
+                    </div>
+
+                    {/* Tags */}
+                    {currentNote.tags && currentNote.tags.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                        <Tag className="w-3.5 h-3.5 text-zinc-400 mr-1" />
+                        {currentNote.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-[11px] font-mono px-2 py-0.5 rounded bg-white/[0.04] text-zinc-400 border border-white/[0.06]"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
                   {/* Note Content Sections */}
                   <div className="space-y-12">
                     {currentNote.sections.map((section, idx) => (

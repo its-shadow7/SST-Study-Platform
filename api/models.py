@@ -43,6 +43,7 @@ class PublicUserProfileResponse(BaseModel):
     total_upvotes: int = 0
     badges: List[str] = []
     recent_comments: List[dict] = []
+    quiz_stats: Optional[dict] = None
 
 class AuthResponse(BaseModel):
     user: UserResponse

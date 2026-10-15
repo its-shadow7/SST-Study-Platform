@@ -28,6 +28,7 @@ from api.comments import router as comments_router
 from api.moderation import router as moderation_router
 from api.notifications import router as notifications_router
 from api.scratchpad import router as scratchpad_router
+from api.quizzes import router as quizzes_router, get_quiz_stats_for_user
 from api.rate_limiter import check_rate_limit, get_client_ip
 from api.auth import (
     generate_login_nonce,
@@ -617,6 +618,7 @@ async def get_public_user_profile(
         badges.append("🛡️ Community Guardian")
 
     batch_info = extract_batch_info(email) or {}
+    quiz_stats = get_quiz_stats_for_user(target_user_id, db=db)
 
     return PublicUserProfileResponse(
         user_id=target_user_id,
@@ -631,6 +633,7 @@ async def get_public_user_profile(
         total_upvotes=total_upvotes,
         badges=badges,
         recent_comments=recent_comments,
+        quiz_stats=quiz_stats,
     )
 
 
@@ -855,10 +858,11 @@ async def get_protected_note_content(note_id: str, user: dict = Depends(get_curr
     with open(note_file, "r", encoding="utf-8") as f:
         return json.load(f)
 
-# Mount Comments, Moderation, Notifications & Scratchpad Routers
+# Mount Comments, Moderation, Notifications, Scratchpad & Quiz Routers
 app.include_router(comments_router)
 app.include_router(moderation_router)
 app.include_router(notifications_router)
 app.include_router(scratchpad_router)
+app.include_router(quizzes_router)
 
 

@@ -8,6 +8,7 @@ import {
   ThumbsUp,
   ExternalLink,
   Loader2,
+  Target,
 } from 'lucide-react';
 import { api } from '@/services/apiClient';
 import { RoleBadge } from './RoleBadge';
@@ -31,6 +32,13 @@ export interface PublicUserProfile {
     score: number;
     created_at: string;
   }>;
+  quiz_stats?: {
+    quizzes_attempted: number;
+    quizzes_completed: number;
+    total_questions_answered: number;
+    total_correct: number;
+    accuracy: number;
+  };
 }
 
 interface StudentProfileModalProps {
@@ -195,6 +203,31 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
                   </div>
                 </div>
               </div>
+
+              {/* Quiz Performance Banner (if attempted quizzes) */}
+              {profile.quiz_stats && profile.quiz_stats.quizzes_attempted > 0 && (
+                <div className="p-3 rounded-lg border border-blue-500/20 bg-blue-500/[0.04] flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-md bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 shrink-0">
+                      <Target className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-zinc-200">
+                        {profile.quiz_stats.quizzes_completed} Topic Quizzes Completed
+                      </p>
+                      <p className="text-[10px] text-zinc-400">
+                        {profile.quiz_stats.total_questions_answered} questions answered
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-sm font-bold text-emerald-400">
+                      {profile.quiz_stats.accuracy}%
+                    </span>
+                    <p className="text-[10px] text-zinc-400">Accuracy</p>
+                  </div>
+                </div>
+              )}
 
               {/* Badges Grid */}
               {profile.badges.length > 0 && (
