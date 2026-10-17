@@ -28,7 +28,7 @@ An exhaustive, rigorous masterclass on Linear Regression assumptions and diagnos
 ## 1. Statistical Inference vs. Pure Prediction: Why Assumptions Dictate Model Trust
 ### 1.1 The Two Operational Objectives of Linear Models
 
-In Lecture 3, we observed that fitting an Ordinary Least Squares (OLS) model produces a set of weights $\\hat{\\boldsymbol{\\theta}}$ that minimize training Mean Squared Error. In machine learning engineering, a model is deployed for one of two distinct objectives:
+In Lecture 3, we observed that fitting an Ordinary Least Squares (OLS) model produces a set of weights $\hat{\boldsymbol{\theta}}$ that minimize training Mean Squared Error. In machine learning engineering, a model is deployed for one of two distinct objectives:
 
 ```
                             +-----------------------------------------------+
@@ -46,8 +46,8 @@ In Lecture 3, we observed that fitting an Ordinary Least Squares (OLS) model pro
      if generalization error is low.                                             are violated (biased SEs, flipped signs).
 ```
 
-1. **Pure Prediction**: The sole objective is producing accurate point estimates $\\hat{y}$ on unseen holdout observations. If a non-linear or heteroscedastic model achieves low test RMSE, the engineer may accept it for prediction, though diagnostic sanity checks are still recommended.
-2. **Statistical Inference & Decision Policy**: The objective is interpreting the learned coefficients $\\hat{\\theta}_j$, conducting hypothesis tests ($H_0: \\theta_j = 0$), constructing $95\\%$ confidence intervals, or making corporate investment decisions based on feature impacts.
+1. **Pure Prediction**: The sole objective is producing accurate point estimates $\hat{y}$ on unseen holdout observations. If a non-linear or heteroscedastic model achieves low test RMSE, the engineer may accept it for prediction, though diagnostic sanity checks are still recommended.
+2. **Statistical Inference & Decision Policy**: The objective is interpreting the learned coefficients $\hat{\theta}_j$, conducting hypothesis tests ($H_0: \theta_j = 0$), constructing $95\\%$ confidence intervals, or making corporate investment decisions based on feature impacts.
 
 ---
 
@@ -66,15 +66,15 @@ In Lecture 3, we observed that fitting an Ordinary Least Squares (OLS) model pro
 
 ### 1.3 The Epistemic Core: Errors vs. Residuals
 
-All classical regression assumptions are formulated on the **unobservable true population disturbances** $\\varepsilon_i$:
+All classical regression assumptions are formulated on the **unobservable true population disturbances** $\varepsilon_i$:
 
-$$y_i = \\mathbf{x}_i^T \\boldsymbol{\\theta}^* + \\varepsilon_i, \\quad \\varepsilon_i \\sim \\mathcal{N}(0, \\sigma^2)$$
+$$y_i = \mathbf{x}_i^T \boldsymbol{\theta}^* + \varepsilon_i, \quad \varepsilon_i \sim \mathcal{N}(0, \sigma^2)$$
 
-Because the true parameter vector $\\boldsymbol{\\theta}^*$ is forever hidden, we can never directly measure the true errors $\\varepsilon_i$. Instead, we inspect the empirical **sample residuals** $e_i$:
+Because the true parameter vector $\boldsymbol{\theta}^*$ is forever hidden, we can never directly measure the true errors $\varepsilon_i$. Instead, we inspect the empirical **sample residuals** $e_i$:
 
-$$e_i = y_i - \\hat{y}_i = y_i - \\mathbf{x}_i^T \\hat{\\boldsymbol{\\theta}}$$
+$$e_i = y_i - \hat{y}_i = y_i - \mathbf{x}_i^T \hat{\boldsymbol{\theta}}$$
 
-Sample residuals $e_i$ serve as our only observable window into the behavior of the unobservable population errors $\\varepsilon_i$. Residual analysis is the diagnostic language through which we audit model validity.
+Sample residuals $e_i$ serve as our only observable window into the behavior of the unobservable population errors $\varepsilon_i$. Residual analysis is the diagnostic language through which we audit model validity.
 
 **Citations & References:**
 - Breiman, L. (2001). Statistical modeling: The two cultures. Statistical Science, 16(3), 199-231.
@@ -90,11 +90,11 @@ To verify that an Ordinary Least Squares estimator is theoretically sound, econo
 
 | Letter | Assumption Name | Mathematical Formulation | Core Meaning in Plain English |
 | :---: | :--- | :--- | :--- |
-| **L** | **Linearity in Parameters** | $\\mathbb{E}[y \\mid \\mathbf{X}] = \\mathbf{X}\\boldsymbol{\\theta}$ | The true relationship between input features and target expectation is linear in weights $\\boldsymbol{\\theta}$. |
-| **I** | **Independence of Errors** | $\\text{Cov}(\\varepsilon_i, \\varepsilon_j \\mid \\mathbf{X}) = 0, \\quad \\forall i \\neq j$ | Observations are independent. No autocorrelation across time, space, or clustered entity groups. |
-| **N** | **Normality of Residuals** | $\\varepsilon \\mid \\mathbf{X} \\sim \\mathcal{N}(\\mathbf{0}, \\sigma^2 \\mathbf{I})$ | Error terms are normally distributed. Mandatory for exact small-sample hypothesis tests ($t, F$) and prediction intervals. |
-| **E** | **Equal Variance (Homoscedasticity)** | $\\text{Var}(\\varepsilon_i \\mid \\mathbf{X}) = \\sigma^2, \\quad \\forall i$ | Residual dispersion remains constant across all fitted values $\\hat{y}$ and across all feature ranges. |
-| **+** | **No Perfect Multicollinearity** | $\\text{rank}(\\mathbf{X}) = d + 1$ | No explanatory feature column is an exact or near-exact linear combination of other feature columns. |
+| **L** | **Linearity in Parameters** | $\mathbb{E}[y \mid \mathbf{X}] = \mathbf{X}\boldsymbol{\theta}$ | The true relationship between input features and target expectation is linear in weights $\boldsymbol{\theta}$. |
+| **I** | **Independence of Errors** | $\text{Cov}(\varepsilon_i, \varepsilon_j \mid \mathbf{X}) = 0, \quad \forall i \neq j$ | Observations are independent. No autocorrelation across time, space, or clustered entity groups. |
+| **N** | **Normality of Residuals** | $\varepsilon \mid \mathbf{X} \sim \mathcal{N}(\mathbf{0}, \sigma^2 \mathbf{I})$ | Error terms are normally distributed. Mandatory for exact small-sample hypothesis tests ($t, F$) and prediction intervals. |
+| **E** | **Equal Variance (Homoscedasticity)** | $\text{Var}(\varepsilon_i \mid \mathbf{X}) = \sigma^2, \quad \forall i$ | Residual dispersion remains constant across all fitted values $\hat{y}$ and across all feature ranges. |
+| **+** | **No Perfect Multicollinearity** | $\text{rank}(\mathbf{X}) = d + 1$ | No explanatory feature column is an exact or near-exact linear combination of other feature columns. |
 
 ---
 
@@ -104,12 +104,12 @@ Why are these assumptions revered in mathematical statistics? The answer is form
 
 > **The Gauss-Markov Theorem**:
 > Under the conditions of:
-> 1. Linearity: $\\mathbf{y} = \\mathbf{X}\\boldsymbol{\\theta} + \\boldsymbol{\\varepsilon}$
-> 2. Zero conditional mean: $\\mathbb{E}[\\boldsymbol{\\varepsilon} \\mid \\mathbf{X}] = \\mathbf{0}$
-> 3. Spherical error variance (Homoscedasticity and No Autocorrelation): $\\text{Var}(\\boldsymbol{\\varepsilon} \\mid \\mathbf{X}) = \\sigma^2 \\mathbf{I}_m$
-> 4. Full column rank: $\\text{rank}(\\mathbf{X}) = d + 1$
+> 1. Linearity: $\mathbf{y} = \mathbf{X}\boldsymbol{\theta} + \boldsymbol{\varepsilon}$
+> 2. Zero conditional mean: $\mathbb{E}[\boldsymbol{\varepsilon} \mid \mathbf{X}] = \mathbf{0}$
+> 3. Spherical error variance (Homoscedasticity and No Autocorrelation): $\text{Var}(\boldsymbol{\varepsilon} \mid \mathbf{X}) = \sigma^2 \mathbf{I}_m$
+> 4. Full column rank: $\text{rank}(\mathbf{X}) = d + 1$
 > 
-> The Ordinary Least Squares estimator $\\hat{\\boldsymbol{\\theta}} = (\\mathbf{X}^T \\mathbf{X})^{-1} \\mathbf{X}^T \\mathbf{y}$ is the **Best Linear Unbiased Estimator (BLUE)**.
+> The Ordinary Least Squares estimator $\hat{\boldsymbol{\theta}} = (\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T \mathbf{y}$ is the **Best Linear Unbiased Estimator (BLUE)**.
 
 ```
 What BLUE Mathematically Guarantees:
@@ -130,7 +130,7 @@ What BLUE Mathematically Guarantees:
 ## 3. Residual Analysis: The Diagnostic Language of Regression
 ### 3.1 The Failure of Simple 'Predicted vs. Actual' Plots
 
-A common mistake is evaluating a regression model exclusively by plotting actual targets $y$ against predicted targets $\\hat{y}$. While this plot reveals gross correlation, it **hides severe systematic structural failures**:
+A common mistake is evaluating a regression model exclusively by plotting actual targets $y$ against predicted targets $\hat{y}$. While this plot reveals gross correlation, it **hides severe systematic structural failures**:
 - A curved non-linear trend can look deceptively tight around the $y = x$ diagonal.
 - Heteroscedastic fan spreads are compressed visually at high values.
 - Mild outliers blend into dense point clusters.
@@ -150,9 +150,9 @@ Predicted vs Actual (Deceptively Acceptable):     Residuals vs Fitted (Reveals S
 
 ### 3.2 The Four Core Residual Diagnostic Plots
 
-#### 1. Residuals vs. Fitted Values ($e_i$ vs. $\\hat{y}_i$)
+#### 1. Residuals vs. Fitted Values ($e_i$ vs. $\hat{y}_i$)
 - **What it audits**: Linearity and Equal Variance (Homoscedasticity).
-- **Ideal Pattern**: A completely uniform, random horizontal cloud of points scattered symmetrically around the zero line $e = 0$, with constant vertical spread across the entire horizontal range of $\\hat{y}$.
+- **Ideal Pattern**: A completely uniform, random horizontal cloud of points scattered symmetrically around the zero line $e = 0$, with constant vertical spread across the entire horizontal range of $\hat{y}$.
 - **Warning Signals**:
   - *Curved parabolic or U-shape*: Violates Linearity.
   - *Funnel / Megaphone shape*: Violates Homoscedasticity.
@@ -164,7 +164,7 @@ Predicted vs Actual (Deceptively Acceptable):     Residuals vs Fitted (Reveals S
   - *S-shaped curve with ends peeling away from diagonal*: Heavy tails (leptokurtic distribution / outliers).
   - *Systematic upward or downward bow*: Skewed residuals.
 
-#### 3. Scale-Location Plot ($\\sqrt{|\\text{Standardized Residuals}|}$ vs. $\\hat{y}_i$)
+#### 3. Scale-Location Plot ($\sqrt{|\text{Standardized Residuals}|}$ vs. $\hat{y}_i$)
 - **What it audits**: Homoscedasticity across the fitted range.
 - **Ideal Pattern**: A flat, horizontal trend line with randomly scattered points of equal vertical density.
 - **Warning Signal**: A steep upward sloping trend line proves that residual spread increases systematically with prediction magnitude.
@@ -181,17 +181,17 @@ Predicted vs Actual (Deceptively Acceptable):     Residuals vs Fitted (Reveals S
 ## 4. Assumption 1 (Linearity): Detection, Polynomial Spanning & Transformations
 ### 4.1 What Linearity Truly Means in OLS
 
-A frequent point of confusion is the definition of 'linear'. Linear regression requires the model to be **linear in the parameters $\\boldsymbol{\\theta}$**, **not** necessarily linear in the raw input features $\\mathbf{x}$.
+A frequent point of confusion is the definition of 'linear'. Linear regression requires the model to be **linear in the parameters $\boldsymbol{\theta}$**, **not** necessarily linear in the raw input features $\mathbf{x}$.
 
-$$\\text{Linear Model} \\iff h_{\\boldsymbol{\\theta}}(\\mathbf{x}) = \\sum_{j=0}^d \\theta_j \\phi_j(\\mathbf{x})$$
+$$\text{Linear Model} \iff h_{\boldsymbol{\theta}}(\mathbf{x}) = \sum_{j=0}^d \theta_j \phi_j(\mathbf{x})$$
 
-Where $\\phi_j(\\mathbf{x})$ can be any arbitrary non-linear basis transformation of raw features (e.g., $x_1^2$, $\\log(x_2)$, $\\sin(x_3)$, $x_1 x_2$). As long as the relationship between the transformed features $\\phi(\\mathbf{x})$ and prediction $\\hat{y}$ is additive with scalar weights $\\theta_j$, the optimization problem remains Ordinary Least Squares!
+Where $\phi_j(\mathbf{x})$ can be any arbitrary non-linear basis transformation of raw features (e.g., $x_1^2$, $\log(x_2)$, $\sin(x_3)$, $x_1 x_2$). As long as the relationship between the transformed features $\phi(\mathbf{x})$ and prediction $\hat{y}$ is additive with scalar weights $\theta_j$, the optimization problem remains Ordinary Least Squares!
 
 ---
 
 ### 4.2 Diagnosing Non-Linearity
 
-When the true relationship between an input feature and the target is non-linear (e.g., diminishing returns of income, exponential growth of population), fitting a straight line $y = \\theta_0 + \\theta_1 x$ introduces **systematic structural bias**:
+When the true relationship between an input feature and the target is non-linear (e.g., diminishing returns of income, exponential growth of population), fitting a straight line $y = \theta_0 + \theta_1 x$ introduces **systematic structural bias**:
 
 ```
 Diagnosing Non-Linearity in Residual Plots:
@@ -206,7 +206,7 @@ Diagnosing Non-Linearity in Residual Plots:
 ```
 
 1. **Residuals vs. Fitted**: If the mean residual curve bends in a smooth U-shape or inverted U-shape, the model is failing to capture a non-linear curvature.
-2. **Component-Plus-Residual (Partial Residual) Plots**: Plots $e_i + \\hat{\\theta}_j x_{ij}$ against $x_j$. This isolates the specific non-linear shape of feature $x_j$ independent of other model variables.
+2. **Component-Plus-Residual (Partial Residual) Plots**: Plots $e_i + \hat{\theta}_j x_{ij}$ against $x_j$. This isolates the specific non-linear shape of feature $x_j$ independent of other model variables.
 
 ---
 
@@ -215,11 +215,11 @@ Diagnosing Non-Linearity in Residual Plots:
 When non-linearity is detected, an engineer has three primary options:
 
 1. **Non-Linear Feature Transformations**:
-   - Logarithmic: $x' = \\log(x)$ (for diminishing returns, power-law features, or exponential decay).
-   - Square Root: $x' = \\sqrt{x}$ (for count features or Poisson-like variances).
+   - Logarithmic: $x' = \log(x)$ (for diminishing returns, power-law features, or exponential decay).
+   - Square Root: $x' = \sqrt{x}$ (for count features or Poisson-like variances).
    - Reciprocal: $x' = 1 / x$ (for rates, speed vs. time).
 2. **Polynomial Feature Expansion**:
-   $$h_{\\boldsymbol{\\theta}}(x) = \\theta_0 + \\theta_1 x + \\theta_2 x^2 + \\theta_3 x^3$$
+   $$h_{\boldsymbol{\theta}}(x) = \theta_0 + \theta_1 x + \theta_2 x^2 + \theta_3 x^3$$
    Implemented via Scikit-Learn's `PolynomialFeatures(degree=2, include_bias=False)`.
 3. **Spline Transformations / Generalized Additive Models (GAMs)**:
    Dividing the feature domain into intervals via knots and fitting piecewise polynomial splines (`SplineTransformer`).
@@ -233,11 +233,11 @@ When non-linearity is detected, an engineer has three primary options:
 ## 5. Assumption 2 (Homoscedasticity): The Heteroscedastic Fan, Breusch-Pagan Test & Log Transforms
 ### 5.1 The Nature of Heteroscedasticity
 
-**Homoscedasticity** (equal scatter) requires that the variance of the error term $\\varepsilon_i$ is constant across all observations, regardless of the values of the input features:
+**Homoscedasticity** (equal scatter) requires that the variance of the error term $\varepsilon_i$ is constant across all observations, regardless of the values of the input features:
 
-$$\\text{Var}(\\varepsilon_i \\mid \\mathbf{X} = \\mathbf{x}_i) = \\sigma^2 = \\text{constant}, \\quad \\forall i \\in \\{1, \\dots, m\\}$$
+$$\text{Var}(\varepsilon_i \mid \mathbf{X} = \mathbf{x}_i) = \sigma^2 = \text{constant}, \quad \forall i \in \\{1, \dots, m\\}$$
 
-**Heteroscedasticity** occurs when error variance is a function of input variables or predicted magnitude: $\\text{Var}(\\varepsilon_i \\mid \\mathbf{X} = \\mathbf{x}_i) = \\sigma_i^2 = f(\\mathbf{x}_i)$.
+**Heteroscedasticity** occurs when error variance is a function of input variables or predicted magnitude: $\text{Var}(\varepsilon_i \mid \mathbf{X} = \mathbf{x}_i) = \sigma_i^2 = f(\mathbf{x}_i)$.
 
 ```
 Homoscedasticity (Healthy Constant Band):          Heteroscedasticity (Classic Fan / Megaphone):
@@ -252,13 +252,13 @@ Homoscedasticity (Healthy Constant Band):          Heteroscedasticity (Classic F
 ```
 
 #### Why Heteroscedasticity Occurs in Practice
-- **Real Estate**: For modest $100,000 homes, pricing variation is small ($\\pm $10,000$). For luxury $5,000,000 estates, unique architectural features and bidder wealth create massive variance ($\\pm $1,000,000$).
+- **Real Estate**: For modest 100,000 USD homes, pricing variation is small ($\pm 10{,}000\text{ USD}$). For luxury 5,000,000 USD estates, unique architectural features and bidder wealth create massive variance ($\pm 1{,}000{,}000\text{ USD}$).
 - **Income & Expenditure**: Low-income households spend predictable fractions of income on food; wealthy households have immense discretionary choice, creating widening expenditure variance.
 
 #### Consequences on OLS
-1. **Coefficients Remain Unbiased**: $\\mathbb{E}[\\hat{\\boldsymbol{\\theta}}] = \\boldsymbol{\\theta}^*$. The line still passes through the center of the cloud.
-2. **Standard Errors Are Biased**: OLS standard error formulas assume $\\sigma^2$ is constant. Under heteroscedasticity, standard errors are systematically underestimated.
-3. **Hypothesis Tests Collapse**: Computed $t$-scores $\\frac{\\hat{\\theta}_j}{\\text{SE}(\\hat{\\theta}_j)}$ are artificially inflated, generating false positive statistical discoveries ($p$-value spam).
+1. **Coefficients Remain Unbiased**: $\mathbb{E}[\hat{\boldsymbol{\theta}}] = \boldsymbol{\theta}^*$. The line still passes through the center of the cloud.
+2. **Standard Errors Are Biased**: OLS standard error formulas assume $\sigma^2$ is constant. Under heteroscedasticity, standard errors are systematically underestimated.
+3. **Hypothesis Tests Collapse**: Computed $t$-scores $\frac{\hat{\theta}_j}{\text{SE}(\hat{\theta}_j)}$ are artificially inflated, generating false positive statistical discoveries ($p$-value spam).
 
 ---
 
@@ -266,11 +266,11 @@ Homoscedasticity (Healthy Constant Band):          Heteroscedasticity (Classic F
 
 To statistically confirm whether a residual fan represents true heteroscedasticity rather than random noise, we deploy the **Breusch-Pagan Test**:
 
-1. Fit the primary OLS model and obtain squared residuals $e_i^2 = (y_i - \\hat{y}_i)^2$.
+1. Fit the primary OLS model and obtain squared residuals $e_i^2 = (y_i - \hat{y}_i)^2$.
 2. Fit an auxiliary regression predicting squared residuals from the original features:
-   $$e_i^2 = \\gamma_0 + \\gamma_1 x_{i,1} + \\dots + \\gamma_d x_{i,d} + v_i$$
+   $$e_i^2 = \gamma_0 + \gamma_1 x_{i,1} + \dots + \gamma_d x_{i,d} + v_i$$
 3. Compute the test statistic:
-   $$\\text{LM} = m \\cdot R_{\\text{aux}}^2 \\sim \\chi^2(d)$$
+   $$\text{LM} = m \cdot R_{\text{aux}}^2 \sim \chi^2(d)$$
 4. **Decision Rule**: If $p < 0.05$, reject the null hypothesis of homoscedasticity; heteroscedasticity is statistically verified.
 
 ---
@@ -278,20 +278,20 @@ To statistically confirm whether a residual fan represents true heteroscedastici
 ### 5.3 Remediation Strategies
 
 #### Strategy 1: Log-Transformation of Target ($\log(y)$)
-When error spread grows proportionally with $y$, transforming $y \\to \\log(y)$ stabilizes variance across orders of magnitude:
+When error spread grows proportionally with $y$, transforming $y \to \log(y)$ stabilizes variance across orders of magnitude:
 
-$$\\log(y) = \\theta_0 + \\theta_1 x_1 + \\dots + \\theta_d x_d + \\varepsilon$$
+$$\log(y) = \theta_0 + \theta_1 x_1 + \dots + \theta_d x_d + \varepsilon$$
 
 - **Coefficient Interpretation After Log-y**:
-  $$\\theta_j = \\frac{\\partial \\log(y)}{\\partial x_j} = \\frac{1}{y} \\frac{\\partial y}{\\partial x_j} \\implies \\% \\Delta y \\approx 100 \\cdot \\theta_j \\quad (\\text{for a 1-unit increase in } x_j)$$
-  A coefficient of $\\theta_{\\text{income}} = 0.08$ means each additional unit of income associates with approximately an **$8\\%$ increase** in house price, rather than a fixed dollar amount.
+  $$\theta_j = \frac{\partial \log(y)}{\partial x_j} = \frac{1}{y} \frac{\partial y}{\partial x_j} \implies \\% \Delta y \approx 100 \cdot \theta_j \quad (\text{for a 1-unit increase in } x_j)$$
+  A coefficient of $\theta_{\text{income}} = 0.08$ means each additional unit of income associates with approximately an **$8\\%$ increase** in house price, rather than a fixed dollar amount.
 
 #### Strategy 2: Heteroscedasticity-Consistent (White / Huber-White) Standard Errors
 If transforming $y$ is undesirable or fails to fully resolve heteroscedasticity, compute robust standard errors via the 'sandwich' covariance estimator:
 
-$$\\text{Var}_{\\text{robust}}(\\hat{\\boldsymbol{\\theta}}) = (\\mathbf{X}^T \\mathbf{X})^{-1} \\left( \\sum_{i=1}^m e_i^2 \\mathbf{x}_i \\mathbf{x}_i^T \\right) (\\mathbf{X}^T \\mathbf{X})^{-1}$$
+$$\text{Var}_{\text{robust}}(\hat{\boldsymbol{\theta}}) = (\mathbf{X}^T \mathbf{X})^{-1} \left( \sum_{i=1}^m e_i^2 \mathbf{x}_i \mathbf{x}_i^T \right) (\mathbf{X}^T \mathbf{X})^{-1}$$
 
-This adjusts standard errors and $p$-values to be asymptotically valid without modifying the point estimates $\\hat{\\boldsymbol{\\theta}}$.
+This adjusts standard errors and $p$-values to be asymptotically valid without modifying the point estimates $\hat{\boldsymbol{\theta}}$.
 
 **Citations & References:**
 - Breusch, T. S., & Pagan, A. R. (1979). A simple test for heteroscedasticity and random coefficient variation. Econometrica, 47(5), 1287-1294.
@@ -303,14 +303,14 @@ This adjusts standard errors and $p$-values to be asymptotically valid without m
 ### 6.1 The Role of Normal Errors in OLS
 
 Assumption 3 specifies that the population disturbances follow a Gaussian bell curve:
-$$\\varepsilon_i \\overset{\\text{iid}}{\\sim} \\mathcal{N}(0, \\sigma^2)$$
+$$\varepsilon_i \overset{\text{iid}}{\sim} \mathcal{N}(0, \sigma^2)$$
 
 #### Why Normality Matters
-1. **Hypothesis Testing**: Formulating confidence intervals ($\\hat{\\theta}_j \\pm 1.96 \\cdot \\text{SE}$) and computing exact $t$-tests and $F$-tests requires that sampling distributions of $\\hat{\\boldsymbol{\\theta}}$ are strictly Gaussian.
-2. **Prediction Intervals**: Forecasting future individual outcomes $y_{\\text{new}} = \\hat{y}_{\\text{new}} \\pm t_{\\alpha/2} \\sqrt{\\sigma^2 + \\text{SE}^2}$ depends directly on Gaussian tail probabilities.
+1. **Hypothesis Testing**: Formulating confidence intervals ($\hat{\theta}_j \pm 1.96 \cdot \text{SE}$) and computing exact $t$-tests and $F$-tests requires that sampling distributions of $\hat{\boldsymbol{\theta}}$ are strictly Gaussian.
+2. **Prediction Intervals**: Forecasting future individual outcomes $y_{\text{new}} = \hat{y}_{\text{new}} \pm t_{\alpha/2} \sqrt{\sigma^2 + \text{SE}^2}$ depends directly on Gaussian tail probabilities.
 
 #### The Central Limit Theorem (CLT) Salvation for Large $m$
-By the Central Limit Theorem, the distribution of the estimated parameters $\\hat{\\boldsymbol{\\theta}} = (\\mathbf{X}^T \\mathbf{X})^{-1} \\mathbf{X}^T \\mathbf{y}$ converges asymptotically to a Multivariate Normal distribution as sample size $m \\to \\infty$, **regardless of the distribution of $\\varepsilon_i$**, provided errors have finite variance.
+By the Central Limit Theorem, the distribution of the estimated parameters $\hat{\boldsymbol{\theta}} = (\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T \mathbf{y}$ converges asymptotically to a Multivariate Normal distribution as sample size $m \to \infty$, **regardless of the distribution of $\varepsilon_i$**, provided errors have finite variance.
 - For datasets with $m > 500$, non-normal residuals have negligible impact on point estimates or large-sample $Z$-tests.
 - However, for individual prediction intervals and small sample inference ($m < 100$), non-normality remains a critical failure mode.
 
@@ -358,15 +358,15 @@ Outliers vs. High-Leverage vs. Influential Observations:
 ```
 
 1. **Vertical Outlier**: Observation with an extreme residual $|e_i|$, but typical feature values $x_i$. Has minimal leverage to tilt the regression line.
-2. **High Leverage Point**: Observation with extreme, unusual feature values $x_i$, far from the centroid $\\bar{\\mathbf{x}}$. Measured by the diagonal elements $h_{ii}$ of the Hat Matrix $\\mathbf{H} = \\mathbf{X}(\\mathbf{X}^T \\mathbf{X})^{-1} \\mathbf{X}^T$.
-3. **Influential Point**: An observation that possesses **both** high leverage and a large residual. Deleting this single point drastically changes the parameter vector $\\hat{\\boldsymbol{\\theta}}$.
+2. **High Leverage Point**: Observation with extreme, unusual feature values $x_i$, far from the centroid $\bar{\mathbf{x}}$. Measured by the diagonal elements $h_{ii}$ of the Hat Matrix $\mathbf{H} = \mathbf{X}(\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T$.
+3. **Influential Point**: An observation that possesses **both** high leverage and a large residual. Deleting this single point drastically changes the parameter vector $\hat{\boldsymbol{\theta}}$.
 
 #### Cook's Distance ($D_i$)
 Cook's Distance quantifies the overall displacement of all model predictions when observation $i$ is omitted:
 
-$$D_i = \\frac{\\sum_{j=1}^m (\\hat{y}_j - \\hat{y}_{j(-i)})^2}{(d+1) \\cdot \\text{MSE}} = \\frac{e_i^2}{(d+1) \\cdot \\text{MSE}} \\left[ \\frac{h_{ii}}{(1 - h_{ii})^2} \\right]$$
+$$D_i = \frac{\sum_{j=1}^m (\hat{y}_j - \hat{y}_{j(-i)})^2}{(d+1) \cdot \text{MSE}} = \frac{e_i^2}{(d+1) \cdot \text{MSE}} \left[ \frac{h_{ii}}{(1 - h_{ii})^2} \right]$$
 
-- **Threshold**: Any observation with $D_i > 0.5$ or $D_i > \\frac{4}{m}$ warrants manual inspection. Never blindly delete outliers; investigate whether they represent measurement error or genuine rare phenomena.
+- **Threshold**: Any observation with $D_i > 0.5$ or $D_i > \frac{4}{m}$ warrants manual inspection. Never blindly delete outliers; investigate whether they represent measurement error or genuine rare phenomena.
 
 **Citations & References:**
 - Shapiro, S. S., & Wilk, M. B. (1965). An analysis of variance test for normality. Biometrika, 52(3-4), 591-611.
@@ -379,23 +379,23 @@ $$D_i = \\frac{\\sum_{j=1}^m (\\hat{y}_j - \\hat{y}_{j(-i)})^2}{(d+1) \\cdot \\t
 
 Assumption 4 dictates that error terms across distinct observations are statistically uncorrelated:
 
-$$\\text{Cov}(\\varepsilon_i, \\varepsilon_j \\mid \\mathbf{X}) = 0, \\quad \\forall i \\neq j$$
+$$\text{Cov}(\varepsilon_i, \varepsilon_j \mid \mathbf{X}) = 0, \quad \forall i \neq j$$
 
 When this assumption is violated, the error covariance matrix is non-diagonal:
-$$\\text{Var}(\\boldsymbol{\\varepsilon} \\mid \\mathbf{X}) = \\sigma^2 \\boldsymbol{\\Omega}, \\quad \\boldsymbol{\\Omega} \\neq \\mathbf{I}$$
+$$\text{Var}(\boldsymbol{\varepsilon} \mid \mathbf{X}) = \sigma^2 \boldsymbol{\Omega}, \quad \boldsymbol{\Omega} \neq \mathbf{I}$$
 
 ---
 
 ### 7.2 Manifestations of Autocorrelation
 
 1. **Temporal Serial Correlation**: In sequential data (daily stock prices, hourly temperature, quarterly GDP), the residual at time $t$ is correlated with the residual at time $t-1$:
-   $$\\varepsilon_t = \\rho \\varepsilon_{t-1} + u_t, \\quad |\\rho| < 1$$
-   - Positive serial correlation ($\\rho > 0$): Consecutive errors have identical signs, producing long waves above and below the regression line.
+   $$\varepsilon_t = \rho \varepsilon_{t-1} + u_t, \quad |\rho| < 1$$
+   - Positive serial correlation ($\rho > 0$): Consecutive errors have identical signs, producing long waves above and below the regression line.
 2. **Spatial Autocorrelation**: Geographic proximity induces dependency (e.g., California housing parcel prices where neighboring parcels share unmeasured school district and ocean proximity amenities).
 3. **Clustered / Grouped Dependency**: Multiple observations collected from the same user, patient, or school classroom.
 
 #### Consequences on OLS
-Under positive autocorrelation ($\\rho > 0$), OLS standard error formulas vastly underestimate true parameter uncertainty. The true variance can be **10 to 50 times larger** than reported by OLS, creating false claims of statistical significance.
+Under positive autocorrelation ($\rho > 0$), OLS standard error formulas vastly underestimate true parameter uncertainty. The true variance can be **10 to 50 times larger** than reported by OLS, creating false claims of statistical significance.
 
 ---
 
@@ -403,9 +403,9 @@ Under positive autocorrelation ($\\rho > 0$), OLS standard error formulas vastly
 
 The **Durbin-Watson ($d$) test** evaluates first-order serial correlation in sequential residuals:
 
-$$d = \\frac{\\sum_{t=2}^m (e_t - e_{t-1})^2}{\\sum_{t=1}^m e_t^2} \\approx 2(1 - \\hat{\\rho})$$
+$$d = \frac{\sum_{t=2}^m (e_t - e_{t-1})^2}{\sum_{t=1}^m e_t^2} \approx 2(1 - \hat{\rho})$$
 
-Where $\\hat{\\rho} = \\frac{\\sum e_t e_{t-1}}{\\sum e_t^2}$ is the sample first-order autocorrelation of residuals.
+Where $\hat{\rho} = \frac{\sum e_t e_{t-1}}{\sum e_t^2}$ is the sample first-order autocorrelation of residuals.
 
 ```
 Interpreting the Durbin-Watson Statistic:
@@ -416,16 +416,16 @@ Interpreting the Durbin-Watson Statistic:
    Serial Correlation           AUTOCORRELATION             Serial Correlation
 ```
 
-- **$d \\approx 2.0$**: Ideal. Zero serial correlation.
+- **$d \approx 2.0$**: Ideal. Zero serial correlation.
 - **$d < 1.5$**: Serious positive autocorrelation. Standard errors are severely underestimated.
 - **$d > 2.5$**: Negative autocorrelation (alternating residual signs).
 
 ---
 
 ### 7.4 Remediation Strategies
-1. **Time-Series Lags & Differencing**: Include autoregressive lag terms $y_{t-1}$ or regress on first differences: $\\Delta y_t = y_t - y_{t-1}$.
+1. **Time-Series Lags & Differencing**: Include autoregressive lag terms $y_{t-1}$ or regress on first differences: $\Delta y_t = y_t - y_{t-1}$.
 2. **Cluster-Robust Standard Errors (Huber-White-Liang-Zeger)**: Group observations by entity ID (e.g., patient or district), allowing arbitrary internal correlation within clusters while maintaining independence across clusters.
-3. **Generalized Least Squares (GLS / Prais-Winsten)**: Pre-whiten data by multiplying by $\\boldsymbol{\\Omega}^{-1/2}$.
+3. **Generalized Least Squares (GLS / Prais-Winsten)**: Pre-whiten data by multiplying by $\boldsymbol{\Omega}^{-1/2}$.
 
 **Citations & References:**
 - Durbin, J., & Watson, G. S. (1950). Testing for serial correlation in least squares regression: I. Biometrika, 37(3-4), 409-428.
@@ -436,10 +436,10 @@ Interpreting the Durbin-Watson Statistic:
 ## 8. Assumption 5 (No Multicollinearity): Variance Inflation Factor (VIF) Derivation & Matrix Conditioning
 ### 8.1 The Multicollinearity Problem
 
-Multicollinearity arises when two or more explanatory features in design matrix $\\mathbf{X}$ are highly correlated, meaning one feature can be linearly predicted from the others with substantial accuracy.
+Multicollinearity arises when two or more explanatory features in design matrix $\mathbf{X}$ are highly correlated, meaning one feature can be linearly predicted from the others with substantial accuracy.
 
-- **Perfect Multicollinearity**: One column is an exact linear combination of others (e.g., including both `height_in_inches` and `height_in_centimeters`, or failing to drop one level in One-Hot Encoding). $\\mathbf{X}^T \\mathbf{X}$ is singular, determinant equals 0, and Normal Equations cannot be inverted.
-- **Imperfect (High) Multicollinearity**: Features are strongly correlated (e.g., in California housing, `total_rooms`, `total_bedrooms`, `population`, and `households` have pairwise correlations $r > 0.90$). $\\mathbf{X}^T \\mathbf{X}$ is invertible, but near-singular with tiny eigenvalues.
+- **Perfect Multicollinearity**: One column is an exact linear combination of others (e.g., including both `height_in_inches` and `height_in_centimeters`, or failing to drop one level in One-Hot Encoding). $\mathbf{X}^T \mathbf{X}$ is singular, determinant equals 0, and Normal Equations cannot be inverted.
+- **Imperfect (High) Multicollinearity**: Features are strongly correlated (e.g., in California housing, `total_rooms`, `total_bedrooms`, `population`, and `households` have pairwise correlations $r > 0.90$). $\mathbf{X}^T \mathbf{X}$ is invertible, but near-singular with tiny eigenvalues.
 
 ---
 
@@ -453,18 +453,18 @@ Multicollinearity arises when two or more explanatory features in design matrix 
 
 ### 8.3 Mathematical Derivation of Variance Inflation Factor (VIF)
 
-The variance of an individual estimated regression coefficient $\\hat{\\theta}_j$ in multiple regression is given by:
+The variance of an individual estimated regression coefficient $\hat{\theta}_j$ in multiple regression is given by:
 
-$$\\text{Var}(\\hat{\\theta}_j) = \\frac{\\sigma^2}{(m - 1) s_{x_j}^2} \\cdot \\frac{1}{1 - R_j^2}$$
+$$\text{Var}(\hat{\theta}_j) = \frac{\sigma^2}{(m - 1) s_{x_j}^2} \cdot \frac{1}{1 - R_j^2}$$
 
 Where:
-- $\\sigma^2$ is error variance.
+- $\sigma^2$ is error variance.
 - $s_{x_j}^2$ is the sample variance of feature $x_j$.
 - $R_j^2$ is the Coefficient of Determination obtained by **regressing feature $x_j$ on all other $d-1$ features**.
 
-The term $\\frac{1}{1 - R_j^2}$ is defined as the **Variance Inflation Factor (VIF)**:
+The term $\frac{1}{1 - R_j^2}$ is defined as the **Variance Inflation Factor (VIF)**:
 
-$$\\text{VIF}_j = \\frac{1}{1 - R_j^2}$$
+$$\text{VIF}_j = \frac{1}{1 - R_j^2}$$
 
 ```
 VIF Growth as Auxiliary R_j^2 Increases:
@@ -475,10 +475,10 @@ VIF Growth as Auxiliary R_j^2 Increases:
 ```
 
 #### Diagnostic Decision Rules
-- $\\text{VIF} = 1$: Ideal. Completely orthogonal.
-- $1 < \\text{VIF} < 5$: Acceptable moderate correlation. No remediation needed.
-- $\\text{VIF} > 5$: High collinearity. Investigate feature relationships.
-- $\\text{VIF} > 10$: Severe multicollinearity. Coefficients are untrustworthy and require remediation.
+- $\text{VIF} = 1$: Ideal. Completely orthogonal.
+- $1 < \text{VIF} < 5$: Acceptable moderate correlation. No remediation needed.
+- $\text{VIF} > 5$: High collinearity. Investigate feature relationships.
+- $\text{VIF} > 10$: Severe multicollinearity. Coefficients are untrustworthy and require remediation.
 
 ---
 
@@ -486,10 +486,10 @@ VIF Growth as Auxiliary R_j^2 Increases:
 
 1. **Feature Pruning**: Delete redundant features that provide duplicate signals (e.g., between `total_rooms` and `total_bedrooms`, keep only one).
 2. **Feature Engineering (Ratios)**: Create composite ratios that represent distinct physical concepts:
-   $$\\text{rooms\\_per\\_household} = \\frac{\\text{total\\_rooms}}{\\text{households}}, \\quad \\text{bedrooms\\_per\\_room} = \\frac{\\text{total\\_bedrooms}}{\\text{total\\_rooms}}$$
+   $$\text{rooms\\_per\\_household} = \frac{\text{total\\_rooms}}{\text{households}}, \quad \text{bedrooms\\_per\\_room} = \frac{\text{total\\_bedrooms}}{\text{total\\_rooms}}$$
    This breaks linear dependency and yields highly interpretable features.
 3. **Principal Component Analysis (PCA)**: Orthogonalize the correlated features into uncorrelated principal components.
-4. **$L_2$ Regularization (Ridge Regression)**: Adding $\\lambda \\mathbf{I}$ to $\\mathbf{X}^T \\mathbf{X}$ shifts eigenvalues away from zero, conditioning the matrix and stabilizing coefficient variances.
+4. **$L_2$ Regularization (Ridge Regression)**: Adding $\lambda \mathbf{I}$ to $\mathbf{X}^T \mathbf{X}$ shifts eigenvalues away from zero, conditioning the matrix and stabilizing coefficient variances.
 
 **Citations & References:**
 - Belsley, D. A., Kuh, E., & Welsch, R. E. (1980). Regression Diagnostics: Identifying Influential Data and Sources of Collinearity. John Wiley & Sons.
@@ -550,10 +550,10 @@ print(vif_data.sort_values(by="VIF", ascending=False).to_string(index=False))
 ```
 
 #### Diagnostic Output on California Housing
-- `households`: $\\text{VIF} \\approx 13.5$ (Severe Multicollinearity!)
-- `total_bedrooms`: $\\text{VIF} \\approx 10.2$ (Severe Multicollinearity!)
-- `total_rooms`: $\\text{VIF} \\approx 8.9$ (High Collinearity!)
-- `population`: $\\text{VIF} \\approx 6.4$ (High Collinearity!)
+- `households`: $\text{VIF} \approx 13.5$ (Severe Multicollinearity!)
+- `total_bedrooms`: $\text{VIF} \approx 10.2$ (Severe Multicollinearity!)
+- `total_rooms`: $\text{VIF} \approx 8.9$ (High Collinearity!)
+- `population`: $\text{VIF} \approx 6.4$ (High Collinearity!)
 
 The four census volume variables are heavily intercorrelated. In our pipeline, replacing them with `rooms_per_household`, `bedrooms_per_room`, and `population_per_household` reduces all VIFs below $2.5$.
 

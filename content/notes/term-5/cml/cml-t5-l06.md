@@ -470,12 +470,14 @@ To build indelible mental intuition for the interplay of Bias and Variance, cons
 
 When we construct a polynomial design matrix for a scalar feature $x \in \mathbb{R}$, we generate a **Vandermonde Matrix** $\boldsymbol{\Phi} \in \mathbb{R}^{m \times (d+1)}$:
 
-$$\boldsymbol{\Phi} = \begin{bmatrix}
+$$
+\boldsymbol{\Phi} = \begin{bmatrix}
 1 & x_1 & x_1^2 & x_1^3 & \dots & x_1^d \\
 1 & x_2 & x_2^2 & x_2^3 & \dots & x_2^d \\
 \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
 1 & x_m & x_m^2 & x_m^3 & \dots & x_m^d
-\end{bmatrix}$$
+\end{bmatrix}
+$$
 
 In numerical linear algebra, the Vandermonde matrix is notorious for being **exponentially ill-conditioned**:
 

@@ -86,6 +86,13 @@ const CodeBlock: React.FC<{ language: string; value: string; isCompact?: boolean
 };
 
 export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ content, isCompact = true }) => {
+  const sanitizedContent = React.useMemo(() => {
+    if (!content) return '';
+    // Safely convert escaped dollar signs (\$ or \\$) to HTML entity &dollar;
+    // Using a callback function ensures no '$' replacement pattern expansion happens.
+    return content.replace(/\\(\$)/g, () => '&dollar;');
+  }, [content]);
+
   const pClass = isCompact
     ? 'mb-3.5 leading-[1.62] text-zinc-300 font-normal'
     : 'mb-6 leading-[1.85] text-zinc-300 font-normal';
@@ -232,7 +239,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ content, isCompa
           pre: ({ children }) => <>{children}</>,
         }}
       >
-        {content}
+        {sanitizedContent}
       </ReactMarkdown>
     </div>
   );

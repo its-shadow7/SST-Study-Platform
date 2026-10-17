@@ -23,26 +23,27 @@
     "note_id": "cml-t5-l01",
     "term": "Term 5",
     "subject_code": "CML",
-    "topic_title": "1. Foundations of Machine Learning, Paradigms & Problem Formulation",
+    "topic_title": "1. Introduction to Classical Machine Learning, Paradigms & Problem Formulation",
     "tags": [
-      "Machine Learning",
-      "Mitchell Framework",
-      "Supervised Learning",
-      "Unsupervised Learning",
+      "Classical Machine Learning",
+      "Foundations",
+      "Tom Mitchell ETP",
       "Classification",
       "Regression",
-      "Mathematical Foundations",
-      "EDA"
+      "Supervised Learning",
+      "Unsupervised Learning",
+      "EDA",
+      "Data Visualization"
     ],
-    "summary": "An exhaustive, rigorous foundation for Classical Machine Learning. Covers the fundamental paradigm shift from rule-based software engineering to statistical learning, Tom Mitchell's formal ETP framework, the mathematical boundary between classification and regression, a complete taxonomy of machine learning paradigms, exploratory data analysis foundations, and concrete synthetic implementations.",
+    "summary": "An intuitive yet rigorous first-principles introduction to Classical Machine Learning. Covers the core DSML foundation (NumPy, Pandas, visualization taxonomy), the fundamental paradigm shift from rule-based software engineering (SDE) to statistical learning (MLE), Tom Mitchell's formal ETP framework for well-defined problems, the mathematical boundary separating classification from regression, and the operational contrast between supervised prediction and unsupervised structure discovery.",
     "learning_objectives": [
-      "Master the transition from classical deterministic programming to empirical machine learning.",
-      "Formalize learning problems using Tom Mitchell's Task-Experience-Performance (T-E-P) framework.",
-      "Differentiate classification and regression tasks based on target topology, loss functions, and evaluation metrics.",
-      "Distinguish supervised, unsupervised, semi-supervised, and reinforcement learning paradigms.",
-      "Select optimal visualization techniques (histograms, bar plots, scatter plots, line charts) for exploratory feature analysis."
+      "Understand why and when to transition from rule-based classical software engineering to machine learning.",
+      "Formulate any machine learning problem using Tom Mitchell's Task-Experience-Performance (T-E-P) framework.",
+      "Select the right exploratory data visualization tool (Histogram, Scatter, Bar, Line) based on data types and analytical questions.",
+      "Differentiate classification and regression tasks based on the mathematical nature of the target variable.",
+      "Distinguish supervised learning from unsupervised structure discovery (clustering) and know when to apply each."
     ],
-    "last_updated": "2026-10-16T00:00:00Z"
+    "last_updated": "2026-10-18T00:00:00Z"
   },
   {
     "note_id": "cml-t5-l02",
@@ -183,6 +184,255 @@
       "9. Build end-to-end, leakage-free Scikit-Learn pipelines utilizing PolynomialFeatures, StandardScaler, and validation sweeps."
     ],
     "last_updated": "2026-10-16T00:00:00Z"
+  },
+  {
+    "note_id": "cml-t5-l07",
+    "term": "Term 5",
+    "subject_code": "CML",
+    "topic_title": "7. Cross-Validation, Hyperparameter Tuning & Regularization (Ridge, Lasso & ElasticNet)",
+    "tags": [
+      "Regularization",
+      "Ridge Regression",
+      "Lasso Regression",
+      "ElasticNet",
+      "L1 vs L2",
+      "Sparsity",
+      "Cross Validation",
+      "Hyperparameter Tuning",
+      "K-Fold CV",
+      "Overfitting Prevention"
+    ],
+    "summary": "A comprehensive, intuitive masterclass on Regularization and Model Validation. Explains how high-degree polynomial and high-dimensional models develop wild coefficient oscillations, and how shrinkage penalties (L2 Ridge, L1 Lasso, and ElasticNet) restore generalization by balancing empirical loss against parameter magnitude. Unpacks the geometric intuition behind Lasso sparsity, why scaling is mandatory, the fundamental divide between parameters and hyperparameters, and how K-Fold Cross-Validation prevents optimistic tuning leakage.",
+    "learning_objectives": [
+      "Understand why complex models overfit and how shrinkage penalties constrain weight magnitudes to restore generalization.",
+      "Formulate L2 (Ridge) and L1 (Lasso) penalty objectives and mathematically explain why Lasso produces exact zero-weight sparsity.",
+      "Select appropriately between Ridge, Lasso, and ElasticNet based on feature correlation and sparsity requirements.",
+      "Recognize the critical necessity of feature scaling prior to regularization to prevent scale-biased penalties.",
+      "Implement leak-free K-Fold Cross-Validation and tune hyperparameter alpha using validation curves and Scikit-Learn Pipelines."
+    ],
+    "last_updated": "2026-10-18T00:00:00Z"
+  },
+  {
+    "note_id": "cml-t5-l08",
+    "term": "Term 5",
+    "subject_code": "CML",
+    "topic_title": "8. Logistic Regression, Classification Metrics & Class Imbalance",
+    "tags": [
+      "Logistic Regression",
+      "Classification",
+      "Sigmoid",
+      "Log-Loss",
+      "Binary Cross-Entropy",
+      "Confusion Matrix",
+      "Precision and Recall",
+      "F1-Score",
+      "ROC-AUC",
+      "Precision-Recall Curve",
+      "Class Imbalance",
+      "Cost-Sensitive Learning"
+    ],
+    "summary": "An exhaustive, intuitive masterclass on Binary Classification using Logistic Regression. Contrasts lines of best fit with hyperplanes of best separation, demystifies the Sigmoid function, Logit, and Odds, formalizes the convex Binary Cross-Entropy loss surface, and delivers a rigorous breakdown of the Confusion Matrix. Explores threshold tuning dynamics, shows why ROC curves deceive on imbalanced data while Precision-Recall curves tell the truth, and details production remediation for class imbalance.",
+    "learning_objectives": [
+      "Understand why linear regression fails for binary classification and formulate the Sigmoid activation and Log-Odds representation.",
+      "Derive and interpret the Binary Cross-Entropy (Log-Loss) objective function and explain why MSE is mathematically unsuitable.",
+      "Compute and diagnose all primary classification metrics (Accuracy, Precision, Recall, Specificity, F1-Score) from a confusion matrix.",
+      "Analyze operating threshold trade-offs and evaluate models using ROC-AUC and Precision-Recall (PR) curves.",
+      "Diagnose the 'Accuracy Trap' in severely imbalanced datasets and deploy industry solutions (class weighting, threshold tuning, and PR-AUC optimization)."
+    ],
+    "last_updated": "2026-10-18T00:00:00Z"
+  },
+  {
+    "note_id": "cml-t5-l09",
+    "term": "Term 5",
+    "subject_code": "CML",
+    "topic_title": "9. K-Nearest Neighbours (k-NN), Distance Metrics & The Curse of Dimensionality",
+    "tags": [
+      "K-Nearest Neighbours",
+      "KNN",
+      "Instance-Based Learning",
+      "Lazy Learning",
+      "Distance Metrics",
+      "Euclidean Distance",
+      "Manhattan Distance",
+      "Minkowski Distance",
+      "Bias-Variance Tradeoff",
+      "Curse of Dimensionality",
+      "Feature Scaling"
+    ],
+    "summary": "A comprehensive, intuitive masterclass on K-Nearest Neighbours (k-NN) and metric-space learning. Explores the non-parametric, instance-based paradigm where 'training' consists of memorizing data and inference computes local neighborhood majorities. Deconstructs Euclidean, Manhattan, and Minkowski distances, demonstrates why unscaled features blind the algorithm, maps the Bias-Variance tradeoff as k shifts from 1 to n, and proves why high-dimensional feature spaces suffer from distance concentration.",
+    "learning_objectives": [
+      "Understand instance-based (lazy) learning and contrast k-NN with parametric models (Linear and Logistic Regression).",
+      "Calculate and contrast distance metrics (Euclidean, Manhattan, Minkowski) and explain why feature scaling is strictly mandatory.",
+      "Analyze how hyperparameter k governs the Bias-Variance tradeoff from k=1 (high variance) to k=n (high bias).",
+      "Explain the geometric reality of the Curse of Dimensionality and the distance concentration phenomenon.",
+      "Implement production k-NN classification and regression pipelines using Scikit-Learn, KD-Trees, and BallTrees."
+    ],
+    "last_updated": "2026-10-18T00:00:00Z"
+  },
+  {
+    "note_id": "cml-t5-l10",
+    "term": "Term 5",
+    "subject_code": "CML",
+    "topic_title": "10. Decision Trees: Recursive Partitioning, Impurity Metrics & Tree Depth",
+    "tags": [
+      "Decision Trees",
+      "Recursive Partitioning",
+      "Entropy",
+      "Gini Impurity",
+      "Information Gain",
+      "Tree Depth",
+      "Overfitting",
+      "Axis-Aligned Splits",
+      "Classification Trees"
+    ],
+    "summary": "An intuitive yet rigorous first-principles guide to Decision Trees. Covers the foundational concept of recursive binary splitting, explains how trees partition feature space into axis-aligned rectangular regions without requiring feature scaling, deconstructs node impurity metrics (Shannon Entropy and Gini Impurity), walks through hand-calculated Information Gain on loan data, explores tree growth and stopping criteria, and diagnoses overfitting controls.",
+    "learning_objectives": [
+      "Explain how Decision Trees partition feature space using axis-aligned orthogonal splits to make predictions.",
+      "Calculate and contrast Entropy and Gini Impurity as measures of node homogeneity.",
+      "Compute Information Gain and Gini Gain step-by-step for candidate feature splits on a dataset.",
+      "Analyze why unconstrained deep trees overfit and tune pre-pruning stopping knobs (max_depth, min_samples_leaf).",
+      "Train, visualize, and interpret Decision Trees using Scikit-Learn's DecisionTreeClassifier and plot_tree."
+    ],
+    "last_updated": "2026-10-18T00:00:00Z"
+  },
+  {
+    "note_id": "cml-t5-l11",
+    "term": "Term 5",
+    "subject_code": "CML",
+    "topic_title": "11. Decision Trees II: Pruning, Categorical Features & Feature Importance",
+    "tags": [
+      "Decision Trees",
+      "Cost-Complexity Pruning",
+      "Post-Pruning",
+      "ccp_alpha",
+      "Feature Importance",
+      "Mean Decrease in Impurity",
+      "Categorical Splits",
+      "Model Interpretability"
+    ],
+    "summary": "An in-depth, practical continuation of Decision Tree architectures. Explores why pre-pruning can suffer from the horizon problem and formalizes Cost-Complexity Pruning (ccp_alpha) where a deep tree is grown and systematically trimmed back. Dissects categorical split mechanics in Scikit-Learn, demystifies Mean Decrease in Impurity (MDI) feature importance, exposes high-cardinality bias traps, and implements production pruning on loan default datasets.",
+    "learning_objectives": [
+      "Contrast pre-pruning stopping rules with post-pruning via Minimal Cost-Complexity Pruning (ccp_alpha).",
+      "Extract the effective alpha pruning path using cost_complexity_pruning_path and select optimal tree complexity.",
+      "Compare numerical threshold splits against categorical feature encodings in CART trees.",
+      "Compute and interpret Mean Decrease in Impurity (MDI) feature importances and diagnose high-cardinality bias.",
+      "Build an end-to-end pruned decision tree pipeline on tabular data and rank feature drivers."
+    ],
+    "last_updated": "2026-10-18T00:00:00Z"
+  },
+  {
+    "note_id": "cml-t5-l12",
+    "term": "Term 5",
+    "subject_code": "CML",
+    "topic_title": "12. Bagging & Random Forests: Ensembles, Bootstrapping & Out-of-Bag Error",
+    "tags": [
+      "Ensemble Learning",
+      "Bagging",
+      "Bootstrap Aggregation",
+      "Random Forests",
+      "Out-of-Bag Error",
+      "Decorrelation",
+      "Variance Reduction",
+      "Feature Subspace Sampling",
+      "RandomForestClassifier"
+    ],
+    "summary": "An intuitive yet rigorous exploration of ensemble learning through Bagging and Random Forests. Starts by demonstrating why individual deep decision trees are fragile high-variance estimators that over-respond to small training shifts. Introduces Bootstrap sampling and the mathematical reality of Out-of-Bag samples. Unpacks Bagging (Bootstrap Aggregating) as parallel variance reduction, exposes the problem of correlated trees, and shows how Random Forests decorrelate trees by sampling random feature subsets at every split. Concludes with practical Scikit-Learn implementation on credit risk data and Out-of-Bag validation.",
+    "learning_objectives": [
+      "Explain why single deep decision trees suffer from high variance and structural instability.",
+      "Deconstruct the Bootstrap sampling mechanism and derive why approximately 36.8% of observations remain Out-of-Bag (OOB).",
+      "Formulate Bagging (Bootstrap Aggregation) and explain how averaging independent base learners reduces model variance.",
+      "Explain how Random Forests decorrelate ensemble trees via random feature subspace sampling (max_features = sqrt(p)).",
+      "Evaluate ensemble models using Out-of-Bag (OOB) scoring and compare single Decision Trees, Bagging, and Random Forests in Scikit-Learn."
+    ],
+    "last_updated": "2026-10-18T00:00:00Z"
+  },
+  {
+    "note_id": "cml-t5-l13",
+    "term": "Term 5",
+    "subject_code": "CML",
+    "topic_title": "13. Boosting: Sequential Ensembles, AdaBoost, Gradient Boosting & XGBoost",
+    "tags": [
+      "Boosting",
+      "Ensemble Learning",
+      "AdaBoost",
+      "Gradient Boosting",
+      "GBM",
+      "XGBoost",
+      "Decision Stumps",
+      "Residuals",
+      "Shrinkage",
+      "HistGradientBoostingClassifier"
+    ],
+    "summary": "A comprehensive, intuitive masterclass on sequential ensemble learning and the Boosting paradigm. Contrasts independent parallel averaging against sequential iterative error correction. Deconstructs AdaBoost using decision stumps and sample reweighting, explains Gradient Boosting as additive gradient descent in function space fitting residuals, explores modern production libraries (XGBoost and HistGradientBoosting), and contrasts the overfitting dynamics of Boosting against Random Forests.",
+    "learning_objectives": [
+      "Contrast parallel variance-reduction ensembles (Bagging/Random Forests) with sequential bias-reduction ensembles (Boosting).",
+      "Explain the step-by-step mechanism of AdaBoost: sample reweighting, decision stumps, and stage-weighted voting.",
+      "Formulate Gradient Boosting as an additive model that fits shallow regression trees to the pseudo-residuals of preceding models.",
+      "Analyze the architectural innovations of XGBoost and HistGradientBoosting (regularization, second-order gradients, histogram binning).",
+      "Diagnose overfitting risks in Boosting (learning_rate vs n_estimators trade-off) and tune models using Scikit-Learn and XGBoost."
+    ],
+    "last_updated": "2026-10-18T00:00:00Z"
+  },
+  {
+    "note_id": "cml-t5-l14",
+    "term": "Term 5",
+    "subject_code": "CML",
+    "topic_title": "14. Unsupervised Learning: K-Means Clustering & Hierarchical Clustering",
+    "tags": [
+      "Unsupervised Learning",
+      "Clustering",
+      "K-Means",
+      "Inertia",
+      "WCSS",
+      "k-means++",
+      "Elbow Method",
+      "Silhouette Score",
+      "Hierarchical Clustering",
+      "Agglomerative Clustering",
+      "Dendrogram",
+      "Linkage Criteria",
+      "Customer Segmentation"
+    ],
+    "summary": "An exhaustive, first-principles journey through Unsupervised Learning and Clustering. Explores why learning without labels requires internal geometrical validation, walks through Lloyd's K-Means algorithm and the mathematical proof of inertia convergence, solves the local minima trap with k-means++ initialization, and rigorously deconstructs the Elbow method and Silhouette coefficients. Unpacks Hierarchical Agglomerative Clustering, compares linkage metrics, decodes dendrograms, and demonstrates production customer segmentation in Scikit-Learn.",
+    "learning_objectives": [
+      "Contrast supervised learning against unsupervised learning and define cluster homogeneity via Euclidean distance.",
+      "Execute Lloyd's K-Means algorithm step-by-step: nearest-centroid assignment and centroid mean update.",
+      "Analyze the K-Means objective function (Inertia/WCSS), explain local minima convergence, and evaluate k-means++ seeding.",
+      "Determine the optimal number of clusters k using the Elbow heuristic and Silhouette analysis (cohesion a vs separation b).",
+      "Construct Hierarchical Agglomerative Clustering trees, evaluate linkage criteria (Single, Complete, Average, Ward), and cut dendrograms.",
+      "Implement end-to-end customer segmentation in Scikit-Learn, profile cluster personas, and diagnose geometric failure modes."
+    ],
+    "last_updated": "2026-10-18T00:00:00Z"
+  },
+  {
+    "note_id": "cml-t5-l15",
+    "term": "Term 5",
+    "subject_code": "CML",
+    "topic_title": "15. Dimensionality Reduction: Principal Component Analysis (PCA) & Variance Maximization",
+    "tags": [
+      "Dimensionality Reduction",
+      "PCA",
+      "Principal Component Analysis",
+      "Eigenvalues",
+      "Eigenvectors",
+      "Covariance Matrix",
+      "Variance Maximization",
+      "Scree Plot",
+      "Data Compression",
+      "Data Visualization",
+      "StandardScaler",
+      "Pipeline"
+    ],
+    "summary": "An intuitive yet mathematically rigorous guide to Principal Component Analysis (PCA) and Dimensionality Reduction. Establishes variance as the geometric currency of information, uses the torch-and-shadow analogy to explain projection, demystifies eigenvalues and eigenvectors as stretch factors and invariant directions of the covariance matrix, demonstrates the catastrophic 'forgot-to-scale' trap, guides component selection via scree plots, and constructs production Scikit-Learn pipelines for visualization, compression, and classification.",
+    "learning_objectives": [
+      "Explain why dimensionality reduction is necessary for visualization, computational speed, noise filtering, and distance metric stability.",
+      "Articulate the geometric intuition of PCA: rotating coordinate axes to align with directions of maximum data spread (variance).",
+      "Demonstrate why standardizing features (mean 0, variance 1) is mandatory before PCA to avoid arbitrary physical unit dominance.",
+      "Define eigenvalues and eigenvectors in plain language and calculate explained variance ratios step-by-step.",
+      "Select the optimal number of principal components using scree plots, cumulative variance thresholds, and cross-validated downstream models.",
+      "Implement PCA pipelines in Scikit-Learn without data leakage for high-dimensional visualization and lossy data compression."
+    ],
+    "last_updated": "2026-10-18T00:00:00Z"
   },
   {
     "note_id": "cn-lecture-01-introduction",

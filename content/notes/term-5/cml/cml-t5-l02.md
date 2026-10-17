@@ -236,8 +236,8 @@ Different machine learning model families exhibit starkly different mathematical
 
 ```
 Distance-Based Distortion (KNN / K-Means / SVM):
-   Point A: Income = $50,000, Age = 25
-   Point B: Income = $52,000, Age = 45
+   Point A: Income = 50,000 USD, Age = 25
+   Point B: Income = 52,000 USD, Age = 45
    Euclidean Distance = sqrt( (52000 - 50000)^2 + (45 - 25)^2 )
                       = sqrt( 4,000,000 + 400 ) = sqrt( 4,000,400 ) approx 2000.1
    The Age difference (20 years) is completely drowned out by Income ($2000)!

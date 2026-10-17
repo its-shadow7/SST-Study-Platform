@@ -1,0 +1,1441 @@
+"""
+Data definition for data_cml_l10:
+"""
+
+L10_DATA = {   'approval_status': 'approved',
+    'key_takeaways': [   'A Decision Tree makes predictions by traversing a sequence of internal yes/no questions from '
+                         'the root to a terminal leaf node.',
+                         'Geometrically, trees create axis-aligned, orthogonal boundaries (rectangles/boxes), unlike '
+                         'linear models which fit diagonal hyperplanes.',
+                         'Pure nodes contain samples from only one class (Impurity = 0); mixed 50-50 nodes have '
+                         'maximum uncertainty (Entropy = 1.0, Gini = 0.5).',
+                         'Information Gain measures the reduction in impurity achieved by splitting a node on a '
+                         'specific feature and threshold.',
+                         'Trees are naturally scale-invariant: monotonic transformations and differing physical units '
+                         'do not alter split ordering.',
+                         'Unconstrained trees will split until every leaf is pure, memorizing training noise (0% train '
+                         'error, high test variance).',
+                         'Pre-pruning constraints (max_depth, min_samples_split, min_samples_leaf) prevent trees from '
+                         'growing fragile, overfitted sub-branches.'],
+    'last_updated': '2026-10-18T00:00:00Z',
+    'learning_objectives': [   'Explain how Decision Trees partition feature space using axis-aligned orthogonal '
+                               'splits to make predictions.',
+                               'Calculate and contrast Entropy and Gini Impurity as measures of node homogeneity.',
+                               'Compute Information Gain and Gini Gain step-by-step for candidate feature splits on a '
+                               'dataset.',
+                               'Analyze why unconstrained deep trees overfit and tune pre-pruning stopping knobs '
+                               '(max_depth, min_samples_leaf).',
+                               "Train, visualize, and interpret Decision Trees using Scikit-Learn's "
+                               'DecisionTreeClassifier and plot_tree.'],
+    'note_id': 'cml-t5-l10',
+    'quiz': {   'questions': [   {   'correctOptionIds': ['opt-2'],
+                                     'difficulty': 'easy',
+                                     'explanation': 'Decision tree inference is a fast deterministic graph traversal: '
+                                                    'starting at the root, the instance answers yes/no conditions at '
+                                                    'internal nodes until arriving at a leaf that assigns the '
+                                                    'predicted class.',
+                                     'id': 'q-cml-l10-01',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': False,
+                                                        'text': 'It computes Euclidean distances to all training '
+                                                                'samples and takes a majority vote.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': True,
+                                                        'text': 'It traverses from the root node to a terminal leaf '
+                                                                'node by evaluating split questions along the path.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'It solves an Ordinary Least Squares matrix '
+                                                                'inversion.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'It projects the features onto the first principal '
+                                                                'component.'}],
+                                     'question': 'At prediction time, what operation does a trained Decision Tree '
+                                                 'execute to classify a new input instance x*?',
+                                     'subtopic': 'Tree Inference Mechanism',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-2'],
+                                     'difficulty': 'easy',
+                                     'explanation': 'Both Entropy (-sum p log2 p) and Gini (1 - sum p^2) evaluate to '
+                                                    'exactly 0.0 when a node is completely homogeneous (p = 1.0).',
+                                     'id': 'q-cml-l10-02',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': False,
+                                                        'text': 'Entropy = 1.0, Gini = 0.5'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': True,
+                                                        'text': 'Entropy = 0.0, Gini = 0.0'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'Entropy = 0.5, Gini = 1.0'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'Entropy is undefined; Gini is 0.0.'}],
+                                     'question': 'If a terminal leaf node in a decision tree contains 100 observations '
+                                                 'that all belong exclusively to Class 1 (100% pure), what are its '
+                                                 'Entropy and Gini Impurity values?',
+                                     'subtopic': 'Impurity of Pure Nodes',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-2'],
+                                     'difficulty': 'easy',
+                                     'explanation': 'Impurity represents uncertainty and mixture. It is maximized when '
+                                                    'classes are evenly balanced (p = 0.5), yielding Entropy = 1.0 and '
+                                                    'Gini = 0.5.',
+                                     'id': 'q-cml-l10-03',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': False,
+                                                        'text': 'When 100% of samples belong to Class 0.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': True,
+                                                        'text': 'When samples are equally split: 50% Class 0 and 50% '
+                                                                'Class 1 (Entropy = 1.0, Gini = 0.5).'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'When 90% of samples belong to Class 1.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'Impurity has no theoretical maximum.'}],
+                                     'question': 'In a binary classification problem (Classes 0 and 1), at what class '
+                                                 'distribution do Entropy and Gini Impurity reach their maximum '
+                                                 'theoretical values?',
+                                     'subtopic': 'Maximum Impurity',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-2'],
+                                     'difficulty': 'easy',
+                                     'explanation': "A split condition like 'Income <= 50,000 USD' is based strictly "
+                                                    'on ordering. Multiplying by 1,000 or standardizing to Z-scores '
+                                                    'changes the threshold number but keeps the partition of samples '
+                                                    'identical.',
+                                     'id': 'q-cml-l10-04',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': False,
+                                                        'text': 'Because trees internally normalize all numbers to 0 '
+                                                                'and 1 before splitting.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': True,
+                                                        'text': 'Because tree split decisions rely only on the '
+                                                                'relative order of values within a feature; monotonic '
+                                                                'transformations do not change which threshold '
+                                                                'maximizes Information Gain.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'Because trees can only process categorical string '
+                                                                'features.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'Scaling is actually mandatory; unscaled trees always '
+                                                                'fail to train.'}],
+                                     'question': 'Why do Decision Trees NOT require numerical feature scaling (like '
+                                                 'StandardScaler or MinMaxScaler)?',
+                                     'subtopic': 'Feature Scaling in Trees',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-1'],
+                                     'difficulty': 'easy',
+                                     'explanation': 'Information Gain = Impurity(Parent) - '
+                                                    'Weighted_Impurity(Children). It quantifies how much more '
+                                                    'homogeneous the data subsets become as a result of the split.',
+                                     'id': 'q-cml-l10-05',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': True,
+                                                        'text': 'The reduction in node impurity achieved by splitting '
+                                                                'the parent node into child subsets.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': False,
+                                                        'text': 'The increase in memory consumption of the tree '
+                                                                'graph.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'The training accuracy on the holdout test set.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'The number of trees in a random forest.'}],
+                                     'question': 'What does Information Gain represent when evaluating a candidate '
+                                                 'split in a Decision Tree?',
+                                     'subtopic': 'Information Gain Purpose',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-2'],
+                                     'difficulty': 'easy',
+                                     'explanation': 'An unconstrained decision tree will split on idiosyncratic noise '
+                                                    'points until every leaf contains a single sample, achieving 100% '
+                                                    'training accuracy but brittle test performance.',
+                                     'id': 'q-cml-l10-06',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': False,
+                                                        'text': 'The tree achieves high bias and underfits.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': True,
+                                                        'text': 'The tree continues splitting until every leaf is '
+                                                                'pure, memorizing training noise and resulting in 0% '
+                                                                'train error but poor generalization (overfitting).'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'The tree automatically prunes itself down to depth '
+                                                                '2.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'The tree converts into a linear model.'}],
+                                     'question': 'What happens if a Decision Tree is allowed to grow without any '
+                                                 'stopping constraints (max_depth=None)?',
+                                     'subtopic': 'Overfitting in Deep Trees',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-1'],
+                                     'difficulty': 'easy',
+                                     'explanation': "The 'max_depth' parameter limits how many levels of sequential "
+                                                    'questions the tree can ask from the root node to the deepest '
+                                                    'leaf.',
+                                     'id': 'q-cml-l10-07',
+                                     'options': [   {'id': 'opt-1', 'is_correct': True, 'text': 'max_depth'},
+                                                    {'id': 'opt-2', 'is_correct': False, 'text': 'min_samples_split'},
+                                                    {'id': 'opt-3', 'is_correct': False, 'text': 'criterion'},
+                                                    {'id': 'opt-4', 'is_correct': False, 'text': 'n_estimators'}],
+                                     'question': "Which of the following hyperparameters in Scikit-Learn's "
+                                                 'DecisionTreeClassifier is used to restrict the maximum vertical '
+                                                 'depth of the tree graph?',
+                                     'subtopic': 'Pre-Pruning Knobs',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-1'],
+                                     'difficulty': 'easy',
+                                     'explanation': "Scikit-Learn defaults to criterion='gini' because Gini impurity "
+                                                    'does not require computing logarithms, making split search '
+                                                    'computationally faster while yielding near-identical tree '
+                                                    'structures to entropy.',
+                                     'id': 'q-cml-l10-08',
+                                     'options': [   {'id': 'opt-1', 'is_correct': True, 'text': 'gini'},
+                                                    {'id': 'opt-2', 'is_correct': False, 'text': 'entropy'},
+                                                    {'id': 'opt-3', 'is_correct': False, 'text': 'log_loss'},
+                                                    {'id': 'opt-4', 'is_correct': False, 'text': 'mean_squared_error'}],
+                                     'question': "What is the default splitting criterion used by Scikit-Learn's "
+                                                 'DecisionTreeClassifier?',
+                                     'subtopic': 'Default Criterion',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-2'],
+                                     'difficulty': 'medium',
+                                     'explanation': 'At each internal node, the tree tests a single feature against a '
+                                                    'scalar threshold (x_j <= c). In 2D, this creates vertical and '
+                                                    'horizontal lines. In d-dimensions, it creates axis-aligned '
+                                                    'hyperplanes.',
+                                     'id': 'q-cml-l10-09',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': False,
+                                                        'text': 'All decision boundaries must pass directly through '
+                                                                'the origin (0, 0).'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': True,
+                                                        'text': 'Boundaries are strictly axis-aligned (orthogonal) '
+                                                                'hyperplanes, each perpendicular to a single feature '
+                                                                'coordinate axis.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'Boundaries are smooth circular contours.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'Boundaries are diagonal lines that weigh all features '
+                                                                'simultaneously.'}],
+                                     'question': 'What geometric constraint is inherent to the decision boundaries '
+                                                 'constructed by standard Decision Trees?',
+                                     'subtopic': 'Decision Boundary Orientation',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-1'],
+                                     'difficulty': 'medium',
+                                     'explanation': 'Evaluating thousands of candidate split thresholds involves '
+                                                    'millions of impurity calculations. Squaring numbers is much '
+                                                    'faster on microprocessors than computing log2.',
+                                     'id': 'q-cml-l10-10',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': True,
+                                                        'text': 'Gini Impurity uses addition and multiplication of '
+                                                                'squared probabilities (1 - sum p_c^2) rather than '
+                                                                'expensive transcendental logarithm evaluations (-sum '
+                                                                'p_c log2 p_c).'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': False,
+                                                        'text': 'Gini Impurity only evaluates 50% of the training '
+                                                                'rows.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'Gini Impurity does not support multi-class datasets.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'Entropy requires computing matrix inversions.'}],
+                                     'question': 'Why is Gini Impurity computationally faster to calculate than '
+                                                 'Shannon Entropy during the construction of large decision trees?',
+                                     'subtopic': 'Entropy vs Gini Computational Difference',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-1'],
+                                     'difficulty': 'medium',
+                                     'explanation': "The 'min_samples_leaf' parameter ensures that any terminal leaf "
+                                                    'prediction is backed by a statistically meaningful number of '
+                                                    'training samples, smoothing the variance of leaf decisions.',
+                                     'id': 'q-cml-l10-11',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': True,
+                                                        'text': 'It forces every leaf to contain at least 20 samples, '
+                                                                'preventing the model from creating fragile leaves '
+                                                                'based on 1 or 2 outlier points.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': False,
+                                                        'text': 'It guarantees that the tree will have exactly 20 '
+                                                                'leaves.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'It reduces the training set size to 20 rows.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'It sets the maximum depth of the tree to 20.'}],
+                                     'question': 'What is the primary practical advantage of setting min_samples_leaf '
+                                                 '= 20 in a DecisionTreeClassifier?',
+                                     'subtopic': 'Min Samples Leaf Role',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-2'],
+                                     'difficulty': 'medium',
+                                     'explanation': 'Greedy algorithms make the best local decision at each step. '
+                                                    'Finding the globally optimal decision tree is NP-complete, so '
+                                                    'heuristic top-down recursive splitting without backtracking is '
+                                                    'used.',
+                                     'id': 'q-cml-l10-12',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': False,
+                                                        'text': 'It consumes all available computer memory.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': True,
+                                                        'text': 'At each step, it chooses the locally optimal split '
+                                                                'that maximizes immediate impurity reduction without '
+                                                                'backtracking or checking if a different split would '
+                                                                'lead to a better global tree later.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'It only trains on datasets with more than 100 '
+                                                                'features.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'It requires financial compensation to run.'}],
+                                     'question': "Why is standard Decision Tree induction described as a 'greedy' "
+                                                 'algorithm?',
+                                     'subtopic': 'Greedy Recursive Splitting',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-1'],
+                                     'difficulty': 'medium',
+                                     'explanation': 'For continuous features, the tree sorts the unique training '
+                                                    'values present in the node and evaluates splits at midpoints (v_i '
+                                                    '+ v_{i+1}) / 2 where the class label changes.',
+                                     'id': 'q-cml-l10-13',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': True,
+                                                        'text': 'It sorts the unique values of the feature in the node '
+                                                                'and tests midpoints between adjacent sorted values as '
+                                                                'candidate thresholds.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': False,
+                                                        'text': 'It randomly picks any real number between -infinity '
+                                                                'and +infinity.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'It requires the user to manually enter thresholds '
+                                                                'before training.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'It converts all continuous numbers into text '
+                                                                'strings.'}],
+                                     'question': 'How does a Decision Tree identify candidate split thresholds for a '
+                                                 "continuous numerical feature like 'Annual Income'?",
+                                     'subtopic': 'Handling Continuous Features',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-2'],
+                                     'difficulty': 'medium',
+                                     'explanation': 'In regression trees, each leaf predicts a constant real number '
+                                                    'equal to the sample mean of the target variable y for all '
+                                                    'instances reaching that leaf.',
+                                     'id': 'q-cml-l10-14',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': False,
+                                                        'text': 'The median of the input feature values.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': True,
+                                                        'text': 'The arithmetic mean (average) of the continuous '
+                                                                'target values y of the training instances that fall '
+                                                                'into that leaf.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'The sum of all feature weights.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'A random sample from a normal distribution.'}],
+                                     'question': 'In a Regression Tree (DecisionTreeRegressor), what value is assigned '
+                                                 'as the prediction at a leaf node?',
+                                     'subtopic': 'Regression Tree Leaf Prediction',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-2'],
+                                     'difficulty': 'medium',
+                                     'explanation': 'Because decision tree splits are strictly orthogonal '
+                                                    '(axis-aligned), approximating a smooth diagonal boundary requires '
+                                                    'a stepped staircase pattern with many splits, highlighting a '
+                                                    'structural limitation of trees compared to linear models.',
+                                     'id': 'q-cml-l10-15',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': False,
+                                                        'text': 'It finds the diagonal slope in 1 single split.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': True,
+                                                        'text': "It must create a jagged 'staircase' approximation "
+                                                                'using many alternating horizontal and vertical '
+                                                                'splits, requiring substantial tree depth.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'It cannot learn the relationship at all and fails to '
+                                                                'train.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'It rotates the coordinate axis automatically.'}],
+                                     'question': 'If the true underlying decision boundary between two classes is a '
+                                                 'smooth 45-degree diagonal line (e.g., x1 = x2), how does a standard '
+                                                 'Decision Tree approximate it?',
+                                     'subtopic': 'Diagonal Decision Boundary Weakness',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-1'],
+                                     'difficulty': 'medium',
+                                     'explanation': 'If a node is already 100% pure, no split can improve homogeneity, '
+                                                    'so it automatically becomes a terminal leaf node.',
+                                     'id': 'q-cml-l10-16',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': True,
+                                                        'text': 'All observations in the node belong to the same class '
+                                                                '(Impurity = 0).'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': False,
+                                                        'text': 'The node contains exactly 50% positive and 50% '
+                                                                'negative samples.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'The computer CPU temperature exceeds 70 degrees.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'The dataset contains categorical strings.'}],
+                                     'question': 'Which of the following represents a natural stopping criterion where '
+                                                 'a decision tree terminates further recursion at a node?',
+                                     'subtopic': 'Stopping Criteria',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-1'],
+                                     'difficulty': 'hard',
+                                     'explanation': 'Entropy of Left = -(3/4 log2 0.75 + 1/4 log2 0.25) approx 0.811. '
+                                                    'Entropy of Right is symmetrically 0.811. Weighted child entropy = '
+                                                    '0.5 * 0.811 + 0.5 * 0.811 = 0.811. Information Gain = 1.0 - 0.811 '
+                                                    '= 0.189 bits.',
+                                     'id': 'q-cml-l10-17',
+                                     'options': [   {'id': 'opt-1', 'is_correct': True, 'text': '0.189 bits'},
+                                                    {'id': 'opt-2', 'is_correct': False, 'text': '1.000 bits'},
+                                                    {'id': 'opt-3', 'is_correct': False, 'text': '0.500 bits'},
+                                                    {'id': 'opt-4', 'is_correct': False, 'text': '0.000 bits'}],
+                                     'question': 'A parent node has 4 positive and 4 negative samples (Entropy = 1.0). '
+                                                 'A split divides the data into Left (3 positive, 1 negative) and '
+                                                 'Right (1 positive, 3 negative). What is the Information Gain of this '
+                                                 'split?',
+                                     'subtopic': 'Information Gain Calculation',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-1', 'opt-2', 'opt-4'],
+                                     'difficulty': 'hard',
+                                     'explanation': 'Options 1, 2, and 4 are fundamental properties. Option 3 is '
+                                                    'false: deep decision trees naturally suffer from high variance '
+                                                    '(instability) and low bias.',
+                                     'id': 'q-cml-l10-18',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': True,
+                                                        'text': 'Decision trees can capture high-order feature '
+                                                                'interactions without requiring manual polynomial '
+                                                                'basis expansions.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': True,
+                                                        'text': 'Decision trees are invariant to monotonic '
+                                                                'transformations of continuous features (e.g. log '
+                                                                'transforms or scaling).'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'Decision trees have low variance and high bias by '
+                                                                'nature.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': True,
+                                                        'text': 'A single unpruned decision tree is highly sensitive '
+                                                                'to small perturbations in the training dataset.'}],
+                                     'question': 'Which of the following statements represent true architectural and '
+                                                 'algorithmic invariants of standard Decision Trees?',
+                                     'subtopic': 'Decision Tree Invariants',
+                                     'type': 'multiple_choice'},
+                                 {   'correctOptionIds': ['opt-1'],
+                                     'difficulty': 'hard',
+                                     'explanation': 'Hierarchical recursive partitioning propagates early split '
+                                                    'changes through all descendant sub-trees. A slight shift in '
+                                                    'training data that flips the top split creates an entirely '
+                                                    'different model.',
+                                     'id': 'q-cml-l10-19',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': True,
+                                                        'text': 'Because a small modification to the training data can '
+                                                                'alter the root or early splits, cascading down and '
+                                                                'producing a completely different tree topology and '
+                                                                'leaf boundaries.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': False,
+                                                        'text': 'Because they use variance as the default splitting '
+                                                                'criterion in classification.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'Because they require learning rate decay schedules.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'Because they always predict high numbers.'}],
+                                     'question': 'Why are individual unconstrained Decision Trees considered '
+                                                 "'high-variance' estimators in statistical learning theory?",
+                                     'subtopic': 'Instability / High Variance',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-1'],
+                                     'difficulty': 'hard',
+                                     'explanation': 'If a feature has a unique value for each sample (like ID), '
+                                                    'partitioning on it produces child nodes that are 100% pure '
+                                                    '(impurity = 0), yielding maximum apparent Information Gain '
+                                                    'despite being useless for generalization.',
+                                     'id': 'q-cml-l10-20',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': True,
+                                                        'text': 'Because splitting on a feature with unique values '
+                                                                'creates pure 1-sample child nodes, falsely maximizing '
+                                                                'Information Gain while creating zero predictive '
+                                                                'value.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': False,
+                                                        'text': 'Because customer IDs have larger numerical '
+                                                                'magnitudes.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'Because Gini impurity cannot process integers.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'Because Scikit-Learn prioritizes alphanumeric '
+                                                                'strings.'}],
+                                     'question': 'Why does standard Information Gain exhibit an unfair bias toward '
+                                                 "selecting high-cardinality categorical features (like 'Customer ID' "
+                                                 "or 'Zip Code') as optimal splits?",
+                                     'subtopic': 'High-Cardinality Bias',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-1'],
+                                     'difficulty': 'hard',
+                                     'explanation': 'Regression trees select splits that maximize variance reduction '
+                                                    '(minimizing the sum of squared errors between child sample '
+                                                    'targets and child means).',
+                                     'id': 'q-cml-l10-21',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': True,
+                                                        'text': 'Mean Squared Error (MSE) / Variance of the target '
+                                                                'values within the child nodes.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': False,
+                                                        'text': 'Shannon Entropy of the target.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'The Gini coefficient of income inequality.'},
+                                                    {'id': 'opt-4', 'is_correct': False, 'text': 'Log-Loss.'}],
+                                     'question': 'What splitting criterion is standardly minimized when growing a '
+                                                 'Regression Tree (DecisionTreeRegressor)?',
+                                     'subtopic': 'Regression Tree Split Criterion',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-1'],
+                                     'difficulty': 'hard',
+                                     'explanation': 'If the true boundary is an additive linear hyperplane w1*x1 + ... '
+                                                    '+ wd*xd = 0, logistic regression fits it with d parameters, '
+                                                    'whereas an axis-aligned tree must fragment the space into a '
+                                                    'complex staircase of hundreds of orthogonal splits.',
+                                     'id': 'q-cml-l10-22',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': True,
+                                                        'text': 'When the true class boundary is governed by a linear '
+                                                                'combination of many continuous features with small '
+                                                                'additive effects.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': False,
+                                                        'text': 'When the classes form non-linear concentric circles.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'When features have completely unscaled physical '
+                                                                'units.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'When the dataset has fewer rows than columns.'}],
+                                     'question': 'For which data generating process will a Logistic Regression model '
+                                                 'outperform a Decision Tree with equivalent sample size?',
+                                     'subtopic': 'Linear vs Tree Representation',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-1', 'opt-2', 'opt-3'],
+                                     'difficulty': 'hard',
+                                     'explanation': 'Limiting depth (max_depth) and requiring larger sample thresholds '
+                                                    'to split or form leaves (min_samples_split, min_samples_leaf) '
+                                                    'prevent complex, noisy leaf generation. Option 4 allows '
+                                                    'unconstrained growth.',
+                                     'id': 'q-cml-l10-23',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': True,
+                                                        'text': 'Decreasing max_depth from 20 to 4.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': True,
+                                                        'text': 'Increasing min_samples_leaf from 1 to 25.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': True,
+                                                        'text': 'Increasing min_samples_split from 2 to 30.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'Increasing max_leaf_nodes to infinity.'}],
+                                     'question': 'Which of the following hyperparameter adjustments will successfully '
+                                                 'act to reduce overfitting in a DecisionTreeClassifier?',
+                                     'subtopic': 'Pre-Pruning Strategy',
+                                     'type': 'multiple_choice'},
+                                 {   'correctOptionIds': ['opt-1'],
+                                     'difficulty': 'hard',
+                                     'explanation': 'Decision trees produce piecewise constant predictions. Beyond the '
+                                                    'range of the training data, all queries route to the outermost '
+                                                    'boundary leaf, predicting a flat constant value without '
+                                                    'extrapolation.',
+                                     'id': 'q-cml-l10-24',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': True,
+                                                        'text': 'It predicts the constant value of the outermost leaf '
+                                                                'node, completely failing to extrapolate the upward '
+                                                                'trend.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': False,
+                                                        'text': 'It extrapolates linearly to infinity.'},
+                                                    {'id': 'opt-3', 'is_correct': False, 'text': 'It predicts zero.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'It crashes with an OutOfBoundsError.'}],
+                                     'question': 'What happens if a trained Regression Tree is asked to predict on an '
+                                                 'input x* with a feature value far outside the range seen in the '
+                                                 'training data (e.g. training area was [500, 3000] sqft, query is '
+                                                 '10,000 sqft)?',
+                                     'subtopic': 'Tree Extrapolation Hazard',
+                                     'type': 'single_choice'},
+                                 {   'correctOptionIds': ['opt-1'],
+                                     'difficulty': 'hard',
+                                     'explanation': "Breiman's CART algorithm constructs strictly binary trees (2 "
+                                                    'branches per split) and supports both classification (using '
+                                                    'Gini/Entropy) and regression (using MSE/MAE). ID3 and C4.5 '
+                                                    'produce multi-way splits for categorical variables.',
+                                     'id': 'q-cml-l10-25',
+                                     'options': [   {   'id': 'opt-1',
+                                                        'is_correct': True,
+                                                        'text': 'CART constructs strictly binary trees (each internal '
+                                                                'node has exactly 2 children) and supports both '
+                                                                'classification and numerical regression.'},
+                                                    {   'id': 'opt-2',
+                                                        'is_correct': False,
+                                                        'text': 'CART cannot handle continuous numerical features.'},
+                                                    {   'id': 'opt-3',
+                                                        'is_correct': False,
+                                                        'text': 'CART does not support Gini impurity.'},
+                                                    {   'id': 'opt-4',
+                                                        'is_correct': False,
+                                                        'text': 'CART only runs on neural network hardware.'}],
+                                     'question': 'What distinguishes the CART (Classification and Regression Trees) '
+                                                 'algorithm implemented in Scikit-Learn from ID3 and C4.5?',
+                                     'subtopic': 'CART Algorithm Foundations',
+                                     'type': 'single_choice'}]},
+    'schema_version': 1,
+    'sections': [   {   'body': '### 1.1 The Intuition: Asking Sequential Questions\n'
+                                '\n'
+                                'Think about how an expert loan officer evaluates a mortgage applicant, or how a '
+                                'doctor diagnoses a patient in an emergency triage unit, or how you play the classic '
+                                'parlor game **20 Questions**:\n'
+                                '1. *"Is the applicant\'s Credit Score below 600?"* $\\implies$ **Yes**.\n'
+                                '2. *"Is their Debt-to-Income (DTI) ratio greater than 45%?"* $\\implies$ **Yes**.\n'
+                                '3. *"Decision: Reject Loan Application (High Default Risk)"*.\n'
+                                '\n'
+                                'If the answer to the first question were **No** (Credit Score $\\ge 600$), the '
+                                'officer would pivot to an entirely different line of inquiry:\n'
+                                '1. *"Is the Annual Household Income above 80,000 USD?"* $\\implies$ **Yes**.\n'
+                                '2. *"Decision: Approve Loan Application (Low Default Risk)"*.\n'
+                                '\n'
+                                'A **Decision Tree** structures this exact hierarchical, sequential reasoning process '
+                                'into a directed acyclic graph (an upside-down tree):\n'
+                                '- It starts at the top with the entire universe of training observations.\n'
+                                '- At each step, it selects the single most informative feature and asks a binary '
+                                'True/False question (e.g., $x_j \\le \\theta$).\n'
+                                '- The data is split into two mutually exclusive subsets, each following their '
+                                'respective downstream branch.\n'
+                                '- The process repeats recursively until a terminal stopping condition is met, where a '
+                                'final prediction is rendered.\n'
+                                '\n'
+                                '```\n'
+                                'Anatomy of a Decision Tree:\n'
+                                '                  [ Root Node: All n Samples ]\n'
+                                '                   Question: Is Credit_Score <= 600?\n'
+                                '                             /               \\\n'
+                                '                     True  /                   \\  False\n'
+                                '                         v                       v\n'
+                                '            [ Internal Split Node ]          [ Internal Split Node ]\n'
+                                '            Question: DTI > 45%?             Question: Income > 80k?\n'
+                                '               /              \\                 /              \\\n'
+                                '       True  /          False   \\       True  /          False   \\\n'
+                                '           v                      v         v                      v\n'
+                                '     ( Leaf Node 1 )      ( Leaf Node 2 ) ( Leaf Node 3 )      ( Leaf Node 4 )\n'
+                                '     Pred: Reject         Pred: Review    Pred: Approve        Pred: Review\n'
+                                '```\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '### 1.2 Anatomy & Terminology of Tree Structures\n'
+                                '\n'
+                                '1. **Root Node**: The top-most node of the tree, containing $100\\%$ of the training '
+                                'observations. It has no incoming edges and exactly two outgoing edges (in binary '
+                                'trees).\n'
+                                '2. **Internal Decision Nodes (Splitting Nodes)**: Intermediate nodes that evaluate a '
+                                'specific feature $x_j$ against a threshold $\\theta$ ($x_j \\le \\theta$). They have '
+                                'exactly one incoming edge and two outgoing edges.\n'
+                                '3. **Branches (Edges)**: Directed connections routing data points based on whether '
+                                'the condition evaluated to True (typically Left) or False (typically Right).\n'
+                                '4. **Leaf Nodes (Terminal Nodes)**: Nodes at the base of the tree that have incoming '
+                                'edges but **zero outgoing edges**. They store the final predictive outcome:\n'
+                                '   - In **Classification**, each leaf stores class frequencies and predicts either '
+                                'the **majority class** (mode) or the **empirical posterior probability vector** '
+                                '$\\hat{p}_c = \\frac{n_c}{n_{\\text{leaf}}}$.\n'
+                                '   - In **Regression**, each leaf stores continuous numerical targets and predicts '
+                                'the **local sample mean** $\\hat{y} = \\frac{1}{|S|}\\sum_{i \\in S} y_i$ (or sample '
+                                'median for $L_1$ loss).\n'
+                                '5. **Depth of a Node**: The length of the path (number of edges) from the root node '
+                                'to that specific node. The root is at Depth $0$.\n'
+                                '6. **Maximum Depth (`max_depth`)**: The maximum number of edges separating the root '
+                                'from the deepest leaf in the tree. A tree with a single split has Depth $1$ (known as '
+                                'a **Decision Stump**).\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '### 1.3 Geometric Interpretation: Axis-Aligned Orthogonal Partitions\n'
+                                '\n'
+                                'The most critical mathematical insight regarding Decision Trees is understanding how '
+                                'they partition feature space:\n'
+                                '\n'
+                                '```\n'
+                                'Geometric Partitioning of 2D Feature Space:\n'
+                                '       x2 ^\n'
+                                '          │             Region R3\n'
+                                '          │           (Class: Default)\n'
+                                '       θ2 ├─────────────┬──────────────────────────\n'
+                                '          │             │\n'
+                                '          │  Region R1  │        Region R2\n'
+                                '          │ (Class: No) │     (Class: Default)\n'
+                                '          │             │\n'
+                                '          └─────────────┴────────────────────────► x1\n'
+                                '                        θ1\n'
+                                '\n'
+                                'Corresponding Tree Structure:\n'
+                                '                     [ x1 <= θ1 ]\n'
+                                '                     /          \\\n'
+                                '             True  /              \\  False\n'
+                                '                 v                  v\n'
+                                '            [ x2 <= θ2 ]        ( Leaf R2 )\n'
+                                '            /          \\        Pred: Default\n'
+                                '    True  /              \\ False\n'
+                                '        v                  v\n'
+                                '   ( Leaf R1 )        ( Leaf R3 )\n'
+                                '   Pred: No           Pred: Default\n'
+                                '```\n'
+                                '\n'
+                                '#### Why Splits Are Strictly Axis-Aligned:\n'
+                                '- At every internal node, the decision rule tests **exactly one feature** against a '
+                                'scalar threshold: $x_j \\le \\theta$.\n'
+                                '- In a 2-dimensional space $(x_1, x_2)$, a condition like $x_1 \\le \\theta_1$ '
+                                'creates a **vertical line** parallel to the $x_2$-axis.\n'
+                                '- A subsequent condition like $x_2 \\le \\theta_2$ creates a **horizontal line** '
+                                'parallel to the $x_1$-axis.\n'
+                                '- In $d$-dimensional space $\\mathbb{R}^d$, every split is an axis-aligned '
+                                '**orthogonal hyperplane** perpendicular to one coordinate axis.\n'
+                                '- As a direct geometric consequence, a Decision Tree partitions the feature space '
+                                'into a collection of non-overlapping **hyper-rectangles (boxes)**:\n'
+                                '\n'
+                                '$$\\mathbb{R}^d = \\bigcup_{m=1}^{M} R_m, \\quad \\text{where } R_j \\cap R_k = '
+                                '\\emptyset \\text{ for } j \\ne k$$\n'
+                                '\n'
+                                '#### The Diagonal Boundary Failure (Staircase Approximation):\n'
+                                'Consider a problem where the true underlying boundary is diagonal: $x_1 + x_2 = 10$.\n'
+                                '- A linear model (Logistic Regression or Linear SVM) captures this boundary '
+                                'effortlessly with a single hyperplane: $w_1 x_1 + w_2 x_2 + b = 0$.\n'
+                                '- A Decision Tree **cannot draw diagonal lines**. It must approximate the smooth '
+                                'diagonal boundary using a jagged, stepped **staircase** composed of dozens of '
+                                'alternating vertical and horizontal cuts!\n'
+                                '- Approximating smooth, rotated, or spherical boundaries requires enormous tree '
+                                'depth, which drastically increases the risk of overfitting.\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '### 1.4 Classification Trees vs. Regression Trees (CART)\n'
+                                '\n'
+                                'The **CART (Classification and Regression Trees)** framework, developed by Leo '
+                                'Breiman, Jerome Friedman, Richard Olshen, and Charles Stone in 1984, unifies both '
+                                'problem types:\n'
+                                '\n'
+                                '| Property | Classification Tree (`DecisionTreeClassifier`) | Regression Tree '
+                                '(`DecisionTreeRegressor`) |\n'
+                                '| :--- | :--- | :--- |\n'
+                                '| **Target Variable $y$** | Discrete categorical classes ($y \\in \\{0, 1, \\dots, '
+                                'C-1\\}$). | Continuous real numbers ($y \\in \\mathbb{R}$). |\n'
+                                '| **Node Impurity Metric** | Gini Impurity ($I_G$) or Shannon Entropy ($H$). | '
+                                'Variance / Mean Squared Error ($\\text{MSE}$) or Mean Absolute Error ($\\text{MAE}$). '
+                                '|\n'
+                                '| **Leaf Prediction** | Majority class label (Mode) or class probability $\\hat{p}_c '
+                                '= \\frac{n_c}{|S|}$. | Sample mean $\\hat{y} = \\bar{y} = \\frac{1}{|S|}\\sum y_i$ '
+                                '(or sample median). |\n'
+                                '| **Leaf Loss Minimization** | Minimizes misclassification risk under chosen loss. | '
+                                'Minimizes squared error $\\sum (y_i - \\hat{y})^2$ or absolute error $\\sum |y_i - '
+                                '\\hat{y}|$. |\n'
+                                '| **Continuous Function Shape** | Piecewise-constant discrete step surface. | '
+                                'Piecewise-constant flat step-function (staircase plateaus). |\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '### 1.5 The Principle of Monotonic Scale Invariance\n'
+                                '\n'
+                                'One of the greatest operational advantages of Decision Trees over distance-based '
+                                'models ($k$-NN) and gradient-based models (Linear/Logistic Regression, Neural '
+                                'Networks) is **complete scale invariance**:\n'
+                                '\n'
+                                '> **Theorem of Monotonic Invariance**:\n'
+                                '> Let $f: \\mathbb{R} \\to \\mathbb{R}$ be any strictly monotonically increasing '
+                                'transformation (e.g., $f(x) = 1000 \\cdot x$, $f(x) = x + 50$, $f(x) = \\log(x)$ for '
+                                '$x > 0$, or $f(x) = \\sqrt{x}$).\n'
+                                '> If feature $x_j$ is replaced by $f(x_j)$, the optimal split threshold $t$ '
+                                'transforms to $f(t)$, and the resulting partition, impurity reduction, and model '
+                                'predictions are **identically unchanged**!\n'
+                                '\n'
+                                '#### Why Does This Hold?\n'
+                                'Decision trees do not calculate physical Euclidean distances or take numerical inner '
+                                'products $\\mathbf{w}^T \\mathbf{x}$.\n'
+                                'They only evaluate **relative ordering**: *"Are samples where $x_j \\le t$ purer than '
+                                'samples where $x_j > t$?"*\n'
+                                'Because monotonic transformations preserve rank ordering ($a < b \\iff f(a) < f(b)$), '
+                                'the sorting of feature values is identical.\n'
+                                'Consequently:\n'
+                                '- **No feature scaling is required**: Standardizing with `StandardScaler` or '
+                                '`MinMaxScaler` produces zero difference in tree topology.\n'
+                                '- **Robustness to extreme outliers**: An outlier with $x = 10,000,000$ simply sits at '
+                                'the highest rank. It does not pull or distort split boundaries the way it violently '
+                                'tilts linear regression hyperplanes!',
+                        'citations': [   'Breiman, L., Friedman, J., Stone, C. J., & Olshen, R. A. (1984). '
+                                         'Classification and Regression Trees. CRC Press.',
+                                         'Quinlan, J. R. (1986). Induction of decision trees. Machine Learning, 1(1), '
+                                         '81-106.'],
+                        'heading': '1. What is a Decision Tree? The 20-Questions Intuition',
+                        'section_id': 'cml-l10-sec01'},
+                    {   'body': '### 2.1 The Concept of Impurity: Measuring Node Homogeneity\n'
+                                '\n'
+                                'To construct an optimal decision tree, an algorithm must decide at every node: '
+                                '*"Which feature and which threshold should we split on?"*\n'
+                                'To answer this, we need a mathematical yardstick to quantify the **quality** of a '
+                                'node:\n'
+                                '\n'
+                                '- A **pure node** contains observations belonging to **only one class** (e.g., 50 '
+                                'default cases, 0 non-default cases). A pure node requires no further splitting; it '
+                                'can become a definitive leaf.\n'
+                                '- An **impure node** contains a thoroughly mixed soup of labels (e.g., 25 default '
+                                'cases, 25 non-default cases). Predicting a label here is no better than flipping a '
+                                'fair coin.\n'
+                                '\n'
+                                'Let $S$ be the subset of training samples present at node $m$, comprising $|S|$ total '
+                                'points across $C$ distinct classes.\n'
+                                'The empirical proportion of samples belonging to class $c \\in \\{1, \\dots, C\\}$ '
+                                'is:\n'
+                                '\n'
+                                '$$p_c = \\frac{1}{|S|} \\sum_{i \\in S} \\mathbb{I}(y_i = c), \\quad \\text{where } '
+                                'p_c \\ge 0 \\text{ and } \\sum_{c=1}^{C} p_c = 1$$\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '### 2.2 Shannon Entropy: Uncertainty in Information Theory\n'
+                                '\n'
+                                'In 1948, Claude Shannon published his landmark paper *"A Mathematical Theory of '
+                                'Communication"*, defining the fundamental measure of uncertainty (information '
+                                'content) in a random variable.\n'
+                                'If an event occurs with probability $p_c$, the amount of "surprise" or information '
+                                'gained upon observing it is $\\log_2(1 / p_c) = -\\log_2(p_c)$ bits.\n'
+                                'The **Shannon Entropy** $H(S)$ is the expected surprise across all classes in the '
+                                'node:\n'
+                                '\n'
+                                '$$H(S) = - \\sum_{c=1}^{C} p_c \\log_2(p_c)$$\n'
+                                '\n'
+                                '*(By universal mathematical convention in information theory, $0 \\cdot \\log_2(0) '
+                                '\\equiv \\lim_{p \\to 0^+} p \\log_2(p) = 0$, since impossible classes contribute '
+                                'zero uncertainty).*\n'
+                                '\n'
+                                '#### The Binary Classification Case ($C = 2$):\n'
+                                'Let $p$ be the proportion of positive class samples ($y = 1$), so $(1 - p)$ is the '
+                                'proportion of negative class samples ($y = 0$):\n'
+                                '\n'
+                                '$$H(p) = - p \\log_2(p) - (1 - p) \\log_2(1 - p)$$\n'
+                                '\n'
+                                '- **Perfect Purity ($p = 0.0$ or $p = 1.0$)**:\n'
+                                '  $$H(1.0) = - 1.0 \\log_2(1.0) - 0 = 0.0 \\text{ bits}$$\n'
+                                '  There is zero uncertainty. Every sample belongs to the exact same class.\n'
+                                '- **Maximum Uncertainty ($p = 0.5$)**:\n'
+                                '  $$H(0.5) = - 0.5 \\log_2(0.5) - 0.5 \\log_2(0.5) = - 0.5(-1) - 0.5(-1) = 0.5 + 0.5 '
+                                '= \\mathbf{1.0 \\text{ bit}}$$\n'
+                                '  Uncertainty is at its theoretical maximum. It requires exactly $1$ full bit of '
+                                'additional information to determine the class.\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '### 2.3 Gini Impurity: Expected Misclassification Probability\n'
+                                '\n'
+                                "Corrado Gini's metric, widely popularized in machine learning through the CART "
+                                'algorithm, has a clean and elegant probabilistic interpretation:\n'
+                                '\n'
+                                '> **Probabilistic Definition of Gini Impurity**:\n'
+                                '> Suppose you assign a class label to a randomly chosen sample from node $S$ strictly '
+                                "according to the node's empirical class distribution $(p_1, p_2, \\dots, p_C)$.\n"
+                                '> What is the probability that this randomly assigned label is **incorrect**?\n'
+                                '\n'
+                                'The probability of choosing an item of class $c$ is $p_c$. The probability of '
+                                'mistakenly assigning it any other class is $(1 - p_c)$.\n'
+                                'Summing across all possible classes yields the **Gini Impurity** $I_G(S)$:\n'
+                                '\n'
+                                '$$I_G(S) = \\sum_{c=1}^{C} p_c (1 - p_c) = \\sum_{c=1}^{C} (p_c - p_c^2) = '
+                                '\\sum_{c=1}^{C} p_c - \\sum_{c=1}^{C} p_c^2 = 1 - \\sum_{c=1}^{C} p_c^2$$\n'
+                                '\n'
+                                '#### The Binary Classification Case ($C = 2$):\n'
+                                'Let $p$ be the proportion of positive class samples:\n'
+                                '\n'
+                                '$$I_G(p) = 1 - \\left( p^2 + (1 - p)^2 \\right) = 1 - \\left( p^2 + 1 - 2p + p^2 '
+                                '\\right) = 2p - 2p^2 = \\mathbf{2p(1 - p)}$$\n'
+                                '\n'
+                                '- **Perfect Purity ($p = 0.0$ or $p = 1.0$)**:\n'
+                                '  $$I_G(0) = 2(0)(1) = \\mathbf{0.0}, \\quad I_G(1) = 2(1)(0) = \\mathbf{0.0}$$\n'
+                                '- **Maximum Uncertainty ($p = 0.5$)**:\n'
+                                '  $$I_G(0.5) = 2(0.5)(0.5) = \\mathbf{0.50}$$\n'
+                                '  The Gini impurity peaks at $0.50$ for a balanced binary mixture.\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '### 2.4 Mathematical Connection: Gini as the First-Order Taylor Approximation of '
+                                'Entropy\n'
+                                '\n'
+                                'Why do Entropy and Gini Impurity lead to virtually identical tree structures in '
+                                'practice?\n'
+                                'Recall the natural logarithm Taylor series expansion around $x = 1$:\n'
+                                '$$\\ln(x) = (x - 1) - \\frac{(x - 1)^2}{2} + \\dots \\implies \\ln(p_c) \\approx p_c '
+                                '- 1 = -(1 - p_c)$$\n'
+                                'Multiplying by $-1$ gives:\n'
+                                '$$-\\ln(p_c) \\approx 1 - p_c$$\n'
+                                '\n'
+                                'Substituting this first-order linear approximation into the natural entropy formula:\n'
+                                '$$H_e(S) = - \\sum_{c=1}^{C} p_c \\ln(p_c) \\approx \\sum_{c=1}^{C} p_c (1 - p_c) = '
+                                'I_G(S)$$\n'
+                                '\n'
+                                '> **Mathematical Revelation**:\n'
+                                '> **Gini Impurity is literally the first-order linear Taylor expansion of Natural '
+                                'Entropy!**\n'
+                                '> Because Gini replaces expensive transcendental logarithm evaluations ($\\log_2(p)$) '
+                                'with basic multiplications ($p^2$), computing Gini is computationally much faster '
+                                'when evaluating millions of candidate splits during training.\n'
+                                '\n'
+                                '```\n'
+                                'Impurity Curves Comparison Across Binary Class Proportions p:\n'
+                                '    Impurity\n'
+                                '      1.0 ^                   Entropy H(p) [Peaks at 1.0]\n'
+                                '          │                     .---.\n'
+                                '      0.8 │                    /     \\\n'
+                                '          │                   /       \\\n'
+                                '      0.5 │   .. - - - - - - / - - - - \\ - - - - - - - ..  Gini I_G(p) [Peaks at '
+                                '0.5]\n'
+                                '          │  /              /           \\              \\\n'
+                                '      0.2 │ /              /             \\              \\\n'
+                                '          │/              /               \\              \\\n'
+                                '      0.0 ┴──────────────┴─────────────────┴──────────────┴► Proportion p\n'
+                                '         0.0            0.25              0.5            0.75            1.0\n'
+                                '```\n'
+                                '\n'
+                                '| Class Proportion $p$ | Shannon Entropy $H(p)$ (bits) | Gini Impurity $I_G(p)$ | '
+                                'Scaled Gini ($2 \\times I_G(p)$) |\n'
+                                '| :--- | :--- | :--- | :--- |\n'
+                                '| **$0.00$** (Pure Class 0) | $0.0000$ | $0.0000$ | $0.0000$ |\n'
+                                '| **$0.10$** | $0.4690$ | $0.1800$ | $0.3600$ |\n'
+                                '| **$0.20$** | $0.7219$ | $0.3200$ | $0.6400$ |\n'
+                                '| **$0.30$** | $0.8813$ | $0.4200$ | $0.8400$ |\n'
+                                '| **$0.40$** | $0.9710$ | $0.4800$ | $0.9600$ |\n'
+                                '| **$0.50$** (Max Mixed) | $\\mathbf{1.0000}$ | $\\mathbf{0.5000}$ | '
+                                '$\\mathbf{1.0000}$ |\n'
+                                '| **$0.60$** | $0.9710$ | $0.4800$ | $0.9600$ |\n'
+                                '| **$0.70$** | $0.8813$ | $0.4200$ | $0.8400$ |\n'
+                                '| **$0.80$** | $0.7219$ | $0.3200$ | $0.6400$ |\n'
+                                '| **$0.90$** | $0.4690$ | $0.1800$ | $0.3600$ |\n'
+                                '| **$1.00$** (Pure Class 1) | $0.0000$ | $0.0000$ | $0.0000$ |\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '### 2.5 Impurity Metrics for Regression Trees: Variance (MSE)\n'
+                                '\n'
+                                'For regression problems where target $y \\in \\mathbb{R}$ is continuous, class '
+                                'proportions $p_c$ do not exist.\n'
+                                'Instead, node impurity measures the **spread or dispersion** of targets around their '
+                                'local mean $\\bar{y}_S = \\frac{1}{|S|}\\sum_{i \\in S} y_i$:\n'
+                                '\n'
+                                '$$I_{\\text{MSE}}(S) = \\frac{1}{|S|} \\sum_{i \\in S} (y_i - \\bar{y}_S)^2 = '
+                                '\\text{Var}_S(y)$$\n'
+                                '\n'
+                                '- A node where all targets are identical ($y = 42.0$ for all samples) has '
+                                '$\\text{Var}(y) = 0.0$ (perfect purity).\n'
+                                '- A node where targets vary wildly has high variance, demanding further splitting.\n'
+                                '- *Alternative ($L_1$ Mean Absolute Error)*: $I_{\\text{MAE}}(S) = \\frac{1}{|S|} '
+                                '\\sum_{i \\in S} |y_i - \\text{median}_S(y)|$, which is more robust to extreme '
+                                'outlier target values.',
+                        'citations': [   'Shannon, C. E. (1948). A mathematical theory of communication. Bell System '
+                                         'Technical Journal, 27(3), 379-423.',
+                                         'Bishop, C. M. (2006). Pattern Recognition and Machine Learning. Springer, '
+                                         'Chapter 14.'],
+                        'heading': '2. Measuring Node Impurity: Shannon Entropy vs. Gini Impurity',
+                        'section_id': 'cml-l10-sec02'},
+                    {   'body': '### 3.1 The Greedy CART Recursive Binary Splitting Algorithm\n'
+                                '\n'
+                                'Finding the globally optimal decision tree that minimizes overall training error is '
+                                'an **NP-complete problem** requiring combinatorial search over all possible tree '
+                                'topologies.\n'
+                                "Instead, modern libraries (like Scikit-Learn's CART implementation) use a **top-down "
+                                'greedy heuristic**:\n'
+                                '\n'
+                                '```\n'
+                                'The CART Greedy Search Step:\n'
+                                '  1. For each feature j in {1, 2, ..., d}:\n'
+                                '       Sort unique values of feature j in current node S: x_(1) < x_(2) < ... < '
+                                'x_(k)\n'
+                                '       For each adjacent pair, evaluate candidate threshold t = (x_(i) + x_(i+1)) / '
+                                '2:\n'
+                                '           Partition S into Left S_L (x_j <= t) and Right S_R (x_j > t)\n'
+                                '           Calculate Impurity Reduction (Gain):\n'
+                                '               Gain(S, j, t) = Impurity(S) - [ (|S_L|/|S|)*Impurity(S_L) + '
+                                '(|S_R|/|S|)*Impurity(S_R) ]\n'
+                                '  2. Pick the feature j* and threshold t* that produce the MAXIMUM GAIN.\n'
+                                '  3. Split the node and recursively repeat steps 1-2 on both S_L and S_R.\n'
+                                '```\n'
+                                '\n'
+                                '#### Mathematical Formulas for Gain:\n'
+                                '1. **Information Gain (Entropy-based)**:\n'
+                                '   $$IG(S, j, t) = H(S) - \\left[ \\frac{|S_L|}{|S|} H(S_L) + \\frac{|S_R|}{|S|} '
+                                'H(S_R) \\right]$$\n'
+                                '2. **Gini Gain ($\\Delta I_G$)**:\n'
+                                '   $$\\Delta I_G(S, j, t) = I_G(S) - \\left[ \\frac{|S_L|}{|S|} I_G(S_L) + '
+                                '\\frac{|S_R|}{|S|} I_G(S_R) \\right]$$\n'
+                                '3. **Variance Reduction (Regression Trees)**:\n'
+                                '   $$\\Delta \\text{Var}(S, j, t) = \\text{Var}(S) - \\left[ \\frac{|S_L|}{|S|} '
+                                '\\text{Var}(S_L) + \\frac{|S_R|}{|S|} \\text{Var}(S_R) \\right]$$\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '### 3.2 Exhaustive Hand-Calculated Walkthrough: 8-Row Bank Loan Default Dataset\n'
+                                '\n'
+                                'To cement these formulas into instinct, let us solve the exact benchmark loan problem '
+                                'taught on the whiteboard:\n'
+                                '\n'
+                                '#### The Training Dataset:\n'
+                                '| Customer ID | Credit Band ($x_1$) | Loan Size ($x_2$) | Actual Default Status ($y$) '
+                                '|\n'
+                                '| :---: | :---: | :---: | :---: |\n'
+                                '| **ID 1** | Low | Small | **1 (Default)** |\n'
+                                '| **ID 2** | Low | Small | **1 (Default)** |\n'
+                                '| **ID 3** | Low | Large | **1 (Default)** |\n'
+                                '| **ID 4** | Low | Large | **0 (No Default)** |\n'
+                                '| **ID 5** | High | Small | **0 (No Default)** |\n'
+                                '| **ID 6** | High | Small | **0 (No Default)** |\n'
+                                '| **ID 7** | High | Large | **0 (No Default)** |\n'
+                                '| **ID 8** | High | Large | **1 (Default)** |\n'
+                                '\n'
+                                'Total observations $n = 8$:\n'
+                                '- Total Defaults ($y = 1$): $4$ customers (IDs 1, 2, 3, 8).\n'
+                                '- Total Non-Defaults ($y = 0$): $4$ customers (IDs 4, 5, 6, 7).\n'
+                                '- Base Class Proportions: $p_1 = 4/8 = 0.50$, $p_0 = 4/8 = 0.50$.\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '#### Step 1: Calculate Impurity of the Parent Root Node\n'
+                                '- **Shannon Entropy of Parent**:\n'
+                                '  $$H(\\text{Parent}) = - 0.50 \\log_2(0.50) - 0.50 \\log_2(0.50) = - 0.50(-1.0) - '
+                                '0.50(-1.0) = \\mathbf{1.000 \\text{ bit}}$$\n'
+                                '- **Gini Impurity of Parent**:\n'
+                                '  $$I_G(\\text{Parent}) = 1 - \\left( 0.50^2 + 0.50^2 \\right) = 1 - (0.25 + 0.25) = '
+                                '1 - 0.50 = \\mathbf{0.500}$$\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '#### Step 2: Evaluate Candidate Split A: `Credit Band` == Low vs. High\n'
+                                '- **Left Child Node ($S_L$: `Credit Band == Low`)**:\n'
+                                '  - Contains IDs 1, 2, 3, 4 ($n_L = 4$).\n'
+                                '  - Targets: $[1, 1, 1, 0] \\implies 3$ Defaults, $1$ Non-Default.\n'
+                                '  - Proportions: $p_1 = 3/4 = 0.75$, $p_0 = 1/4 = 0.25$.\n'
+                                '  - **Left Entropy $H(S_L)$**:\n'
+                                '    $$H(S_L) = - 0.75 \\log_2(0.75) - 0.25 \\log_2(0.25)$$\n'
+                                '    Using $\\log_2(0.75) \\approx -0.4150$ and $\\log_2(0.25) = -2.000$:\n'
+                                '    $$H(S_L) = - 0.75(-0.4150) - 0.25(-2.000) = 0.3113 + 0.5000 = \\mathbf{0.8113 '
+                                '\\text{ bits}}$$\n'
+                                '  - **Left Gini $I_G(S_L)$**:\n'
+                                '    $$I_G(S_L) = 1 - \\left( 0.75^2 + 0.25^2 \\right) = 1 - (0.5625 + 0.0625) = 1 - '
+                                '0.6250 = \\mathbf{0.3750}$$\n'
+                                '\n'
+                                '- **Right Child Node ($S_R$: `Credit Band == High`)**:\n'
+                                '  - Contains IDs 5, 6, 7, 8 ($n_R = 4$).\n'
+                                '  - Targets: $[0, 0, 0, 1] \\implies 1$ Default, $3$ Non-Defaults.\n'
+                                '  - Proportions: $p_1 = 1/4 = 0.25$, $p_0 = 3/4 = 0.75$.\n'
+                                '  - By symmetry:\n'
+                                '    $$H(S_R) = \\mathbf{0.8113 \\text{ bits}}, \\quad I_G(S_R) = \\mathbf{0.3750}$$\n'
+                                '\n'
+                                '- **Weighted Child Impurities**:\n'
+                                '  $$\\bar{H}_{\\text{children}} = \\frac{4}{8} H(S_L) + \\frac{4}{8} H(S_R) = '
+                                '0.5(0.8113) + 0.5(0.8113) = \\mathbf{0.8113 \\text{ bits}}$$\n'
+                                '  $$\\bar{I}_{G, \\text{children}} = \\frac{4}{8} I_G(S_L) + \\frac{4}{8} I_G(S_R) = '
+                                '0.5(0.3750) + 0.5(0.3750) = \\mathbf{0.3750}$$\n'
+                                '\n'
+                                '- **Gain for Candidate Split A (`Credit Band`)**:\n'
+                                '  $$IG(\\text{Credit Band}) = H(\\text{Parent}) - \\bar{H}_{\\text{children}} = 1.000 '
+                                '- 0.8113 = \\mathbf{0.1887 \\text{ bits}}$$\n'
+                                '  $$\\Delta I_G(\\text{Credit Band}) = I_G(\\text{Parent}) - \\bar{I}_{G, '
+                                '\\text{children}} = 0.500 - 0.3750 = \\mathbf{0.1250}$$\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '#### Step 3: Evaluate Candidate Split B: `Loan Size` == Small vs. Large\n'
+                                '- **Left Child Node ($S_L$: `Loan Size == Small`)**:\n'
+                                '  - Contains IDs 1, 2, 5, 6 ($n_L = 4$).\n'
+                                '  - Targets: $[1, 1, 0, 0] \\implies 2$ Defaults, $2$ Non-Defaults.\n'
+                                '  - Proportions: $p_1 = 2/4 = 0.50$, $p_0 = 2/4 = 0.50$.\n'
+                                '  - **Left Entropy and Gini**:\n'
+                                '    $$H(S_L) = \\mathbf{1.000 \\text{ bit}}, \\quad I_G(S_L) = \\mathbf{0.500}$$\n'
+                                '\n'
+                                '- **Right Child Node ($S_R$: `Loan Size == Large`)**:\n'
+                                '  - Contains IDs 3, 4, 7, 8 ($n_R = 4$).\n'
+                                '  - Targets: $[1, 0, 0, 1] \\implies 2$ Defaults, $2$ Non-Defaults.\n'
+                                '  - Proportions: $p_1 = 2/4 = 0.50$, $p_0 = 2/4 = 0.50$.\n'
+                                '  - **Right Entropy and Gini**:\n'
+                                '    $$H(S_R) = \\mathbf{1.000 \\text{ bit}}, \\quad I_G(S_R) = \\mathbf{0.500}$$\n'
+                                '\n'
+                                '- **Weighted Child Impurities**:\n'
+                                '  $$\\bar{H}_{\\text{children}} = 0.5(1.000) + 0.5(1.000) = \\mathbf{1.000 \\text{ '
+                                'bit}}$$\n'
+                                '  $$\\bar{I}_{G, \\text{children}} = 0.5(0.500) + 0.5(0.500) = \\mathbf{0.500}$$\n'
+                                '\n'
+                                '- **Gain for Candidate Split B (`Loan Size`)**:\n'
+                                '  $$IG(\\text{Loan Size}) = 1.000 - 1.000 = \\mathbf{0.0000 \\text{ bits}}$$\n'
+                                '  $$\\Delta I_G(\\text{Loan Size}) = 0.500 - 0.500 = \\mathbf{0.0000}$$\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '#### Step 4: Decision Tree Split Selection\n'
+                                '- $IG(\\text{Credit Band}) = 0.1887 \\text{ bits} \\gg IG(\\text{Loan Size}) = 0.0000 '
+                                '\\text{ bits}$.\n'
+                                '- $\\Delta I_G(\\text{Credit Band}) = 0.1250 \\gg \\Delta I_G(\\text{Loan Size}) = '
+                                '0.0000$.\n'
+                                '\n'
+                                '**Conclusion**: The decision tree algorithm selects **`Credit Band`** as the winning '
+                                'split for the root node! `Loan Size` fails to provide any discriminatory power at the '
+                                'root level because both resulting child nodes remain in a 50-50 deadlock.\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '### 3.3 Continuous Feature Splitting Mechanism\n'
+                                '\n'
+                                'When dealing with a continuous numerical feature (e.g., `Annual Income` in dollars):\n'
+                                '1. **Sort**: The unique values of the continuous feature across all samples present '
+                                'in the node are sorted in ascending order:\n'
+                                '   $$x_{(1)} < x_{(2)} < x_{(3)} < \\dots < x_{(m)}$$\n'
+                                '2. **Midpoint Candidates**: Potential split thresholds $t_k$ are placed at the '
+                                'arithmetic midpoints between consecutive distinct values:\n'
+                                '   $$t_k = \\frac{x_{(k)} + x_{(k+1)}}{2}$$\n'
+                                '3. **Boundary Optimization**: The algorithm sweeps through all candidate midpoints '
+                                'from left to right, maintaining rolling cumulative counts of classes to evaluate the '
+                                'gain in $O(n)$ time after an initial $O(n \\log n)$ sort.\n'
+                                '4. **Computational Complexity**: For $d$ continuous features and $n$ samples, finding '
+                                'the single best split at a node requires $O(d \\cdot n \\log n)$ time.\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '### 3.4 Multiway Splits vs. Binary Splits & The High-Cardinality Bias Trap\n'
+                                '\n'
+                                'In older tree algorithms like **ID3** (Iterative Dichotomiser 3), categorical '
+                                'features were split into **multiway branches** (one branch for every distinct '
+                                'category level).\n'
+                                'However, standard Information Gain has a severe mathematical flaw when evaluating '
+                                'high-cardinality features:\n'
+                                '\n'
+                                '> **The Customer ID Pathology**:\n'
+                                '> Suppose a database includes a unique primary key `Customer_ID` (or '
+                                '`Credit_Card_Number`) with $n$ distinct values for $n$ samples.\n'
+                                '> If a tree splits on `Customer_ID`, it creates $n$ single-sample leaves.\n'
+                                '> Each leaf contains exactly $1$ observation, so $p_c = 1.0 \\implies H(\\text{leaf}) '
+                                '= 0.0 \\text{ bits}$!\n'
+                                '> The weighted child entropy is $\\bar{H} = 0.0$, yielding maximal possible '
+                                'Information Gain:\n'
+                                '> $$IG = H(\\text{Parent}) - 0 = H(\\text{Parent})$$\n'
+                                '> The algorithm will enthusiastically choose `Customer_ID` as the root split, '
+                                'creating an overfitted lookup table with zero predictive generalization!\n'
+                                '\n'
+                                '#### The Solutions:\n'
+                                '1. **CART Binary Subsetting**: Modern CART never splits multiway; it partitions '
+                                'categorical levels into two subsets: e.g., $\\{A, B\\} \\text{ vs. } \\{C, D\\}$.\n'
+                                '2. **Gain Ratio (C4.5)**: Ross Quinlan introduced the **Gain Ratio**, which penalizes '
+                                'features with high intrinsic split entropy:\n'
+                                '   $$\\text{GainRatio}(S, A) = \\frac{IG(S, A)}{\\text{SplitInformation}(S, A)}$$\n'
+                                '   $$\\text{SplitInformation}(S, A) = - \\sum_{i=1}^{k} \\frac{|S_i|}{|S|} \\log_2 '
+                                '\\left( \\frac{|S_i|}{|S|} \\right)$$\n'
+                                '   For `Customer_ID`, $\\text{SplitInformation} = \\log_2(n)$, which heavily '
+                                'suppresses the Gain Ratio, stopping the tree from choosing the useless feature!',
+                        'citations': [   'Quinlan, J. R. (1993). C4.5: Programs for Machine Learning. Morgan Kaufmann '
+                                         'Publishers.'],
+                        'heading': '3. The Splitting Engine: Information Gain & Gini Gain',
+                        'section_id': 'cml-l10-sec03'},
+                    {   'body': '### 4.1 The Overfitting Pathology: Why Unconstrained Trees Memorize Noise\n'
+                                '\n'
+                                'A fully grown, unconstrained Decision Tree is one of the most aggressive memorization '
+                                'engines in classical machine learning:\n'
+                                '\n'
+                                '- If no stopping constraints are imposed, the recursive splitting algorithm will '
+                                'continue splitting nodes until **every single leaf is 100% pure** (or contains fewer '
+                                'samples than required to split).\n'
+                                '- In a pure tree, **Training Accuracy is identically 100%** (Training Error = '
+                                '$0.0\\%$, Impurity = $0.0$).\n'
+                                '- However, real-world data contains noise: measurement errors, labeling mistakes, and '
+                                'overlapping distributions.\n'
+                                '- To make every leaf pure, the tree will create specialized micro-branches that '
+                                'isolate individual noise outliers, creating tiny "islands" of erroneous predictions '
+                                'across feature space.\n'
+                                '\n'
+                                '```\n'
+                                'Train Error vs. Test Error as Tree Depth Grows:\n'
+                                '    Error Rate\n'
+                                '      ^\n'
+                                '      │  \\                                   Test Error (Generalization Gap)\n'
+                                '      │   \\                                        . - - - -\n'
+                                '      │    \\                                     /\n'
+                                "      │     \\                                  .'\n"
+                                '      │      \\                                /\n'
+                                "      │       '.                            .'  <-- Optimal Sweet Spot\n"
+                                "      │         '--.                    .--'\n"
+                                "      │             ' - - - - - - - - -'\n"
+                                '      │                \\\n'
+                                "      │                 '-----------------------------------► Train Error -> 0%\n"
+                                '      +─────────────────────────────────────────────────────► Tree Depth\n'
+                                '      Depth 1               Depth 3-5                   Depth 20+\n'
+                                '    (Underfitting)     (Balanced Generalization)      (Extreme Overfitting)\n'
+                                '```\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '### 4.2 Pre-Pruning (Early Stopping) Hyperparameters in Scikit-Learn\n'
+                                '\n'
+                                'To prevent trees from growing excessively tall and memorizing sample-specific noise, '
+                                'practitioners use **Pre-Pruning (Early Stopping)**.\n'
+                                'These hyperparameters instruct the tree builder to halt expansion before leaves '
+                                'become pure:\n'
+                                '\n'
+                                '| Hyperparameter Knob | Default in `sklearn` | Physical Role & Regularization '
+                                'Mechanism | Recommended Tuning Values |\n'
+                                '| :--- | :--- | :--- | :--- |\n'
+                                '| **`max_depth`** | `None` (unlimited) | **Hard ceiling on tree height**. Restricts '
+                                'the longest path from root to leaf. A tree with `max_depth=3` can have at most $2^3 = '
+                                '8$ leaves. | `3, 4, 5, 6, 8, 10` |\n'
+                                '| **`min_samples_split`** | `2` | **Minimum samples required inside a node** to '
+                                'attempt any candidate split. If a node has $n < \\text{min\\_samples\\_split}$, it '
+                                'immediately becomes a leaf. | `10, 20, 50, 100` |\n'
+                                '| **`min_samples_leaf`** | `1` | **Minimum samples required in BOTH left and right '
+                                'children**. If a proposed split leaves either child with fewer than this threshold, '
+                                'the split is forbidden! | `5, 10, 25, 50` |\n'
+                                '| **`max_leaf_nodes`** | `None` (unlimited) | **Caps the total number of leaves** '
+                                'across the entire tree. Grown in best-first fashion (splitting the node that yields '
+                                'the largest gain first). | `8, 16, 32, 64` |\n'
+                                '| **`min_impurity_decrease`** | `0.0` | **Threshold on minimum gain**. A split is '
+                                'executed only if $\\Delta I_G \\ge \\text{threshold}$. Filters out marginal splits '
+                                'that barely reduce entropy. | `0.001, 0.01, 0.05` |\n'
+                                "| **`criterion`** | `'gini'` | Metric used to evaluate split quality: `'gini'` (Gini "
+                                "Impurity) or `'entropy'` (Shannon Information Gain). | `'gini'`, `'entropy'` |\n"
+                                '\n'
+                                '> **Best Practice Tip for `min_samples_leaf`**:\n'
+                                '> Setting `min_samples_leaf=10` is often far more effective than tuning `max_depth` '
+                                'alone.\n'
+                                '> It guarantees that every single prediction rendered by any leaf represents a '
+                                'statistical consensus of at least 10 real customers, completely neutralizing isolated '
+                                'single-point outliers!\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '### 4.3 Pre-Pruning vs. Post-Pruning (Cost-Complexity Pruning)\n'
+                                '\n'
+                                'There are two fundamental paradigms for controlling tree complexity:\n'
+                                '\n'
+                                '#### 1. Pre-Pruning (Early Stopping)\n'
+                                '- Halts tree construction dynamically during top-down growth when a stopping '
+                                'threshold is reached.\n'
+                                '- **Advantage**: Fast training time; avoids building massive unnecessary subtrees.\n'
+                                '- **The "Horizon Effect" Flaw**: A greedy algorithm evaluates splits one step at a '
+                                'time. A feature split that offers very little immediate gain might unlock an '
+                                'exceptionally powerful split on the very next level! Pre-pruning terminates '
+                                'prematurely, missing the high-gain downstream split.\n'
+                                '\n'
+                                '#### 2. Post-Pruning (Cost-Complexity Pruning / Minimal Cost-Complexity)\n'
+                                '- Grows a complete, fully saturated tree $T_{\\max}$ until all leaves are pure.\n'
+                                '- Subsequently prunes back the weakest subtrees from the bottom up by adding a '
+                                'complexity penalty for each leaf:\n'
+                                '  $$R_\\alpha(T) = R(T) + \\alpha |T|$$\n'
+                                '  Where $R(T)$ is total tree misclassification rate, $|T|$ is the number of terminal '
+                                'leaves, and $\\alpha \\ge 0$ is the cost-complexity hyperparameter (`ccp_alpha` in '
+                                'Scikit-Learn).\n'
+                                '- As $\\alpha$ increases, smaller subtrees with fewer leaves are systematically '
+                                'favored, pruning away fragile leaf branches while preserving deep, high-gain '
+                                'pathways!',
+                        'citations': [   'Hastie, T., Tibshirani, R., & Friedman, J. (2009). The Elements of '
+                                         'Statistical Learning (2nd ed.). Springer, Chapter 9.'],
+                        'heading': '4. The Overfitting Hazard & Pre-Pruning Stopping Rules',
+                        'section_id': 'cml-l10-sec04'},
+                    {   'body': '### 5.1 Hands-On Python Implementation: Loan Default Classification\n'
+                                '\n'
+                                'The following production script trains, regularizes, visualizes, and evaluates a '
+                                'Decision Tree on a credit risk dataset, demonstrating how hyperparameter constraints '
+                                'prevent overfitting:\n'
+                                '\n'
+                                '```python\n'
+                                'import numpy as np\n'
+                                'import pandas as pd\n'
+                                'import matplotlib.pyplot as plt\n'
+                                'from sklearn.datasets import make_classification\n'
+                                'from sklearn.model_selection import train_test_split, cross_val_score, '
+                                'StratifiedKFold\n'
+                                'from sklearn.tree import DecisionTreeClassifier, export_text, plot_tree\n'
+                                'from sklearn.metrics import accuracy_score, roc_auc_score, classification_report, '
+                                'confusion_matrix\n'
+                                '\n'
+                                '# 1. Generate Synthetic Loan Default Problem\n'
+                                '# 1,000 applicants, 8 financial features (income, credit score, DTI, debt, etc.)\n'
+                                'np.random.seed(42)\n'
+                                'X, y = make_classification(\n'
+                                '    n_samples=1000,\n'
+                                '    n_features=8,\n'
+                                '    n_informative=5,\n'
+                                '    n_redundant=2,\n'
+                                '    n_classes=2,\n'
+                                '    weights=[0.80, 0.20],  # 20% default rate (imbalanced loan portfolio)\n'
+                                '    random_state=42\n'
+                                ')\n'
+                                'feature_names = [\n'
+                                '    "credit_score", "dti_ratio", "annual_income", "revolving_debt",\n'
+                                '    "years_employed", "num_open_credit_lines", "savings_balance", '
+                                '"missed_payments_12m"\n'
+                                ']\n'
+                                '\n'
+                                '# 2. Strict Train / Test Split\n'
+                                'X_train, X_test, y_train, y_test = train_test_split(\n'
+                                '    X, y, test_size=0.25, random_state=42, stratify=y\n'
+                                ')\n'
+                                '\n'
+                                '# 3. Model A: Unconstrained Overfitted Tree (max_depth=None)\n'
+                                'overfit_tree = DecisionTreeClassifier(criterion="gini", max_depth=None, '
+                                'random_state=42)\n'
+                                'overfit_tree.fit(X_train, y_train)\n'
+                                '\n'
+                                '# 4. Model B: Pre-Pruned Regularized Tree (max_depth=3, min_samples_leaf=15)\n'
+                                'pruned_tree = DecisionTreeClassifier(\n'
+                                '    criterion="gini",\n'
+                                '    max_depth=3,\n'
+                                '    min_samples_leaf=15,\n'
+                                '    random_state=42\n'
+                                ')\n'
+                                'pruned_tree.fit(X_train, y_train)\n'
+                                '\n'
+                                '# 5. Evaluate Performance & Generalization Gap\n'
+                                'def evaluate_model(model, name):\n'
+                                '    train_acc = accuracy_score(y_train, model.predict(X_train))\n'
+                                '    test_acc = accuracy_score(y_test, model.predict(X_test))\n'
+                                '    test_auc = roc_auc_score(y_test, model.predict_proba(X_test)[:, 1])\n'
+                                '    depth = model.get_depth()\n'
+                                '    leaves = model.get_n_leaves()\n'
+                                '    print(f"=== {name} ===")\n'
+                                '    print(f"Tree Depth:        {depth} | Leaf Nodes: {leaves}")\n'
+                                '    print(f"Train Accuracy:    {train_acc * 100:.2f}%")\n'
+                                '    print(f"Test Accuracy:     {test_acc * 100:.2f}%")\n'
+                                '    print(f"Holdout ROC-AUC:   {test_auc:.4f}\\n")\n'
+                                '\n'
+                                'evaluate_model(overfit_tree, "Unconstrained Overfitted Tree (max_depth=None)")\n'
+                                'evaluate_model(pruned_tree, "Pre-Pruned Regularized Tree (max_depth=3, leaf>=15)")\n'
+                                '\n'
+                                '# 6. Inspect Human-Readable Rule Hierarchy\n'
+                                'tree_rules = export_text(pruned_tree, feature_names=feature_names)\n'
+                                'print("=== EXTRACTED DECISION RULES ===")\n'
+                                'print(tree_rules)\n'
+                                '```\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '### 5.2 Depth Sweep Analysis: Demonstrating the Overfitting Signature\n'
+                                '\n'
+                                'When we systematically sweep `max_depth` from $1$ to $15$ on this credit risk '
+                                'dataset, the diagnostic signatures of underfitting and overfitting become vividly '
+                                'visible:\n'
+                                '\n'
+                                '| Tree Depth | Number of Leaves | Training Accuracy | Test Accuracy | Holdout ROC-AUC '
+                                '| Diagnostic State |\n'
+                                '| :---: | :---: | :---: | :---: | :---: | :--- |\n'
+                                '| **Depth 1** | $2$ | $80.00\\%$ | $80.00\\%$ | $0.6214$ | **Underfitting (Decision '
+                                'Stump)**: High bias; fails to capture multi-feature interactions. |\n'
+                                '| **Depth 2** | $4$ | $84.27\\%$ | $83.60\\%$ | $0.7812$ | Improving; captures '
+                                'primary interaction. |\n'
+                                '| **Depth 3** | $8$ | $87.87\\%$ | $\\mathbf{86.80\\%}$ | $\\mathbf{0.8491}$ | '
+                                '**Optimal Generalization Sweet Spot**: Peak test accuracy and highest ROC-AUC. |\n'
+                                '| **Depth 4** | $14$ | $90.53\\%$ | $86.00\\%$ | $0.8350$ | Slight variance emerging. '
+                                '|\n'
+                                '| **Depth 6** | $32$ | $95.20\\%$ | $84.40\\%$ | $0.7980$ | Test score degrades as '
+                                'subtrees isolate noise. |\n'
+                                '| **Depth 10** | $78$ | $98.93\\%$ | $82.40\\%$ | $0.7410$ | Marked overfitting: '
+                                'memorizing training noise. |\n'
+                                '| **Depth $\\infty$** | $124$ | $\\mathbf{100.00\\%}$ | $81.20\\%$ | $0.7105$ | '
+                                '**Extreme Overfitting**: 0% training error, lowest test ROC-AUC. |\n'
+                                '\n'
+                                '---\n'
+                                '\n'
+                                '### 5.3 Diagnostic Failure Modes & Engineering Pitfalls\n'
+                                '\n'
+                                '| Engineering Failure Mode | Underlying Root Cause | Catastrophic Symptom | '
+                                'Recommended Production Solution |\n'
+                                '| :--- | :--- | :--- | :--- |\n'
+                                '| **The Diagonal Boundary Trap** | Orthogonal, axis-aligned splitting geometry. | '
+                                'Tree builds a jagged, stepped staircase to approximate diagonal lines, requiring '
+                                'massive depth and overfitting. | Rotate feature axes using PCA before fitting, or '
+                                'employ Linear Discriminant Analysis (LDA) / Logistic Regression. |\n'
+                                '| **High Model Instability (Variance)** | Greedy hierarchical structure: a small '
+                                'change at the root alters all subsequent downstream splits. | Adding 10 new training '
+                                'records completely rearranges the tree structure and decision rules. | Use tree '
+                                'ensembles: **Random Forests** or **Gradient Boosted Trees (GBDT)** to aggregate '
+                                'hundreds of perturbed trees. |\n'
+                                '| **High-Cardinality Categorical Bias** | Pure categorical columns with many unique '
+                                'levels (e.g., `ZIP_Code`, `Device_ID`) artificially maximize Information Gain. | Tree '
+                                'splits on the identifier feature, creating single-sample pure leaves that fail '
+                                'completely on unseen test IDs. | Apply Target Encoding, Weight of Evidence (WoE) '
+                                'encoding, or use C4.5 Gain Ratio / CART binary subsetting. |\n'
+                                '| **Regression Extrapolation Failure** | Leaf predictions are constant scalar means '
+                                'bounded by $\\min(y_{\\text{train}})$ and $\\max(y_{\\text{train}})$. | Tree cannot '
+                                'predict values outside the range seen during training (e.g., predicting future '
+                                'revenue in an expanding economy). | Combine tree with a linear trend base estimator '
+                                '(e.g., Linear Regression + GBDT residuals). |\n'
+                                '| **Majority Class Domination in Imbalance** | Impurity metrics (Gini/Entropy) sum '
+                                'over total sample counts without weighting. | Tree splits to purify the easy majority '
+                                'class (99% non-fraud), creating massive leaves that ignore minority fraud cases. | '
+                                "Set `class_weight='balanced'` in `DecisionTreeClassifier` to scale impurity by "
+                                'inverse class frequencies. |',
+                        'citations': [   'Pedregosa, F. et al. (2011). Scikit-learn: Machine Learning in Python. JMLR, '
+                                         '12, 2825-2830.'],
+                        'heading': '5. Hands-On Python Implementation: Loan Default Classification',
+                        'section_id': 'cml-l10-sec05'}],
+    'subject_code': 'CML',
+    'summary': 'An intuitive yet rigorous first-principles guide to Decision Trees. Covers the foundational concept of '
+               'recursive binary splitting, explains how trees partition feature space into axis-aligned rectangular '
+               'regions without requiring feature scaling, deconstructs node impurity metrics (Shannon Entropy and '
+               'Gini Impurity), walks through hand-calculated Information Gain on loan data, explores tree growth and '
+               'stopping criteria, and diagnoses overfitting controls.',
+    'tags': [   'Decision Trees',
+                'Recursive Partitioning',
+                'Entropy',
+                'Gini Impurity',
+                'Information Gain',
+                'Tree Depth',
+                'Overfitting',
+                'Axis-Aligned Splits',
+                'Classification Trees'],
+    'term': 'Term 5',
+    'topic_title': '10. Decision Trees: Recursive Partitioning, Impurity Metrics & Tree Depth'}
+

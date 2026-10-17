@@ -1,29 +1,5 @@
 {
-  "schema_version": 1,
-  "note_id": "cml-t5-l03",
-  "term": "Term 5",
-  "subject_code": "CML",
-  "topic_title": "3. Linear Regression Deep Dive: Ordinary Least Squares, Normal Equations & Optimization",
-  "tags": [
-    "Linear Regression",
-    "Ordinary Least Squares",
-    "Normal Equation",
-    "Gradient Descent",
-    "Cost Functions",
-    "Evaluation Metrics",
-    "R-squared",
-    "Residuals"
-  ],
-  "learning_objectives": [
-    "1. Master the mathematical formulation of linear regression using vector dot products and the intercept trick.",
-    "2. Formulate the Ordinary Least Squares (OLS) objective function J(theta) and understand its convex quadratic geometry.",
-    "3. Derive the closed-form Normal Equation theta = (X^T X)^(-1) X^T y via matrix calculus and geometric projection.",
-    "4. Differentiate Batch Gradient Descent, Stochastic Gradient Descent (SGD), and Mini-Batch Gradient Descent update rules.",
-    "5. Explain how feature scaling spherizes the loss surface contours to accelerate gradient descent convergence.",
-    "6. Compute, interpret, and compare evaluation metrics: MAE, MSE, RMSE, R^2, and Adjusted R^2 on unseen holdout datasets.",
-    "7. Interpret regression weights as partial slopes under ceteris paribus conditions, distinguishing association from causation."
-  ],
-  "summary": "An exhaustive, mathematically rigorous deep dive into Linear Regression. Covers vector formulation with the intercept trick, geometric projection in column space, calculus derivation of the Normal Equation, Batch vs. Stochastic Gradient Descent dynamics, feature scaling condition numbers, comprehensive holdout evaluation metrics (MAE, MSE, RMSE, R^2, Adjusted R^2), coefficient interpretation pitfalls, and complete scikit-learn pipeline implementations.",
+  "approval_status": "approved",
   "key_takeaways": [
     "1. The intercept trick packs the bias parameter theta_0 and feature weights theta_1...theta_d into a single compact dot product theta^T x by appending a constant feature x_0 = 1.",
     "2. Ordinary Least Squares minimizes the sum of squared vertical residuals, forming a strictly convex quadratic bowl J(theta) with a unique global minimum.",
@@ -34,922 +10,946 @@
     "7. Regression coefficients represent partial associations holding all other model variables fixed; they do not establish causal mechanisms without experimental designs."
   ],
   "last_updated": "2026-10-16T00:00:00Z",
-  "approval_status": "approved",
+  "learning_objectives": [
+    "1. Master the mathematical formulation of linear regression using vector dot products and the intercept trick.",
+    "2. Formulate the Ordinary Least Squares (OLS) objective function J(theta) and understand its convex quadratic geometry.",
+    "3. Derive the closed-form Normal Equation theta = (X^T X)^(-1) X^T y via matrix calculus and geometric projection.",
+    "4. Differentiate Batch Gradient Descent, Stochastic Gradient Descent (SGD), and Mini-Batch Gradient Descent update rules.",
+    "5. Explain how feature scaling spherizes the loss surface contours to accelerate gradient descent convergence.",
+    "6. Compute, interpret, and compare evaluation metrics: MAE, MSE, RMSE, R^2, and Adjusted R^2 on unseen holdout datasets.",
+    "7. Interpret regression weights as partial slopes under ceteris paribus conditions, distinguishing association from causation."
+  ],
+  "note_id": "cml-t5-l03",
+  "quiz": {
+    "description": "25-question examination testing vector dot product formulation, OLS derivation, Normal Equations, Batch vs. Stochastic Gradient Descent, feature scaling condition numbers, evaluation metrics, and coefficient interpretation.",
+    "questions": [
+      {
+        "correctOptionIds": [
+          "opt-2"
+        ],
+        "difficulty": "easy",
+        "explanation": "By defining x_0 = 1 and appending it to feature vector x, the linear hypothesis h_theta(x) = theta_0 + theta_1 x_1 + ... + theta_d x_d simplifies to the vector dot product theta^T x, enabling vectorized matrix operations.",
+        "id": "q-cml-l03-01",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": false,
+            "text": "To convert the hypothesis into a non-linear quadratic polynomial."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": true,
+            "text": "To pack both the intercept theta_0 and feature weights theta_1...theta_d into a single compact vector dot product theta^T x."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "To eliminate the need for training labels y."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "To ensure that the residual error is identically equal to zero."
+          }
+        ],
+        "question": "In linear regression mathematical notation, what is the purpose of the 'intercept trick' (introducing a dummy feature x_0 = 1)?",
+        "subtopic": "The Intercept Trick",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-2"
+        ],
+        "difficulty": "easy",
+        "explanation": "Ordinary Least Squares minimizes the sum of squared differences between predictions and true labels: J(theta) = (1/2) sum (h_theta(x_i) - y_i)^2. The factor (1/2) is introduced for convenience when differentiating.",
+        "id": "q-cml-l03-02",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": false,
+            "text": "J(theta) = sum |y_i - h_theta(x_i)|"
+          },
+          {
+            "id": "opt-2",
+            "is_correct": true,
+            "text": "J(theta) = (1/2) sum (h_theta(x_i) - y_i)^2"
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "J(theta) = - sum [y_i log(h_theta(x_i))]"
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "J(theta) = max |y_i - h_theta(x_i)|"
+          }
+        ],
+        "question": "What is the mathematical cost function J(theta) minimized by Ordinary Least Squares linear regression?",
+        "subtopic": "OLS Objective Function",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-2"
+        ],
+        "difficulty": "easy",
+        "explanation": "Setting the matrix gradient of J(theta) to zero yields X^T X theta = X^T y. Assuming X^T X is invertible, pre-multiplying by (X^T X)^(-1) gives theta = (X^T X)^(-1) X^T y.",
+        "id": "q-cml-l03-03",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": false,
+            "text": "theta = (X X^T)^(-1) X y"
+          },
+          {
+            "id": "opt-2",
+            "is_correct": true,
+            "text": "theta = (X^T X)^(-1) X^T y"
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "theta = X^T (X X^T)^(-1) y"
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "theta = X^T y / (X^T X)"
+          }
+        ],
+        "question": "What is the closed-form analytical solution (the Normal Equation) for the optimal parameter vector theta in Ordinary Least Squares?",
+        "subtopic": "Normal Equation Matrix Formula",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-2"
+        ],
+        "difficulty": "easy",
+        "explanation": "If alpha is too large, the parameter updates overshoot the bottom of the convex bowl, stepping across to regions of higher cost and causing the optimization trajectory to diverge.",
+        "id": "q-cml-l03-04",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": false,
+            "text": "The algorithm will converge instantaneously in a single iteration."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": true,
+            "text": "The cost function J(theta) may oscillate wildly, overshoot the minimum, and diverge to infinity."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "The algorithm will convert into closed-form OLS."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "The feature weights will all become strictly zero."
+          }
+        ],
+        "question": "In gradient descent optimization, what occurs if the learning rate alpha is set excessively large?",
+        "subtopic": "Gradient Descent Learning Rate",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-2"
+        ],
+        "difficulty": "easy",
+        "explanation": "Simultaneous updating ensures that the gradient vector represents the true slope of the loss surface at the current point theta_old. Updating parameters sequentially would evaluate subsequent derivatives at altered parameter locations.",
+        "id": "q-cml-l03-05",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": false,
+            "text": "To prevent Scikit-Learn from throwing a threading exception."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": true,
+            "text": "To ensure that every partial derivative is computed using the identical old parameter state theta before any parameter is overwritten."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "Because simultaneous updates make J(theta) non-convex."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "To ensure that all features receive identical weights."
+          }
+        ],
+        "question": "In batch gradient descent for linear regression, why must all parameters theta_0, theta_1, ..., theta_d be updated SIMULTANEOUSLY?",
+        "subtopic": "Simultaneous Parameter Updates",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-2"
+        ],
+        "difficulty": "easy",
+        "explanation": "RMSE takes the square root of MSE, returning the metric back to the original units of y (e.g., dollars, meters, degrees). MSE is in squared units, while R^2 is a dimensionless ratio.",
+        "id": "q-cml-l03-06",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": false,
+            "text": "Mean Squared Error (MSE)"
+          },
+          {
+            "id": "opt-2",
+            "is_correct": true,
+            "text": "Root Mean Squared Error (RMSE)"
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "Coefficient of Determination (R-squared)"
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "Variance Inflation Factor (VIF)"
+          }
+        ],
+        "question": "Which of the following regression evaluation metrics is expressed in the EXACT SAME physical measurement units as the target variable y?",
+        "subtopic": "Holdout Metric Units",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-2"
+        ],
+        "difficulty": "easy",
+        "explanation": "Regression coefficients represent partial slopes under ceteris paribus ('holding other variables constant'). They indicate associative correlation within the model, not proven physical causation.",
+        "id": "q-cml-l03-07",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": false,
+            "text": "Raising a neighborhood's income by 10,000 USD will directly cause house prices to rise by 40,000 USD."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": true,
+            "text": "Holding all other features in the model fixed, a 1-unit (10,000 USD) increase in median income is associated with an expected 40,000 USD increase in predicted house price."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "Income explains exactly 40% of the total variance in house prices."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "The model has an RMSE of 40,000 USD."
+          }
+        ],
+        "question": "In an unstandardized multiple linear regression model predicting house prices, the coefficient on 'median_income' (measured in tens of thousands of dollars) is +40,000. How is this interpreted?",
+        "subtopic": "Coefficient Interpretation Basics",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-2"
+        ],
+        "difficulty": "easy",
+        "explanation": "R^2 = 1 - (SSE / SST). SST measures the squared dispersion around the horizontal mean baseline y_bar. An R^2 of 0 indicates the model performs no better than predicting y_bar for every sample.",
+        "id": "q-cml-l03-08",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": false,
+            "text": "A baseline predicting zero (y_hat = 0) for all observations."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": true,
+            "text": "A horizontal baseline predicting the sample mean of the target variable (y_hat = y_bar) for all observations."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "A random uniform number generator."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "A Decision Tree with unlimited depth."
+          }
+        ],
+        "question": "What is the reference baseline model against which R^2 compares the fitted regression model?",
+        "subtopic": "R-squared Baseline Definition",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-1",
+          "opt-3",
+          "opt-4"
+        ],
+        "difficulty": "medium",
+        "explanation": "The OLS cost function is a quadratic form in theta whose Hessian is X^T X. When X has full column rank, X^T X is positive definite, making J(theta) strictly convex with a single unique global minimum and zero local minima (Option 2 is false).",
+        "id": "q-cml-l03-09",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": true,
+            "text": "For linear models, J(theta) is a strictly convex quadratic bowl if X^T X is positive definite."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": false,
+            "text": "J(theta) contains numerous saddle points and local minima that trap gradient descent."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": true,
+            "text": "At the global minimum of J(theta), the gradient vector nabla J(theta) is equal to zero."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": true,
+            "text": "The Hessian matrix of J(theta) is given by X^T X."
+          }
+        ],
+        "question": "Which of the following statements correctly describe the mathematical properties of the OLS cost function J(theta)? (Select all that apply)",
+        "subtopic": "Convexity of OLS Cost",
+        "type": "multiple_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-1"
+        ],
+        "difficulty": "medium",
+        "explanation": "Inverting the (d+1) x (d+1) matrix in the Normal Equation requires O(d^3) operations, which becomes computationally prohibitive when d is large. Gradient descent scales linearly in d per iteration and supports out-of-core streaming.",
+        "id": "q-cml-l03-10",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": true,
+            "text": "When the feature dimensionality d is very large (e.g., d > 50,000) or data arrives in a continuous stream."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": false,
+            "text": "Only when the target variable y is discrete."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "Whenever R^2 is below 0.50."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "When we refuse to perform feature scaling."
+          }
+        ],
+        "question": "When would a machine learning engineer choose Gradient Descent (e.g., SGDRegressor) over the closed-form Normal Equation (LinearRegression)?",
+        "subtopic": "Normal Equation vs Gradient Descent Trade-off",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-2"
+        ],
+        "difficulty": "medium",
+        "explanation": "When feature scales are disparate, level curves of J(theta) are elongated ellipses with high condition numbers, causing gradients to oscillate wildly perpendicular to the valley. Scaling makes contours circular, enabling direct descent.",
+        "id": "q-cml-l03-11",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": false,
+            "text": "It eliminates the need to compute partial derivatives."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": true,
+            "text": "It spherizes the elliptical loss contours of J(theta), reducing the condition number and allowing gradients to point directly toward the minimum without oscillation."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "It guarantees that the model will achieve an R^2 of 1.0."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "It forces all parameters to update sequentially."
+          }
+        ],
+        "question": "Why does Z-score feature standardization accelerate the convergence rate of Gradient Descent in linear regression?",
+        "subtopic": "Feature Scaling for Optimization",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-1",
+          "opt-2",
+          "opt-3"
+        ],
+        "difficulty": "medium",
+        "explanation": "Options 1, 2, and 3 are correct. Option 4 is false: SGD processes one sample at a time and has minimal memory overhead compared to full-batch GD.",
+        "id": "q-cml-l03-12",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": true,
+            "text": "Batch GD computes exact gradients using all m samples, producing a smooth monotonic trajectory toward the minimum."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": true,
+            "text": "Stochastic GD (SGD) updates parameters using 1 sample per step, introducing noisy oscillations that can help escape shallow local plateaus."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": true,
+            "text": "Mini-Batch GD balances vectorization hardware efficiency (GPUs) with gradient stability by using small sample batches (e.g., 32-256)."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "SGD requires significantly more memory than Batch GD because it stores multiple gradient matrices."
+          }
+        ],
+        "question": "Which of the following statements correctly compare Gradient Descent variants? (Select all that apply)",
+        "subtopic": "Batch GD vs SGD vs Mini-Batch",
+        "type": "multiple_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-2"
+        ],
+        "difficulty": "medium",
+        "explanation": "RMSE squares errors before averaging. When a model has a low MAE but a high RMSE, it indicates that while most errors are small, the model produces occasional extreme outlier errors that heavily inflate RMSE.",
+        "id": "q-cml-l03-13",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": false,
+            "text": "Model B has lower overall variance than Model A."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": true,
+            "text": "Model B makes occasional severe, large-magnitude outlier errors that are heavily penalized by the squared term in RMSE."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "Model B was trained without an intercept term."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "Model A has perfect correlation."
+          }
+        ],
+        "question": "An environmental agency is predicting atmospheric pollutant levels. In evaluating two models, Model A has MAE = 12, RMSE = 14. Model B has MAE = 11, RMSE = 28. What does the large gap between MAE and RMSE in Model B indicate?",
+        "subtopic": "MAE vs RMSE Comparison",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-2"
+        ],
+        "difficulty": "medium",
+        "explanation": "Standard R^2 never decreases when adding features because OLS can always assign small weights to reduce training SSE. Adjusted R^2 penalizes the loss of degrees of freedom (m - d - 1) and will decrease if the new features do not add predictive value.",
+        "id": "q-cml-l03-14",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": false,
+            "text": "Both R^2 and Adjusted R^2 will increase substantially."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": true,
+            "text": "R^2 will increase (or stay constant), while Adjusted R^2 will decrease."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "Both R^2 and Adjusted R^2 will automatically drop to 0."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "Adjusted R^2 will become exactly equal to MAE."
+          }
+        ],
+        "question": "An analyst adds 50 completely random noise variables into a linear regression model. What will happen to the training R^2 and the Adjusted R^2?",
+        "subtopic": "Adjusted R-squared Role",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-2"
+        ],
+        "difficulty": "medium",
+        "explanation": "By the Orthogonal Projection Theorem, the minimum distance from y to the subspace Col(X) occurs when the error vector e is orthogonal to the subspace, which mathematically yields the condition X^T e = X^T (y - X theta) = 0.",
+        "id": "q-cml-l03-15",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": false,
+            "text": "The residual vector e lies strictly inside the column space Col(X)."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": true,
+            "text": "The residual vector e is orthogonal (perpendicular) to every column vector in X, meaning X^T e = 0."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "The residual vector e is parallel to the target vector y."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "The angle between e and Col(X) is exactly 45 degrees."
+          }
+        ],
+        "question": "In the geometric vector space formulation of Ordinary Least Squares, what is the geometric relationship between the residual error vector e = y - X theta and the column space Col(X)?",
+        "subtopic": "Geometric Orthogonality of Residuals",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-1",
+          "opt-2",
+          "opt-4"
+        ],
+        "difficulty": "medium",
+        "explanation": "On unseen test data, an overfitted model can produce predictions with SSE > SST, resulting in R^2 < 0. Similarly, fitting without an intercept on training data can yield negative R^2. On training data with an intercept, OLS guarantees 0 <= R^2 <= 1 (Option 3 is false).",
+        "id": "q-cml-l03-16",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": true,
+            "text": "When evaluated on an unseen test set where the model's predictions have larger residual error than simply predicting the training target mean y_bar."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": true,
+            "text": "When fitting an unconstrained linear regression without an intercept term on non-centered data."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "When training an ordinary linear regression with an intercept on the training set using an exact OLS solver."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": true,
+            "text": "When the model is heavily overfitted to training noise and fails to generalize to test data."
+          }
+        ],
+        "question": "Under which of the following conditions can R^2 be mathematically NEGATIVE? (Select all that apply)",
+        "subtopic": "Negative R-squared Conditions",
+        "type": "multiple_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-2"
+        ],
+        "difficulty": "medium",
+        "explanation": "Raw coefficients reflect measurement scales (dollars vs count). To compare feature importance fairly, one must inspect standardized coefficients, which scale the weights by feature standard deviations.",
+        "id": "q-cml-l03-17",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": false,
+            "text": "Because visits has a higher p-value."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": true,
+            "text": "Because raw coefficients depend on measurement units; a 1-std shift in income (15,000 * 0.02 = 300 USD) actually affects predictions six times more than a 1-std shift in visits (1 * 50 = 50 USD)."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "Because the intercept term absorbs the effect of income."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "Because linear regression cannot accept two features simultaneously."
+          }
+        ],
+        "question": "A model predicts customer spending y: y_hat = 150 + 0.02 * income + 50 * visits. Income has mean 50,000 USD, std 15,000 USD. Visits has mean 3, std 1. Why is comparing 0.02 to 50 misleading for assessing feature importance?",
+        "subtopic": "Standardized vs Unstandardized Weights",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-1"
+        ],
+        "difficulty": "hard",
+        "explanation": "Because column 4 is an exact linear combination of columns 2 and 3, X does not have full column rank (rank = 4 instead of 5). Consequently, X^T X has a zero eigenvalue, determinant 0, and is non-invertible.",
+        "id": "q-cml-l03-18",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": true,
+            "text": "The matrix X^T X is strictly singular (determinant = 0) and non-invertible, causing the analytical OLS solver to fail."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": false,
+            "text": "The learning rate automatically increases by a factor of 3."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "The model's R^2 becomes 1.0."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "Gradient descent will converge in exactly 1 iteration."
+          }
+        ],
+        "question": "Suppose a design matrix X has dimensions 1,000 x 5 (1,000 rows, 4 features + intercept). Feature column 4 is exactly equal to 3 * column 2 - 2 * column 3. What is the mathematical consequence when attempting to solve theta = (X^T X)^(-1) X^T y?",
+        "subtopic": "Matrix Rank & Singularity",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-1"
+        ],
+        "difficulty": "hard",
+        "explanation": "In convex quadratic optimization, the spectral radius of the iteration matrix (I - alpha H) must be strictly less than 1 for convergence, which mandates 0 < alpha < 2 / lambda_max. Here, 2 / 500 = 0.004.",
+        "id": "q-cml-l03-19",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": true,
+            "text": "alpha < 2 / lambda_max = 0.004"
+          },
+          {
+            "id": "opt-2",
+            "is_correct": false,
+            "text": "alpha < 500"
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "alpha > 1 / 500"
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "alpha = 1.0"
+          }
+        ],
+        "question": "In optimizing linear regression via Batch Gradient Descent, if the maximum eigenvalue of the Hessian matrix H = X^T X is lambda_max = 500, what is the theoretical upper bound on learning rate alpha to ensure convergence?",
+        "subtopic": "Hessian Condition Number Bounds",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-1",
+          "opt-2",
+          "opt-3"
+        ],
+        "difficulty": "hard",
+        "explanation": "The Gauss-Markov theorem states that OLS is BLUE (minimum variance among linear unbiased estimators) under zero conditional mean, homoscedasticity, and no autocorrelation. Crucially, normality is NOT required for BLUE (it is only needed for exact hypothesis tests and CIs). Option 4 is false.",
+        "id": "q-cml-l03-20",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": true,
+            "text": "The error terms have an expected value of zero: E[epsilon | X] = 0."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": true,
+            "text": "The error terms are homoscedastic: Var(epsilon_i | X) = sigma^2 for all i."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": true,
+            "text": "The error terms are uncorrelated: Cov(epsilon_i, epsilon_j | X) = 0 for all i != j."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "The error terms must follow a strictly Gaussian distribution for OLS to be BLUE."
+          }
+        ],
+        "question": "According to the Gauss-Markov Theorem, under what conditions is the Ordinary Least Squares estimator theta_hat the Best Linear Unbiased Estimator (BLUE)? (Select all that apply)",
+        "subtopic": "Gauss-Markov Theorem Conditions",
+        "type": "multiple_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-1"
+        ],
+        "difficulty": "hard",
+        "explanation": "This is the classic Omitted Variable Bias formula: E[alpha_hat_1] = beta_1 + beta_2 * (Cov(x_1, x_2) / Var(x_1)). The omitted variable biases the estimated coefficient unless beta_2 = 0 or x_1 and x_2 are uncorrelated.",
+        "id": "q-cml-l03-21",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": true,
+            "text": "E[alpha_hat_1] = beta_1 + beta_2 * Cov(x_1, x_2) / Var(x_1)"
+          },
+          {
+            "id": "opt-2",
+            "is_correct": false,
+            "text": "E[alpha_hat_1] = beta_1"
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "E[alpha_hat_1] = beta_1 * beta_2"
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "E[alpha_hat_1] = 0"
+          }
+        ],
+        "question": "Suppose the true data-generating process is y = beta_1 x_1 + beta_2 x_2 + epsilon. An analyst omits x_2 and fits the simple regression y = alpha_1 x_1 + u. What is the expected value of the estimated coefficient alpha_hat_1?",
+        "subtopic": "Omitted Variable Bias Derivation",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-1"
+        ],
+        "difficulty": "hard",
+        "explanation": "Formula: Adj R^2 = 1 - (1 - R^2) * [(m - 1) / (m - d - 1)]. Here, m = 101, d = 10, so m - 1 = 100, and m - d - 1 = 101 - 10 - 1 = 90. Adj R^2 = 1 - (1 - 0.80) * (100 / 90) = 1 - 0.20 * 1.1111 = 1 - 0.2222 = 0.7778.",
+        "id": "q-cml-l03-22",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": true,
+            "text": "0.7778"
+          },
+          {
+            "id": "opt-2",
+            "is_correct": false,
+            "text": "0.8000"
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "0.7200"
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "0.8222"
+          }
+        ],
+        "question": "A model evaluated on a test set of m = 101 samples with d = 10 features achieves an R^2 of 0.80. What is the Adjusted R^2 for this test set?",
+        "subtopic": "Adjusted R-squared Calculation",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-1"
+        ],
+        "difficulty": "hard",
+        "explanation": "As an orthogonal projection operator, the Hat Matrix H satisfies symmetry H^T = H and idempotence H^2 = H * H = H (projecting an already projected vector changes nothing). Its rank equals trace(H) = d + 1.",
+        "id": "q-cml-l03-23",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": true,
+            "text": "H is symmetric (H^T = H) and idempotent (H^2 = H)."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": false,
+            "text": "H is an upper triangular matrix with zero trace."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "H is always an invertible matrix of full rank m."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "H has eigenvalues strictly equal to 2."
+          }
+        ],
+        "question": "In linear regression matrix algebra, the 'Hat Matrix' H is defined as H = X (X^T X)^(-1) X^T, mapping y to predictions y_hat = H y. What mathematical properties characterize the Hat Matrix?",
+        "subtopic": "Hat Matrix & Leverage",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-1"
+        ],
+        "difficulty": "hard",
+        "explanation": "By chain rule, dJ_i/dtheta_j = (h_theta(x) - y) * x_j. The descent step is theta_j := theta_j - alpha * (h_theta(x) - y) * x_j = theta_j + alpha * (y - h_theta(x)) * x_j. This is the Widrow-Hoff / LMS update rule.",
+        "id": "q-cml-l03-24",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": true,
+            "text": "theta_j := theta_j + alpha * (y - h_theta(x)) * x_j"
+          },
+          {
+            "id": "opt-2",
+            "is_correct": false,
+            "text": "theta_j := theta_j - alpha * (y - h_theta(x)) * x_j"
+          },
+          {
+            "id": "opt-3",
+            "is_correct": false,
+            "text": "theta_j := theta_j - alpha * (h_theta(x) - y)^2"
+          },
+          {
+            "id": "opt-4",
+            "is_correct": false,
+            "text": "theta_j := theta_j + alpha * x_j"
+          }
+        ],
+        "question": "For a single observation (x, y) with cost J_i(theta) = (1/2) (h_theta(x) - y)^2, what is the exact gradient update rule for parameter theta_j?",
+        "subtopic": "LMS Stochastic Gradient Derivation",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt-1",
+          "opt-3",
+          "opt-4"
+        ],
+        "difficulty": "hard",
+        "explanation": "Scikit-Learn's LinearRegression wraps scipy.linalg.lstsq, which uses LAPACK's DGELSD driver based on SVD of X. This analytical solver avoids explicitly computing the ill-conditioned product X^T X and handles singularities gracefully. It does NOT use gradient descent (Option 2 is false; SGDRegressor does).",
+        "id": "q-cml-l03-25",
+        "options": [
+          {
+            "id": "opt-1",
+            "is_correct": true,
+            "text": "It uses scipy.linalg.lstsq, which computes the solution via Singular Value Decomposition (SVD) of matrix X rather than explicitly inverting X^T X."
+          },
+          {
+            "id": "opt-2",
+            "is_correct": false,
+            "text": "It executes an iterative from-scratch batch gradient descent loop with learning rate 0.01."
+          },
+          {
+            "id": "opt-3",
+            "is_correct": true,
+            "text": "Using SVD avoids numerical instability and handles rank-deficient matrices via the pseudoinverse."
+          },
+          {
+            "id": "opt-4",
+            "is_correct": true,
+            "text": "It computes parameter estimates using closed-form analytical least squares."
+          }
+        ],
+        "question": "How does Scikit-Learn's LinearRegression class compute optimal coefficients under the hood? (Select all that apply)",
+        "subtopic": "Scikit-Learn OLS Solver Architecture",
+        "type": "multiple_choice"
+      }
+    ],
+    "time_limit": "30 mins",
+    "title": "Comprehensive Examination: Linear Regression Deep Dive & Optimization"
+  },
+  "schema_version": 1,
   "sections": [
     {
-      "section_id": "cml-l03-sec01",
-      "heading": "1. Mathematical Formulation & Geometric Projections of Linear Regression",
+      "body": "### 1.1 The Supervised Learning Framework\n\nIn supervised regression, the learner is supplied with an empirical training dataset $\\mathcal{D} = \\\\{(\\mathbf{x}^{(i)}, y^{(i)})\\\\}_{i=1}^m$, where:\n- $\\mathbf{x}^{(i)} \\in \\mathbb{R}^d$ represents the $i$-th input feature vector (e.g., median income, housing age, total rooms).\n- $y^{(i)} \\in \\mathbb{R}$ represents the continuous target response (e.g., house price in dollars).\n- $m$ denotes the total number of training instances (rows).\n- $d$ denotes the number of raw features (columns).\n\nThe fundamental hypothesis of Linear Regression asserts that the target variable $y$ can be modeled as a linear combination of input features plus an unobserved additive error term $\\varepsilon$:\n\n$$y = \\theta_0 + \\theta_1 x_1 + \\theta_2 x_2 + \\dots + \\theta_d x_d + \\varepsilon$$\n\nWhere:\n- $\\theta_0 \\in \\mathbb{R}$ is the **intercept** (bias term), representing the expected value of $y$ when all input features equal zero ($x_1 = x_2 = \\dots = x_d = 0$).\n- $\\theta_j \\in \\mathbb{R}$ ($j \\in \\\\{1, \\dots, d\\\\}$) are the **regression coefficients** (feature weights), representing the marginal change in $y$ per unit increase in feature $x_j$, holding all other features strictly constant (*ceteris paribus*).\n- $\\varepsilon \\sim \\mathcal{N}(0, \\sigma^2)$ is the irreducible random noise representing unmodeled latent factors and measurement stochasticity.\n\n---\n\n### 1.2 The Intercept Trick & Compact Matrix Notation\n\nTo eliminate separate handling of the intercept $\\theta_0$, we introduce a constant dummy feature $x_0 = 1$ to every observation vector. This mathematical formulation packs the entire hypothesis into a single vector inner product:\n\n$$\\mathbf{x} = \\begin{bmatrix} x_0 \\\\\\\\ x_1 \\\\\\\\ x_2 \\\\\\\\ \\vdots \\\\\\\\ x_d \\end{bmatrix} = \\begin{bmatrix} 1 \\\\\\\\ x_1 \\\\\\\\ x_2 \\\\\\\\ \\vdots \\\\\\\\ x_d \\end{bmatrix} \\in \\mathbb{R}^{d+1}, \\quad \\boldsymbol{\\theta} = \\begin{bmatrix} \\theta_0 \\\\\\\\ \\theta_1 \\\\\\\\ \\theta_2 \\\\\\\\ \\vdots \\\\\\\\ \\theta_d \\end{bmatrix} \\in \\mathbb{R}^{d+1}$$\n\n$$h_{\\boldsymbol{\\theta}}(\\mathbf{x}) = \\boldsymbol{\\theta}^T \\mathbf{x} = \\theta_0 x_0 + \\theta_1 x_1 + \\dots + \\theta_d x_d = \\sum_{j=0}^d \\theta_j x_j$$\n\nFor the entire training dataset of $m$ observations, we assemble the design matrix $\\mathbf{X} \\in \\mathbb{R}^{m \\times (d+1)}$ by prepending a column of ones:\n\n$$\\mathbf{X} = \\begin{bmatrix} 1 & x_{1,1} & x_{1,2} & \\cdots & x_{1,d} \\\\\\\\ 1 & x_{2,1} & x_{2,2} & \\cdots & x_{2,d} \\\\\\\\ \\vdots & \\vdots & \\vdots & \\ddots & \\vdots \\\\\\\\ 1 & x_{m,1} & x_{m,2} & \\cdots & x_{m,d} \\end{bmatrix} = \\begin{bmatrix} (\\mathbf{x}^{(1)})^T \\\\\\\\ (\\mathbf{x}^{(2)})^T \\\\\\\\ \\vdots \\\\\\\\ (\\mathbf{x}^{(m)})^T \\end{bmatrix}, \\quad \\mathbf{y} = \\begin{bmatrix} y^{(1)} \\\\\\\\ y^{(2)} \\\\\\\\ \\vdots \\\\\\\\ y^{(m)} \\end{bmatrix} \\in \\mathbb{R}^m$$\n\nThe vector of all $m$ model predictions $\\hat{\\mathbf{y}} \\in \\mathbb{R}^m$ is expressed as a single matrix-vector multiplication:\n\n$$\\hat{\\mathbf{y}} = \\mathbf{X} \\boldsymbol{\\theta}$$\n\n---\n\n### 1.3 Geometric Interpretation: Projection onto Column Space\n\nLinear regression possesses a geometric interpretation in linear algebra. The target vector $\\mathbf{y} \\in \\mathbb{R}^m$ lives in an $m$-dimensional observation space. \n\nThe columns of design matrix $\\mathbf{X} = [\\mathbf{1}, \\mathbf{x}_1, \\mathbf{x}_2, \\dots, \\mathbf{x}_d]$ span a $(d+1)$-dimensional subspace $\\text{Col}(\\mathbf{X}) \\subset \\mathbb{R}^m$. In real-world data where $m \\gg d$, the vector $\\mathbf{y}$ does **not** lie within $\\text{Col}(\\mathbf{X})$ due to noise $\\varepsilon$. \n\n```\nGeometry of Ordinary Least Squares (m-dimensional Observation Space):\n              y (True target vector)\n              ^\n              | \\\n              |  \\\n              |   \\\\  e = y - X theta (Residual vector, orthogonal to Col(X))\n              |    \\\n              |     v\n              +------> y_hat = X theta  (Orthogonal Projection of y onto Col(X))\n             /       /\n            / Col(X)/  Subspace spanned by columns of design matrix X\n           +-------+\n```\n\n1. Any prediction $\\hat{\\mathbf{y}} = \\mathbf{X} \\boldsymbol{\\theta}$ is a linear combination of the column vectors of $\\mathbf{X}$, meaning $\\hat{\\mathbf{y}}$ is constrained to lie inside $\\text{Col}(\\mathbf{X})$.\n2. The Ordinary Least Squares solution finds the specific point $\\hat{\\mathbf{y}} \\in \\text{Col}(\\mathbf{X})$ that is **closest in Euclidean distance** to the true vector $\\mathbf{y}$.\n3. By the Projection Theorem, the shortest distance from a point to a subspace is achieved when the error vector (residual vector) $\\mathbf{e} = \\mathbf{y} - \\hat{\\mathbf{y}} = \\mathbf{y} - \\mathbf{X}\\boldsymbol{\\theta}$ is **strictly orthogonal (perpendicular)** to every column vector spanning $\\text{Col}(\\mathbf{X})$:\n\n$$\\mathbf{X}^T (\\mathbf{y} - \\mathbf{X}\\boldsymbol{\\theta}) = \\mathbf{0}$$\n\nThis orthogonality condition yields the Normal Equation directly.",
       "citations": [
         "Strang, G. (2016). Introduction to Linear Algebra (5th ed.). Wellesley-Cambridge Press, Chapter 4.",
         "Bishop, C. M. (2006). Pattern Recognition and Machine Learning. Springer, Chapter 3.",
         "Hastie, T., Tibshirani, R., & Friedman, J. (2009). The Elements of Statistical Learning (2nd ed.). Springer."
       ],
-      "body": "### 1.1 The Supervised Learning Framework\n\nIn supervised regression, the learner is supplied with an empirical training dataset $\\\\mathcal{D} = \\\\{(\\\\mathbf{x}^{(i)}, y^{(i)})\\\\}_{i=1}^m$, where:\n- $\\\\mathbf{x}^{(i)} \\\\in \\\\mathbb{R}^d$ represents the $i$-th input feature vector (e.g., median income, housing age, total rooms).\n- $y^{(i)} \\\\in \\\\mathbb{R}$ represents the continuous target response (e.g., house price in dollars).\n- $m$ denotes the total number of training instances (rows).\n- $d$ denotes the number of raw features (columns).\n\nThe fundamental hypothesis of Linear Regression asserts that the target variable $y$ can be modeled as a linear combination of input features plus an unobserved additive error term $\\\\varepsilon$:\n\n$$y = \\\\theta_0 + \\\\theta_1 x_1 + \\\\theta_2 x_2 + \\\\dots + \\\\theta_d x_d + \\\\varepsilon$$\n\nWhere:\n- $\\\\theta_0 \\\\in \\\\mathbb{R}$ is the **intercept** (bias term), representing the expected value of $y$ when all input features equal zero ($x_1 = x_2 = \\\\dots = x_d = 0$).\n- $\\\\theta_j \\\\in \\\\mathbb{R}$ ($j \\\\in \\\\{1, \\\\dots, d\\\\}$) are the **regression coefficients** (feature weights), representing the marginal change in $y$ per unit increase in feature $x_j$, holding all other features strictly constant (*ceteris paribus*).\n- $\\\\varepsilon \\\\sim \\\\mathcal{N}(0, \\\\sigma^2)$ is the irreducible random noise representing unmodeled latent factors and measurement stochasticity.\n\n---\n\n### 1.2 The Intercept Trick & Compact Matrix Notation\n\nTo eliminate separate handling of the intercept $\\\\theta_0$, we introduce a constant dummy feature $x_0 = 1$ to every observation vector. This mathematical formulation packs the entire hypothesis into a single vector inner product:\n\n$$\\\\mathbf{x} = \\\\begin{bmatrix} x_0 \\\\\\\\ x_1 \\\\\\\\ x_2 \\\\\\\\ \\\\vdots \\\\\\\\ x_d \\\\end{bmatrix} = \\\\begin{bmatrix} 1 \\\\\\\\ x_1 \\\\\\\\ x_2 \\\\\\\\ \\\\vdots \\\\\\\\ x_d \\\\end{bmatrix} \\\\in \\\\mathbb{R}^{d+1}, \\\\quad \\\\boldsymbol{\\\\theta} = \\\\begin{bmatrix} \\\\theta_0 \\\\\\\\ \\\\theta_1 \\\\\\\\ \\\\theta_2 \\\\\\\\ \\\\vdots \\\\\\\\ \\\\theta_d \\\\end{bmatrix} \\\\in \\\\mathbb{R}^{d+1}$$\n\n$$h_{\\\\boldsymbol{\\\\theta}}(\\\\mathbf{x}) = \\\\boldsymbol{\\\\theta}^T \\\\mathbf{x} = \\\\theta_0 x_0 + \\\\theta_1 x_1 + \\\\dots + \\\\theta_d x_d = \\\\sum_{j=0}^d \\\\theta_j x_j$$\n\nFor the entire training dataset of $m$ observations, we assemble the design matrix $\\\\mathbf{X} \\\\in \\\\mathbb{R}^{m \\\\times (d+1)}$ by prepending a column of ones:\n\n$$\\\\mathbf{X} = \\\\begin{bmatrix} 1 & x_{1,1} & x_{1,2} & \\\\cdots & x_{1,d} \\\\\\\\ 1 & x_{2,1} & x_{2,2} & \\\\cdots & x_{2,d} \\\\\\\\ \\\\vdots & \\\\vdots & \\\\vdots & \\\\ddots & \\\\vdots \\\\\\\\ 1 & x_{m,1} & x_{m,2} & \\\\cdots & x_{m,d} \\\\end{bmatrix} = \\\\begin{bmatrix} (\\\\mathbf{x}^{(1)})^T \\\\\\\\ (\\\\mathbf{x}^{(2)})^T \\\\\\\\ \\\\vdots \\\\\\\\ (\\\\mathbf{x}^{(m)})^T \\\\end{bmatrix}, \\\\quad \\\\mathbf{y} = \\\\begin{bmatrix} y^{(1)} \\\\\\\\ y^{(2)} \\\\\\\\ \\\\vdots \\\\\\\\ y^{(m)} \\\\end{bmatrix} \\\\in \\\\mathbb{R}^m$$\n\nThe vector of all $m$ model predictions $\\\\hat{\\\\mathbf{y}} \\\\in \\\\mathbb{R}^m$ is expressed as a single matrix-vector multiplication:\n\n$$\\\\hat{\\\\mathbf{y}} = \\\\mathbf{X} \\\\boldsymbol{\\\\theta}$$\n\n---\n\n### 1.3 Geometric Interpretation: Projection onto Column Space\n\nLinear regression possesses a geometric interpretation in linear algebra. The target vector $\\\\mathbf{y} \\\\in \\\\mathbb{R}^m$ lives in an $m$-dimensional observation space. \n\nThe columns of design matrix $\\\\mathbf{X} = [\\\\mathbf{1}, \\\\mathbf{x}_1, \\\\mathbf{x}_2, \\\\dots, \\\\mathbf{x}_d]$ span a $(d+1)$-dimensional subspace $\\\\text{Col}(\\\\mathbf{X}) \\\\subset \\\\mathbb{R}^m$. In real-world data where $m \\\\gg d$, the vector $\\\\mathbf{y}$ does **not** lie within $\\\\text{Col}(\\\\mathbf{X})$ due to noise $\\\\varepsilon$. \n\n```\nGeometry of Ordinary Least Squares (m-dimensional Observation Space):\n              y (True target vector)\n              ^\n              | \\\n              |  \\\n              |   \\\\  e = y - X theta (Residual vector, orthogonal to Col(X))\n              |    \\\n              |     v\n              +------> y_hat = X theta  (Orthogonal Projection of y onto Col(X))\n             /       /\n            / Col(X)/  Subspace spanned by columns of design matrix X\n           +-------+\n```\n\n1. Any prediction $\\\\hat{\\\\mathbf{y}} = \\\\mathbf{X} \\\\boldsymbol{\\\\theta}$ is a linear combination of the column vectors of $\\\\mathbf{X}$, meaning $\\\\hat{\\\\mathbf{y}}$ is constrained to lie inside $\\\\text{Col}(\\\\mathbf{X})$.\n2. The Ordinary Least Squares solution finds the specific point $\\\\hat{\\\\mathbf{y}} \\\\in \\\\text{Col}(\\\\mathbf{X})$ that is **closest in Euclidean distance** to the true vector $\\\\mathbf{y}$.\n3. By the Projection Theorem, the shortest distance from a point to a subspace is achieved when the error vector (residual vector) $\\\\mathbf{e} = \\\\mathbf{y} - \\\\hat{\\\\mathbf{y}} = \\\\mathbf{y} - \\\\mathbf{X}\\\\boldsymbol{\\\\theta}$ is **strictly orthogonal (perpendicular)** to every column vector spanning $\\\\text{Col}(\\\\mathbf{X})$:\n\n$$\\\\mathbf{X}^T (\\\\mathbf{y} - \\\\mathbf{X}\\\\boldsymbol{\\\\theta}) = \\\\mathbf{0}$$\n\nThis orthogonality condition yields the Normal Equation directly."
+      "heading": "1. Mathematical Formulation & Geometric Projections of Linear Regression",
+      "section_id": "cml-l03-sec01"
     },
     {
-      "section_id": "cml-l03-sec02",
-      "heading": "2. The Ordinary Least Squares (OLS) Objective & Cost Function J(theta)",
+      "body": "### 2.1 Formulation of the Least Squares Objective\n\nTo estimate the optimal parameter vector $\\boldsymbol{\\theta}^*$, we establish a mathematical loss function quantifying the discrepancy between model predictions $h_{\\boldsymbol{\\theta}}(\\mathbf{x}^{(i)})$ and ground-truth observations $y^{(i)}$.\n\nThe **residual error** for the $i$-th training observation is:\n$$e^{(i)} = y^{(i)} - h_{\\boldsymbol{\\theta}}(\\mathbf{x}^{(i)}) = y^{(i)} - \\boldsymbol{\\theta}^T \\mathbf{x}^{(i)}$$\n\nThe **Ordinary Least Squares (OLS) Cost Function** $J(\\boldsymbol{\\theta})$ sums the squared residual errors across all $m$ training samples:\n\n$$J(\\boldsymbol{\\theta}) = \\frac{1}{2} \\sum_{i=1}^m \\left( h_{\\boldsymbol{\\theta}}(\\mathbf{x}^{(i)}) - y^{(i)} \\right)^2 = \\frac{1}{2} \\sum_{i=1}^m \\left( \\boldsymbol{\\theta}^T \\mathbf{x}^{(i)} - y^{(i)} \\right)^2$$\n\n*(Note: The leading constant $\\frac{1}{2}$ is introduced purely for algebraic convenience to cancel the factor of $2$ when computing partial derivatives).*\n\nIn vector-matrix notation, $J(\\boldsymbol{\\theta})$ is written as the squared Euclidean norm of the residual vector $\\mathbf{e} = \\mathbf{X}\\boldsymbol{\\theta} - \\mathbf{y}$:\n\n$$J(\\boldsymbol{\\theta}) = \\frac{1}{2} \\\\| \\mathbf{X}\\boldsymbol{\\theta} - \\mathbf{y} \\\\|_2^2 = \\frac{1}{2} (\\mathbf{X}\\boldsymbol{\\theta} - \\mathbf{y})^T (\\mathbf{X}\\boldsymbol{\\theta} - \\mathbf{y})$$\n\n---\n\n### 2.2 Why Squared Residuals? (Gauss-Markov & Maximum Likelihood)\n\nWhy do we minimize squared errors $\\sum (y^{(i)} - \\hat{y}^{(i)})^2$ rather than absolute errors $\\sum |y^{(i)} - \\hat{y}^{(i)}|$ or higher powers?\n\n1. **Strict Convexity & Uniqueness**: For linear models with linearly independent features, $J(\\boldsymbol{\\theta})$ is a quadratic function of $\\boldsymbol{\\theta}$. The Hessian matrix $\\nabla^2 J(\\boldsymbol{\\theta}) = \\mathbf{X}^T \\mathbf{X}$ is positive definite. This guarantees that $J(\\boldsymbol{\\theta})$ forms a smooth, convex bowl with **exactly one global minimum and zero local minima**.\n2. **Maximum Likelihood Equivalence**: Under the assumption that observational errors $\\varepsilon^{(i)} \\overset{\\text{iid}}{\\sim} \\mathcal{N}(0, \\sigma^2)$ are normally distributed:\n   $$p(y^{(i)} \\mid \\mathbf{x}^{(i)}; \\boldsymbol{\\theta}) = \\frac{1}{\\sqrt{2\\pi\\sigma^2}} \\exp\\left( -\\frac{(y^{(i)} - \\boldsymbol{\\theta}^T \\mathbf{x}^{(i)})^2}{2\\sigma^2} \\right)$$\n   Maximizing the log-likelihood function $\\log L(\\boldsymbol{\\theta})$ across all $m$ independent samples is mathematically equivalent to minimizing the sum of squared errors $J(\\boldsymbol{\\theta})$.\n3. **Continuous Differentiability**: Unlike absolute error $|e|$, squared error $e^2$ is everywhere continuously differentiable ($\\mathcal{C}^\\infty$), enabling exact analytical solutions and smooth gradient descent convergence.\n\n```\nResidual Errors in Least Squares (Vertical Distances):\n       y ^\n         |              * (x3, y3)\n         |             /|\n         |            / | e3 = y3 - y_hat3\n         |           /  v\n         |          /---o--  Fitted Line: y_hat = theta0 + theta1 * x\n         |         /|\n         |        / | e2\n         |       /  v\n         |      * (x2, y2)\n         |     /\n         +----+------------------------------------> x\n   OLS minimizes sum(e_i^2) strictly along the VERTICAL y-axis!\n```\n\n> **Pedagogical Warning**: Least Squares minimizes **vertical** errors $(y^{(i)} - \\hat{y}^{(i)})$, assuming input features $x$ are measured without error. This is fundamentally distinct from Total Least Squares (Orthogonal Regression), which minimizes perpendicular Euclidean distances to the regression line.",
       "citations": [
         "Gauss, C. F. (1809). Theoria motus corporum coelestium in sectionibus conicis solem ambientium.",
         "Nocedal, J., & Wright, S. J. (2006). Numerical Optimization (2nd ed.). Springer."
       ],
-      "body": "### 2.1 Formulation of the Least Squares Objective\n\nTo estimate the optimal parameter vector $\\\\boldsymbol{\\\\theta}^*$, we establish a mathematical loss function quantifying the discrepancy between model predictions $h_{\\\\boldsymbol{\\\\theta}}(\\\\mathbf{x}^{(i)})$ and ground-truth observations $y^{(i)}$.\n\nThe **residual error** for the $i$-th training observation is:\n$$e^{(i)} = y^{(i)} - h_{\\\\boldsymbol{\\\\theta}}(\\\\mathbf{x}^{(i)}) = y^{(i)} - \\\\boldsymbol{\\\\theta}^T \\\\mathbf{x}^{(i)}$$\n\nThe **Ordinary Least Squares (OLS) Cost Function** $J(\\\\boldsymbol{\\\\theta})$ sums the squared residual errors across all $m$ training samples:\n\n$$J(\\\\boldsymbol{\\\\theta}) = \\\\frac{1}{2} \\\\sum_{i=1}^m \\\\left( h_{\\\\boldsymbol{\\\\theta}}(\\\\mathbf{x}^{(i)}) - y^{(i)} \\\\right)^2 = \\\\frac{1}{2} \\\\sum_{i=1}^m \\\\left( \\\\boldsymbol{\\\\theta}^T \\\\mathbf{x}^{(i)} - y^{(i)} \\\\right)^2$$\n\n*(Note: The leading constant $\\\\frac{1}{2}$ is introduced purely for algebraic convenience to cancel the factor of $2$ when computing partial derivatives).*\n\nIn vector-matrix notation, $J(\\\\boldsymbol{\\\\theta})$ is written as the squared Euclidean norm of the residual vector $\\\\mathbf{e} = \\\\mathbf{X}\\\\boldsymbol{\\\\theta} - \\\\mathbf{y}$:\n\n$$J(\\\\boldsymbol{\\\\theta}) = \\\\frac{1}{2} \\\\| \\\\mathbf{X}\\\\boldsymbol{\\\\theta} - \\\\mathbf{y} \\\\|_2^2 = \\\\frac{1}{2} (\\\\mathbf{X}\\\\boldsymbol{\\\\theta} - \\\\mathbf{y})^T (\\\\mathbf{X}\\\\boldsymbol{\\\\theta} - \\\\mathbf{y})$$\n\n---\n\n### 2.2 Why Squared Residuals? (Gauss-Markov & Maximum Likelihood)\n\nWhy do we minimize squared errors $\\\\sum (y^{(i)} - \\\\hat{y}^{(i)})^2$ rather than absolute errors $\\\\sum |y^{(i)} - \\\\hat{y}^{(i)}|$ or higher powers?\n\n1. **Strict Convexity & Uniqueness**: For linear models with linearly independent features, $J(\\\\boldsymbol{\\\\theta})$ is a quadratic function of $\\\\boldsymbol{\\\\theta}$. The Hessian matrix $\\\\nabla^2 J(\\\\boldsymbol{\\\\theta}) = \\\\mathbf{X}^T \\\\mathbf{X}$ is positive definite. This guarantees that $J(\\\\boldsymbol{\\\\theta})$ forms a smooth, convex bowl with **exactly one global minimum and zero local minima**.\n2. **Maximum Likelihood Equivalence**: Under the assumption that observational errors $\\\\varepsilon^{(i)} \\\\overset{\\\\text{iid}}{\\\\sim} \\\\mathcal{N}(0, \\\\sigma^2)$ are normally distributed:\n   $$p(y^{(i)} \\\\mid \\\\mathbf{x}^{(i)}; \\\\boldsymbol{\\\\theta}) = \\\\frac{1}{\\\\sqrt{2\\\\pi\\\\sigma^2}} \\\\exp\\\\left( -\\\\frac{(y^{(i)} - \\\\boldsymbol{\\\\theta}^T \\\\mathbf{x}^{(i)})^2}{2\\\\sigma^2} \\\\right)$$\n   Maximizing the log-likelihood function $\\\\log L(\\\\boldsymbol{\\\\theta})$ across all $m$ independent samples is mathematically equivalent to minimizing the sum of squared errors $J(\\\\boldsymbol{\\\\theta})$.\n3. **Continuous Differentiability**: Unlike absolute error $|e|$, squared error $e^2$ is everywhere continuously differentiable ($\\\\mathcal{C}^\\\\infty$), enabling exact analytical solutions and smooth gradient descent convergence.\n\n```\nResidual Errors in Least Squares (Vertical Distances):\n       y ^\n         |              * (x3, y3)\n         |             /|\n         |            / | e3 = y3 - y_hat3\n         |           /  v\n         |          /---o--  Fitted Line: y_hat = theta0 + theta1 * x\n         |         /|\n         |        / | e2\n         |       /  v\n         |      * (x2, y2)\n         |     /\n         +----+------------------------------------> x\n   OLS minimizes sum(e_i^2) strictly along the VERTICAL y-axis!\n```\n\n> **Pedagogical Warning**: Least Squares minimizes **vertical** errors $(y^{(i)} - \\\\hat{y}^{(i)})$, assuming input features $x$ are measured without error. This is fundamentally distinct from Total Least Squares (Orthogonal Regression), which minimizes perpendicular Euclidean distances to the regression line."
+      "heading": "2. The Ordinary Least Squares (OLS) Objective & Cost Function J(theta)",
+      "section_id": "cml-l03-sec02"
     },
     {
-      "section_id": "cml-l03-sec03",
-      "heading": "3. Closed-Form Analytical Solution: Derivation of the Normal Equation",
+      "body": "### 3.1 Step-by-Step Matrix Calculus Derivation\n\nBecause $J(\\boldsymbol{\\theta})$ is a convex quadratic function, its global minimum occurs where the gradient vector $\\nabla_{\\boldsymbol{\\theta}} J(\\boldsymbol{\\theta})$ is identically equal to the zero vector $\\mathbf{0} \\in \\mathbb{R}^{d+1}$.\n\n#### Step 1: Expand the Matrix Cost Function\n$$J(\\boldsymbol{\\theta}) = \\frac{1}{2} (\\mathbf{X}\\boldsymbol{\\theta} - \\mathbf{y})^T (\\mathbf{X}\\boldsymbol{\\theta} - \\mathbf{y})$$\n$$J(\\boldsymbol{\\theta}) = \\frac{1}{2} \\left( (\\mathbf{X}\\boldsymbol{\\theta})^T - \\mathbf{y}^T \\right) (\\mathbf{X}\\boldsymbol{\\theta} - \\mathbf{y})$$\n$$J(\\boldsymbol{\\theta}) = \\frac{1}{2} \\left( \\boldsymbol{\\theta}^T \\mathbf{X}^T \\mathbf{X} \\boldsymbol{\\theta} - \\boldsymbol{\\theta}^T \\mathbf{X}^T \\mathbf{y} - \\mathbf{y}^T \\mathbf{X} \\boldsymbol{\\theta} + \\mathbf{y}^T \\mathbf{y} \\right)$$\n\nNote that $\\boldsymbol{\\theta}^T \\mathbf{X}^T \\mathbf{y}$ is a scalar ($1 \\times 1$). The transpose of a scalar equals itself:\n$$(\\boldsymbol{\\theta}^T \\mathbf{X}^T \\mathbf{y})^T = \\mathbf{y}^T \\mathbf{X} \\boldsymbol{\\theta}$$\n\nTherefore, the two middle cross-terms combine:\n$$J(\\boldsymbol{\\theta}) = \\frac{1}{2} \\left( \\boldsymbol{\\theta}^T \\mathbf{X}^T \\mathbf{X} \\boldsymbol{\\theta} - 2 \\mathbf{y}^T \\mathbf{X} \\boldsymbol{\\theta} + \\mathbf{y}^T \\mathbf{y} \\right)$$\n\n---\n\n#### Step 2: Compute the Matrix Gradient $\\nabla_{\\boldsymbol{\\theta}} J(\\boldsymbol{\\theta})$\nUsing fundamental matrix derivative identities from The Matrix Cookbook:\n- $\\nabla_{\\mathbf{w}} (\\mathbf{a}^T \\mathbf{w}) = \\mathbf{a}$\n- $\\nabla_{\\mathbf{w}} (\\mathbf{w}^T \\mathbf{A} \\mathbf{w}) = (\\mathbf{A} + \\mathbf{A}^T)\\mathbf{w} = 2\\mathbf{A}\\mathbf{w}$ (when $\\mathbf{A}$ is symmetric; $\\mathbf{X}^T\\mathbf{X}$ is symmetric).\n\nDifferentiating $J(\\boldsymbol{\\theta})$ with respect to $\\boldsymbol{\\theta}$:\n$$\\nabla_{\\boldsymbol{\\theta}} J(\\boldsymbol{\\theta}) = \\frac{1}{2} \\left( 2 \\mathbf{X}^T \\mathbf{X} \\boldsymbol{\\theta} - 2 \\mathbf{X}^T \\mathbf{y} + \\mathbf{0} \\right) = \\mathbf{X}^T \\mathbf{X} \\boldsymbol{\\theta} - \\mathbf{X}^T \\mathbf{y}$$\n\n---\n\n#### Step 3: Set Gradient to Zero and Solve for $\\boldsymbol{\\theta}^*$\nSetting the gradient equal to zero yields the **Normal Equation**:\n$$\\mathbf{X}^T \\mathbf{X} \\boldsymbol{\\theta} - \\mathbf{X}^T \\mathbf{y} = \\mathbf{0}$$\n$$\\mathbf{X}^T \\mathbf{X} \\boldsymbol{\\theta} = \\mathbf{X}^T \\mathbf{y}$$\n\nAssuming the square matrix $(\\mathbf{X}^T \\mathbf{X}) \\in \\mathbb{R}^{(d+1) \\times (d+1)}$ is non-singular and invertible, pre-multiplying both sides by $(\\mathbf{X}^T \\mathbf{X})^{-1}$ yields the closed-form analytical OLS solution:\n\n$$\\boldsymbol{\\theta}^* = (\\mathbf{X}^T \\mathbf{X})^{-1} \\mathbf{X}^T \\mathbf{y}$$\n\n---\n\n### 3.2 Invertibility & The Pseudo-Inverse\n\nWhen is $(\\mathbf{X}^T \\mathbf{X})$ invertible?\n1. **Full Column Rank**: The matrix $(\\mathbf{X}^T \\mathbf{X})$ is invertible if and only if $\\mathbf{X}$ has full column rank, meaning $\\text{rank}(\\mathbf{X}) = d + 1$. This requires:\n   - $m \\ge d + 1$ (strictly more observations than parameters).\n   - No feature column is an exact linear combination of other feature columns (zero perfect multicollinearity).\n2. **Singularity Remedies**: If $(\\mathbf{X}^T \\mathbf{X})$ is non-invertible (e.g., $d > m$ or redundant columns):\n   - Compute the Moore-Penrose Pseudoinverse via Singular Value Decomposition (SVD): $\\boldsymbol{\\theta}^* = \\mathbf{X}^+ \\mathbf{y}$.\n   - Add $L_2$ regularization (Ridge Regression): $(\\mathbf{X}^T \\mathbf{X} + \\lambda \\mathbf{I})^{-1} \\mathbf{X}^T \\mathbf{y}$, which guarantees non-singularity for any $\\lambda > 0$.",
       "citations": [
         "Boyd, S., & Vandenberghe, L. (2004). Convex Optimization. Cambridge University Press.",
         "Petersen, K. B., & Pedersen, M. S. (2012). The Matrix Cookbook. Technical University of Denmark."
       ],
-      "body": "### 3.1 Step-by-Step Matrix Calculus Derivation\n\nBecause $J(\\\\boldsymbol{\\\\theta})$ is a convex quadratic function, its global minimum occurs where the gradient vector $\\\\nabla_{\\\\boldsymbol{\\\\theta}} J(\\\\boldsymbol{\\\\theta})$ is identically equal to the zero vector $\\\\mathbf{0} \\\\in \\\\mathbb{R}^{d+1}$.\n\n#### Step 1: Expand the Matrix Cost Function\n$$J(\\\\boldsymbol{\\\\theta}) = \\\\frac{1}{2} (\\\\mathbf{X}\\\\boldsymbol{\\\\theta} - \\\\mathbf{y})^T (\\\\mathbf{X}\\\\boldsymbol{\\\\theta} - \\\\mathbf{y})$$\n$$J(\\\\boldsymbol{\\\\theta}) = \\\\frac{1}{2} \\\\left( (\\\\mathbf{X}\\\\boldsymbol{\\\\theta})^T - \\\\mathbf{y}^T \\\\right) (\\\\mathbf{X}\\\\boldsymbol{\\\\theta} - \\\\mathbf{y})$$\n$$J(\\\\boldsymbol{\\\\theta}) = \\\\frac{1}{2} \\\\left( \\\\boldsymbol{\\\\theta}^T \\\\mathbf{X}^T \\\\mathbf{X} \\\\boldsymbol{\\\\theta} - \\\\boldsymbol{\\\\theta}^T \\\\mathbf{X}^T \\\\mathbf{y} - \\\\mathbf{y}^T \\\\mathbf{X} \\\\boldsymbol{\\\\theta} + \\\\mathbf{y}^T \\\\mathbf{y} \\\\right)$$\n\nNote that $\\\\boldsymbol{\\\\theta}^T \\\\mathbf{X}^T \\\\mathbf{y}$ is a scalar ($1 \\\\times 1$). The transpose of a scalar equals itself:\n$$(\\\\boldsymbol{\\\\theta}^T \\\\mathbf{X}^T \\\\mathbf{y})^T = \\\\mathbf{y}^T \\\\mathbf{X} \\\\boldsymbol{\\\\theta}$$\n\nTherefore, the two middle cross-terms combine:\n$$J(\\\\boldsymbol{\\\\theta}) = \\\\frac{1}{2} \\\\left( \\\\boldsymbol{\\\\theta}^T \\\\mathbf{X}^T \\\\mathbf{X} \\\\boldsymbol{\\\\theta} - 2 \\\\mathbf{y}^T \\\\mathbf{X} \\\\boldsymbol{\\\\theta} + \\\\mathbf{y}^T \\\\mathbf{y} \\\\right)$$\n\n---\n\n#### Step 2: Compute the Matrix Gradient $\\\\nabla_{\\\\boldsymbol{\\\\theta}} J(\\\\boldsymbol{\\\\theta})$\nUsing fundamental matrix derivative identities from The Matrix Cookbook:\n- $\\\\nabla_{\\\\mathbf{w}} (\\\\mathbf{a}^T \\\\mathbf{w}) = \\\\mathbf{a}$\n- $\\\\nabla_{\\\\mathbf{w}} (\\\\mathbf{w}^T \\\\mathbf{A} \\\\mathbf{w}) = (\\\\mathbf{A} + \\\\mathbf{A}^T)\\\\mathbf{w} = 2\\\\mathbf{A}\\\\mathbf{w}$ (when $\\\\mathbf{A}$ is symmetric; $\\\\mathbf{X}^T\\\\mathbf{X}$ is symmetric).\n\nDifferentiating $J(\\\\boldsymbol{\\\\theta})$ with respect to $\\\\boldsymbol{\\\\theta}$:\n$$\\\\nabla_{\\\\boldsymbol{\\\\theta}} J(\\\\boldsymbol{\\\\theta}) = \\\\frac{1}{2} \\\\left( 2 \\\\mathbf{X}^T \\\\mathbf{X} \\\\boldsymbol{\\\\theta} - 2 \\\\mathbf{X}^T \\\\mathbf{y} + \\\\mathbf{0} \\\\right) = \\\\mathbf{X}^T \\\\mathbf{X} \\\\boldsymbol{\\\\theta} - \\\\mathbf{X}^T \\\\mathbf{y}$$\n\n---\n\n#### Step 3: Set Gradient to Zero and Solve for $\\\\boldsymbol{\\\\theta}^*$\nSetting the gradient equal to zero yields the **Normal Equation**:\n$$\\\\mathbf{X}^T \\\\mathbf{X} \\\\boldsymbol{\\\\theta} - \\\\mathbf{X}^T \\\\mathbf{y} = \\\\mathbf{0}$$\n$$\\\\mathbf{X}^T \\\\mathbf{X} \\\\boldsymbol{\\\\theta} = \\\\mathbf{X}^T \\\\mathbf{y}$$\n\nAssuming the square matrix $(\\\\mathbf{X}^T \\\\mathbf{X}) \\\\in \\\\mathbb{R}^{(d+1) \\\\times (d+1)}$ is non-singular and invertible, pre-multiplying both sides by $(\\\\mathbf{X}^T \\\\mathbf{X})^{-1}$ yields the closed-form analytical OLS solution:\n\n$$\\\\boldsymbol{\\\\theta}^* = (\\\\mathbf{X}^T \\\\mathbf{X})^{-1} \\\\mathbf{X}^T \\\\mathbf{y}$$\n\n---\n\n### 3.2 Invertibility & The Pseudo-Inverse\n\nWhen is $(\\\\mathbf{X}^T \\\\mathbf{X})$ invertible?\n1. **Full Column Rank**: The matrix $(\\\\mathbf{X}^T \\\\mathbf{X})$ is invertible if and only if $\\\\mathbf{X}$ has full column rank, meaning $\\\\text{rank}(\\\\mathbf{X}) = d + 1$. This requires:\n   - $m \\\\ge d + 1$ (strictly more observations than parameters).\n   - No feature column is an exact linear combination of other feature columns (zero perfect multicollinearity).\n2. **Singularity Remedies**: If $(\\\\mathbf{X}^T \\\\mathbf{X})$ is non-invertible (e.g., $d > m$ or redundant columns):\n   - Compute the Moore-Penrose Pseudoinverse via Singular Value Decomposition (SVD): $\\\\boldsymbol{\\\\theta}^* = \\\\mathbf{X}^+ \\\\mathbf{y}$.\n   - Add $L_2$ regularization (Ridge Regression): $(\\\\mathbf{X}^T \\\\mathbf{X} + \\\\lambda \\\\mathbf{I})^{-1} \\\\mathbf{X}^T \\\\mathbf{y}$, which guarantees non-singularity for any $\\\\lambda > 0$."
+      "heading": "3. Closed-Form Analytical Solution: Derivation of the Normal Equation",
+      "section_id": "cml-l03-sec03"
     },
     {
-      "section_id": "cml-l03-sec04",
-      "heading": "4. Gradient Descent Optimization: Batch GD, Stochastic GD & Mini-Batch GD",
+      "body": "### 4.1 When the Normal Equation Fails: The Scaling Problem\n\nComputing the closed-form Normal Equation requires inverting the $(d+1) \\times (d+1)$ matrix $(\\mathbf{X}^T \\mathbf{X})$. Matrix inversion has a computational complexity of approximately $\\mathcal{O}(d^3)$ (or $\\mathcal{O}(d^{2.807})$ via Strassen's algorithm).\n- If $d = 100$: $(d+1)^3 \\approx 10^6$ operations (instantaneous, $< 1$ millisecond).\n- If $d = 100,000$ (e.g., text NLP embeddings or genomic data): $(10^5)^3 = 10^{15}$ operations (impossible in RAM, hours/days of compute).\n\nWhen feature dimensionality $d$ or sample size $m$ is large, or when data arrives in streaming batches, we deploy **iterative optimization algorithms: Gradient Descent**.\n\n---\n\n### 4.2 The Gradient Descent Update Rule\n\nGradient Descent starts with an initial parameter guess $\\boldsymbol{\\theta}^{(0)}$ (typically zeros or small random Gaussian values) and iteratively steps in the direction of steepest descent (opposite to the gradient vector $\\nabla J(\\boldsymbol{\\theta})$):\n\n$$\\boldsymbol{\\theta} \\leftarrow \\boldsymbol{\\theta} - \\alpha \\nabla_{\\boldsymbol{\\theta}} J(\\boldsymbol{\\theta})$$\n\nWhere $\\alpha > 0$ represents the **learning rate** (step size).\n\nFor an individual parameter $\\theta_j$, the component-wise update is:\n$$\\theta_j \\leftarrow \\theta_j - \\alpha \\frac{\\partial J(\\boldsymbol{\\theta})}{\\partial \\theta_j}$$\n\n> **The Simultaneous Update Requirement**:\n> All parameters $\\theta_0, \\theta_1, \\dots, \\theta_d$ must be updated **simultaneously** at each iteration. That is, all partial derivatives $\\frac{\\partial J(\\boldsymbol{\\theta})}{\\partial \\theta_j}$ must be calculated using the identical, frozen parameter vector $\\boldsymbol{\\theta}^{\\text{old}}$ before any parameter values are overwritten.\n\n---\n\n### 4.3 The Three Gradient Descent Variants\n\n```\nComparison of Optimization Trajectories on Contour Surface:\n         Batch Gradient Descent                     Stochastic Gradient Descent (SGD)\n              w_2 ^                                      w_2 ^\n                  |      /-----\\\\                             |      /-----\\\\\n                  |     /   |   \\\\                            |     / *--*  \\\\  (Noisy,\n                  |    | <--+--* | (Smooth direct path)      |    | /  / \\\\* |  erratic\n                  |     \\\\   |   /                            |     \\\\*--*  /   walk)\n                  |      \\\\-----/                             |      \\\\-----/\n                  +------------------> w_1                   +------------------> w_1\n```\n\n| Parameter | Batch Gradient Descent (BGD) | Stochastic Gradient Descent (SGD) | Mini-Batch Gradient Descent (MBGD) |\n| :--- | :--- | :--- | :--- |\n| **Samples per Update** | **All $m$ samples** (full dataset). | **1 single sample** ($m=1$). | **$B$ samples** ($32 \\le B \\le 512$). |\n| **Gradient Formula** | $\\sum_{i=1}^m (h_{\\boldsymbol{\\theta}}(\\mathbf{x}^{(i)}) - y^{(i)}) x_j^{(i)}$ | $(h_{\\boldsymbol{\\theta}}(\\mathbf{x}^{(i)}) - y^{(i)}) x_j^{(i)}$ | $\\frac{1}{B} \\sum_{i \\in \\mathcal{B}} (h_{\\boldsymbol{\\theta}}(\\mathbf{x}^{(i)}) - y^{(i)}) x_j^{(i)}$ |\n| **Gradient Variance** | Zero (Exact true gradient). | High (Noisy stochastic gradient). | Moderate (Controlled variance). |\n| **Path to Minimum** | Smooth, direct, monotonic. | Oscillatory, erratic, jagged. | Smooth with mild stochasticity. |\n| **Computational Cost** | $\\mathcal{O}(m \\cdot d)$ per step. Very slow for large $m$. | $\\mathcal{O}(d)$ per step. Extremely fast. | $\\mathcal{O}(B \\cdot d)$ per step. Highly parallelizable on GPUs. |\n| **Memory Requirement** | Entire dataset must reside in RAM. | One sample in RAM (Streaming). | Small batch in RAM. |\n| **Industrial Usage** | Small-to-medium tabular datasets. | Online/streaming learning. | **Standard default for modern deep learning and large-scale ML**. |",
       "citations": [
         "Robbins, H., & Monro, S. (1951). A stochastic approximation method. The Annals of Mathematical Statistics, 22(3), 400-407.",
         "Bottou, L. (2010). Large-scale machine learning with stochastic gradient descent. COMPSTAT."
       ],
-      "body": "### 4.1 When the Normal Equation Fails: The Scaling Problem\n\nComputing the closed-form Normal Equation requires inverting the $(d+1) \\\\times (d+1)$ matrix $(\\\\mathbf{X}^T \\\\mathbf{X})$. Matrix inversion has a computational complexity of approximately $\\\\mathcal{O}(d^3)$ (or $\\\\mathcal{O}(d^{2.807})$ via Strassen's algorithm).\n- If $d = 100$: $(d+1)^3 \\\\approx 10^6$ operations (instantaneous, $< 1$ millisecond).\n- If $d = 100,000$ (e.g., text NLP embeddings or genomic data): $(10^5)^3 = 10^{15}$ operations (impossible in RAM, hours/days of compute).\n\nWhen feature dimensionality $d$ or sample size $m$ is large, or when data arrives in streaming batches, we deploy **iterative optimization algorithms: Gradient Descent**.\n\n---\n\n### 4.2 The Gradient Descent Update Rule\n\nGradient Descent starts with an initial parameter guess $\\\\boldsymbol{\\\\theta}^{(0)}$ (typically zeros or small random Gaussian values) and iteratively steps in the direction of steepest descent (opposite to the gradient vector $\\\\nabla J(\\\\boldsymbol{\\\\theta})$):\n\n$$\\\\boldsymbol{\\\\theta} \\\\leftarrow \\\\boldsymbol{\\\\theta} - \\\\alpha \\\\nabla_{\\\\boldsymbol{\\\\theta}} J(\\\\boldsymbol{\\\\theta})$$\n\nWhere $\\\\alpha > 0$ represents the **learning rate** (step size).\n\nFor an individual parameter $\\\\theta_j$, the component-wise update is:\n$$\\\\theta_j \\\\leftarrow \\\\theta_j - \\\\alpha \\\\frac{\\\\partial J(\\\\boldsymbol{\\\\theta})}{\\\\partial \\\\theta_j}$$\n\n> **The Simultaneous Update Requirement**:\n> All parameters $\\\\theta_0, \\\\theta_1, \\\\dots, \\\\theta_d$ must be updated **simultaneously** at each iteration. That is, all partial derivatives $\\\\frac{\\\\partial J(\\\\boldsymbol{\\\\theta})}{\\\\partial \\\\theta_j}$ must be calculated using the identical, frozen parameter vector $\\\\boldsymbol{\\\\theta}^{\\\\text{old}}$ before any parameter values are overwritten.\n\n---\n\n### 4.3 The Three Gradient Descent Variants\n\n```\nComparison of Optimization Trajectories on Contour Surface:\n         Batch Gradient Descent                     Stochastic Gradient Descent (SGD)\n              w_2 ^                                      w_2 ^\n                  |      /-----\\\\                             |      /-----\\\\\n                  |     /   |   \\\\                            |     / *--*  \\\\  (Noisy,\n                  |    | <--+--* | (Smooth direct path)      |    | /  / \\\\* |  erratic\n                  |     \\\\   |   /                            |     \\\\*--*  /   walk)\n                  |      \\\\-----/                             |      \\\\-----/\n                  +------------------> w_1                   +------------------> w_1\n```\n\n| Parameter | Batch Gradient Descent (BGD) | Stochastic Gradient Descent (SGD) | Mini-Batch Gradient Descent (MBGD) |\n| :--- | :--- | :--- | :--- |\n| **Samples per Update** | **All $m$ samples** (full dataset). | **1 single sample** ($m=1$). | **$B$ samples** ($32 \\\\le B \\\\le 512$). |\n| **Gradient Formula** | $\\\\sum_{i=1}^m (h_{\\\\boldsymbol{\\\\theta}}(\\\\mathbf{x}^{(i)}) - y^{(i)}) x_j^{(i)}$ | $(h_{\\\\boldsymbol{\\\\theta}}(\\\\mathbf{x}^{(i)}) - y^{(i)}) x_j^{(i)}$ | $\\\\frac{1}{B} \\\\sum_{i \\\\in \\\\mathcal{B}} (h_{\\\\boldsymbol{\\\\theta}}(\\\\mathbf{x}^{(i)}) - y^{(i)}) x_j^{(i)}$ |\n| **Gradient Variance** | Zero (Exact true gradient). | High (Noisy stochastic gradient). | Moderate (Controlled variance). |\n| **Path to Minimum** | Smooth, direct, monotonic. | Oscillatory, erratic, jagged. | Smooth with mild stochasticity. |\n| **Computational Cost** | $\\\\mathcal{O}(m \\\\cdot d)$ per step. Very slow for large $m$. | $\\\\mathcal{O}(d)$ per step. Extremely fast. | $\\\\mathcal{O}(B \\\\cdot d)$ per step. Highly parallelizable on GPUs. |\n| **Memory Requirement** | Entire dataset must reside in RAM. | One sample in RAM (Streaming). | Small batch in RAM. |\n| **Industrial Usage** | Small-to-medium tabular datasets. | Online/streaming learning. | **Standard default for modern deep learning and large-scale ML**. |"
+      "heading": "4. Gradient Descent Optimization: Batch GD, Stochastic GD & Mini-Batch GD",
+      "section_id": "cml-l03-sec04"
     },
     {
-      "section_id": "cml-l03-sec05",
-      "heading": "5. Feature Scaling Dynamics & Condition Numbers in Optimization",
+      "body": "### 5.1 The Mathematical Mechanism of Scaling in Optimization\n\nIn Lecture 2, we observed that unscaled features distort distance-based models. In Linear Regression, feature scaling dictates the **geometry of the quadratic loss bowl** and the condition number of the Hessian matrix.\n\nThe Hessian of the OLS cost function is:\n$$\\mathbf{H} = \\nabla^2 J(\\boldsymbol{\\theta}) = \\mathbf{X}^T \\mathbf{X}$$\n\nThe eigenvalues $\\lambda_1 \\ge \\lambda_2 \\ge \\dots \\ge \\lambda_{d+1} > 0$ of $\\mathbf{X}^T \\mathbf{X}$ determine the curvature of $J(\\boldsymbol{\\theta})$ along the principal coordinate axes.\nThe **condition number** $\\kappa$ measures the ratio of maximum to minimum curvature:\n\n$$\\kappa = \\frac{\\lambda_{\\max}(\\mathbf{X}^T \\mathbf{X})}{\\lambda_{\\min}(\\mathbf{X}^T \\mathbf{X})}$$\n\n```\nLoss Surface Geometries:\nIll-Conditioned (kappa >> 1, Unscaled Data):       Well-Conditioned (kappa approx 1, Scaled Data):\n             w_2 ^                                             w_2 ^\n                 |    /-----------------------\\\\                    |       /-----\\\\\n                 |   /           |             \\\\                   |      /   |   \\\\\n                 |  | <----------+----------->  |                  |     | <--+--> |\n                 |   \\\\           |             /                   |      \\\\   |   /\n                 |    \\\\-----------------------/                    |       \\\\-----/\n                 +------------------------------> w_1              +--------------------> w_1\n             Extreme oscillation, tiny learning rate             Direct radial descent, fast convergence\n```\n\n1. **Ill-Conditioned Landscape ($\\kappa \\gg 1$)**: When feature $x_1$ has variance $\\sigma_1^2 = 1,000,000$ (e.g., total rooms) and feature $x_2$ has variance $\\sigma_2^2 = 1$ (e.g., median income), the level curves form extremely compressed ellipses.\n   - The gradient vector $\\nabla J(\\boldsymbol{\\theta})$ points nearly perpendicular to the direction of the true minimum.\n   - Updates oscillate wildly along the steep $w_1$ dimension while making negligible progress along the flat $w_2$ dimension.\n   - To prevent numerical divergence, the learning rate $\\alpha$ must be set exceptionally small: $\\alpha < \\frac{2}{\\lambda_{\\max}}$.\n2. **Well-Conditioned Landscape ($\\kappa \\approx 1$)**: Applying Z-score standardization ($z = \\frac{x - \\mu}{\\sigma}$) scales all features to unit variance $\\sigma^2 = 1$. The eigenvalues become nearly equal, transforming elliptical contours into circular hyperspheres.\n   - Gradients point directly toward the global minimum.\n   - Large, stable learning rates can be deployed, accelerating convergence by orders of magnitude.\n\n---\n\n### 5.2 Normal Equation vs. Gradient Descent Comparison\n\n| Engineering Criterion | Normal Equation ($\\text{OLS Closed Form}$) | Gradient Descent (Iterative Solver) |\n| :--- | :--- | :--- |\n| **Hyperparameter Tuning** | **None**. Zero learning rate or iteration count to configure. | Requires tuning learning rate $\\alpha$, batch size $B$, and convergence epochs. |\n| **Feature Scaling** | Not mathematically necessary for parameter values, though helpful for interpretation. | **Mandatory**. Unscaled features severely impair convergence speed. |\n| **Computational Complexity** | $\\mathcal{O}(d^3)$ inversion of $(\\mathbf{X}^T \\mathbf{X})$. | $\\mathcal{O}(k \\cdot m \\cdot d)$ for $k$ iterations. |\n| **Memory Scalability** | Requires storing $(d+1) \\times (d+1)$ matrix in RAM. | Highly scalable via mini-batch streaming from disk. |\n| **Suitability Threshold** | Ideal when $d < 10,000$ and all data fits in memory. | Ideal when $d > 10,000$ or sample size $m > 1,000,000$. |\n| **Scikit-Learn Implementation** | `LinearRegression()` | `SGDRegressor()` |",
       "citations": [
         "LeCun, Y. et al. (2012). Efficient BackProp. Neural Networks: Tricks of the Trade, Springer.",
         "Trefethen, L. N., & Bau, D. (1997). Numerical Linear Algebra. SIAM."
       ],
-      "body": "### 5.1 The Mathematical Mechanism of Scaling in Optimization\n\nIn Lecture 2, we observed that unscaled features distort distance-based models. In Linear Regression, feature scaling dictates the **geometry of the quadratic loss bowl** and the condition number of the Hessian matrix.\n\nThe Hessian of the OLS cost function is:\n$$\\\\mathbf{H} = \\\\nabla^2 J(\\\\boldsymbol{\\\\theta}) = \\\\mathbf{X}^T \\\\mathbf{X}$$\n\nThe eigenvalues $\\\\lambda_1 \\\\ge \\\\lambda_2 \\\\ge \\\\dots \\\\ge \\\\lambda_{d+1} > 0$ of $\\\\mathbf{X}^T \\\\mathbf{X}$ determine the curvature of $J(\\\\boldsymbol{\\\\theta})$ along the principal coordinate axes.\nThe **condition number** $\\\\kappa$ measures the ratio of maximum to minimum curvature:\n\n$$\\\\kappa = \\\\frac{\\\\lambda_{\\\\max}(\\\\mathbf{X}^T \\\\mathbf{X})}{\\\\lambda_{\\\\min}(\\\\mathbf{X}^T \\\\mathbf{X})}$$\n\n```\nLoss Surface Geometries:\nIll-Conditioned (kappa >> 1, Unscaled Data):       Well-Conditioned (kappa approx 1, Scaled Data):\n             w_2 ^                                             w_2 ^\n                 |    /-----------------------\\\\                    |       /-----\\\\\n                 |   /           |             \\\\                   |      /   |   \\\\\n                 |  | <----------+----------->  |                  |     | <--+--> |\n                 |   \\\\           |             /                   |      \\\\   |   /\n                 |    \\\\-----------------------/                    |       \\\\-----/\n                 +------------------------------> w_1              +--------------------> w_1\n             Extreme oscillation, tiny learning rate             Direct radial descent, fast convergence\n```\n\n1. **Ill-Conditioned Landscape ($\\\\kappa \\\\gg 1$)**: When feature $x_1$ has variance $\\\\sigma_1^2 = 1,000,000$ (e.g., total rooms) and feature $x_2$ has variance $\\\\sigma_2^2 = 1$ (e.g., median income), the level curves form extremely compressed ellipses.\n   - The gradient vector $\\\\nabla J(\\\\boldsymbol{\\\\theta})$ points nearly perpendicular to the direction of the true minimum.\n   - Updates oscillate wildly along the steep $w_1$ dimension while making negligible progress along the flat $w_2$ dimension.\n   - To prevent numerical divergence, the learning rate $\\\\alpha$ must be set exceptionally small: $\\\\alpha < \\\\frac{2}{\\\\lambda_{\\\\max}}$.\n2. **Well-Conditioned Landscape ($\\\\kappa \\\\approx 1$)**: Applying Z-score standardization ($z = \\\\frac{x - \\\\mu}{\\\\sigma}$) scales all features to unit variance $\\\\sigma^2 = 1$. The eigenvalues become nearly equal, transforming elliptical contours into circular hyperspheres.\n   - Gradients point directly toward the global minimum.\n   - Large, stable learning rates can be deployed, accelerating convergence by orders of magnitude.\n\n---\n\n### 5.2 Normal Equation vs. Gradient Descent Comparison\n\n| Engineering Criterion | Normal Equation ($\\text{OLS Closed Form}$) | Gradient Descent (Iterative Solver) |\n| :--- | :--- | :--- |\n| **Hyperparameter Tuning** | **None**. Zero learning rate or iteration count to configure. | Requires tuning learning rate $\\\\alpha$, batch size $B$, and convergence epochs. |\n| **Feature Scaling** | Not mathematically necessary for parameter values, though helpful for interpretation. | **Mandatory**. Unscaled features severely impair convergence speed. |\n| **Computational Complexity** | $\\\\mathcal{O}(d^3)$ inversion of $(\\\\mathbf{X}^T \\\\mathbf{X})$. | $\\\\mathcal{O}(k \\\\cdot m \\\\cdot d)$ for $k$ iterations. |\n| **Memory Scalability** | Requires storing $(d+1) \\\\times (d+1)$ matrix in RAM. | Highly scalable via mini-batch streaming from disk. |\n| **Suitability Threshold** | Ideal when $d < 10,000$ and all data fits in memory. | Ideal when $d > 10,000$ or sample size $m > 1,000,000$. |\n| **Scikit-Learn Implementation** | `LinearRegression()` | `SGDRegressor()` |"
+      "heading": "5. Feature Scaling Dynamics & Condition Numbers in Optimization",
+      "section_id": "cml-l03-sec05"
     },
     {
-      "section_id": "cml-l03-sec06",
-      "heading": "6. Model Evaluation Metrics: MAE, MSE, RMSE, R-squared & Adjusted R-squared",
+      "body": "### 6.1 Point Residual Metrics\n\nOnce parameters $\\boldsymbol{\\theta}$ are fitted on training data $\\mathbf{X}_{\\text{train}}$, the model is evaluated on held-out test data $\\mathbf{X}_{\\text{test}}, \\mathbf{y}_{\\text{test}}$. We define test residual error for sample $i$ as:\n\n$$e_i = y_i - \\hat{y}_i$$\n\n#### 1. Mean Absolute Error (MAE)\n$$\\text{MAE} = \\frac{1}{m} \\sum_{i=1}^m |y_i - \\hat{y}_i|$$\n- **Interpretation**: The average expected absolute magnitude of error in natural target units (e.g., dollars).\n- **Outlier Robustness**: High. Errors are penalized linearly ($L_1$), preventing isolated outliers from distorting the metric.\n\n#### 2. Mean Squared Error (MSE)\n$$\\text{MSE} = \\frac{1}{m} \\sum_{i=1}^m (y_i - \\hat{y}_i)^2$$\n- **Interpretation**: Mean of squared deviations ($L_2$). Highly sensitive to outliers due to quadratic penalty $e_i^2$.\n- **Unit Drawback**: Units are squared (e.g., $\\text{dollars}^2$), making business communication counter-intuitive.\n\n#### 3. Root Mean Squared Error (RMSE)\n$$\\text{RMSE} = \\sqrt{\\frac{1}{m} \\sum_{i=1}^m (y_i - \\hat{y}_i)^2} = \\sqrt{\\text{MSE}}$$\n- **Interpretation**: Standard deviation of the unexplained residuals, measured in identical physical units to $y$.\n- **Mathematical Property**: $\\text{RMSE} \\ge \\text{MAE}$. The difference $\\text{RMSE} - \\text{MAE}$ directly reflects the variance in error magnitudes across the test sample.\n\n---\n\n### 6.2 Relative Goodness-of-Fit: $R^2$ & Adjusted $R^2$\n\nAbsolute metrics (RMSE, MAE) depend on target scale (an RMSE of 10,000 USD is disastrous for predicting car age, but outstanding for predicting aircraft cost). We require a scale-independent metric comparing the model against a naive baseline.\n\n#### The Horizontal Baseline Predictor\nThe simplest possible prediction for any unseen observation is the mean of the training target:\n$$\\hat{y}_{\\text{baseline}} = \\bar{y} = \\frac{1}{m} \\sum_{i=1}^m y_i$$\n\nWe partition total variation into Sum of Squares components:\n- **Total Sum of Squares (SST)**: Total variance inherent in the ground-truth target:\n  $$\\text{SST} = \\sum_{i=1}^m (y_i - \\bar{y})^2$$\n- **Residual Sum of Squares (SSE or SSR)**: Unexplained variance remaining after regression fit:\n  $$\\text{SSE} = \\sum_{i=1}^m (y_i - \\hat{y}_i)^2$$\n\n#### The Coefficient of Determination ($R^2$)\n$$R^2 = 1 - \\frac{\\text{SSE}}{\\text{SST}} = 1 - \\frac{\\sum_{i=1}^m (y_i - \\hat{y}_i)^2}{\\sum_{i=1}^m (y_i - \\bar{y})^2}$$\n\n```\nInterpreting R^2 Values on Test Data:\n   R^2 = 1.0  --> Perfect model: SSE = 0, every prediction exactly matches ground truth.\n   R^2 = 0.8  --> Model explains 80% of the total variance in the target variable.\n   R^2 = 0.0  --> Model performs identically to predicting the horizontal mean baseline y_bar.\n   R^2 < 0.0  --> Model performs WORSE than predicting y_bar! (Indicates severe overfitting/breakdown).\n```\n\n#### The Fatal Flaw of $R^2$ & The Adjusted $R^2$ Solution\n**Mathematical Flaw**: Adding a completely random, useless feature column to design matrix $\\mathbf{X}$ will **never decrease training $R^2$**. It will either marginally increase $R^2$ or keep it identical, because Ordinary Least Squares can always assign a near-zero weight to the useless feature.\n\nTo penalize model complexity and prevent feature bloating, **Adjusted $R^2$** incorporates degrees of freedom:\n\n$$R^2_{\\text{adj}} = 1 - \\left( \\frac{\\text{SSE} / (m - d - 1)}{\\text{SST} / (m - 1)} \\right) = 1 - (1 - R^2) \\frac{m - 1}{m - d - 1}$$\n\nWhere:\n- $m$ is sample size.\n- $d$ is number of features (excluding intercept).\n- $R^2_{\\text{adj}}$ increases **only if** a newly added feature reduces SSE by an amount greater than what would be expected by pure random chance.",
       "citations": [
         "Willmott, C. J., & Matsuura, K. (2005). Advantages of the mean absolute error (MAE) over the root mean squared error (RMSE) in assessing average model performance. Climate Research.",
         "Chai, T., & Draxler, R. R. (2014). Root mean square error (RMSE) or mean absolute error (MAE)? Geoscientific Model Development."
       ],
-      "body": "### 6.1 Point Residual Metrics\n\nOnce parameters $\\\\boldsymbol{\\\\theta}$ are fitted on training data $\\\\mathbf{X}_{\\\\text{train}}$, the model is evaluated on held-out test data $\\\\mathbf{X}_{\\\\text{test}}, \\\\mathbf{y}_{\\\\text{test}}$. We define test residual error for sample $i$ as:\n\n$$e_i = y_i - \\\\hat{y}_i$$\n\n#### 1. Mean Absolute Error (MAE)\n$$\\\\text{MAE} = \\\\frac{1}{m} \\\\sum_{i=1}^m |y_i - \\\\hat{y}_i|$$\n- **Interpretation**: The average expected absolute magnitude of error in natural target units (e.g., dollars).\n- **Outlier Robustness**: High. Errors are penalized linearly ($L_1$), preventing isolated outliers from distorting the metric.\n\n#### 2. Mean Squared Error (MSE)\n$$\\\\text{MSE} = \\\\frac{1}{m} \\\\sum_{i=1}^m (y_i - \\\\hat{y}_i)^2$$\n- **Interpretation**: Mean of squared deviations ($L_2$). Highly sensitive to outliers due to quadratic penalty $e_i^2$.\n- **Unit Drawback**: Units are squared (e.g., $\\\\text{dollars}^2$), making business communication counter-intuitive.\n\n#### 3. Root Mean Squared Error (RMSE)\n$$\\\\text{RMSE} = \\\\sqrt{\\\\frac{1}{m} \\\\sum_{i=1}^m (y_i - \\\\hat{y}_i)^2} = \\\\sqrt{\\\\text{MSE}}$$\n- **Interpretation**: Standard deviation of the unexplained residuals, measured in identical physical units to $y$.\n- **Mathematical Property**: $\\\\text{RMSE} \\\\ge \\\\text{MAE}$. The difference $\\\\text{RMSE} - \\\\text{MAE}$ directly reflects the variance in error magnitudes across the test sample.\n\n---\n\n### 6.2 Relative Goodness-of-Fit: $R^2$ & Adjusted $R^2$\n\nAbsolute metrics (RMSE, MAE) depend on target scale ($10,000 RMSE is disastrous for predicting car age, but outstanding for predicting aircraft cost). We require a scale-independent metric comparing the model against a naive baseline.\n\n#### The Horizontal Baseline Predictor\nThe simplest possible prediction for any unseen observation is the mean of the training target:\n$$\\\\hat{y}_{\\\\text{baseline}} = \\\\bar{y} = \\\\frac{1}{m} \\\\sum_{i=1}^m y_i$$\n\nWe partition total variation into Sum of Squares components:\n- **Total Sum of Squares (SST)**: Total variance inherent in the ground-truth target:\n  $$\\\\text{SST} = \\\\sum_{i=1}^m (y_i - \\\\bar{y})^2$$\n- **Residual Sum of Squares (SSE or SSR)**: Unexplained variance remaining after regression fit:\n  $$\\\\text{SSE} = \\\\sum_{i=1}^m (y_i - \\\\hat{y}_i)^2$$\n\n#### The Coefficient of Determination ($R^2$)\n$$R^2 = 1 - \\\\frac{\\\\text{SSE}}{\\\\text{SST}} = 1 - \\\\frac{\\\\sum_{i=1}^m (y_i - \\\\hat{y}_i)^2}{\\\\sum_{i=1}^m (y_i - \\\\bar{y})^2}$$\n\n```\nInterpreting R^2 Values on Test Data:\n   R^2 = 1.0  --> Perfect model: SSE = 0, every prediction exactly matches ground truth.\n   R^2 = 0.8  --> Model explains 80% of the total variance in the target variable.\n   R^2 = 0.0  --> Model performs identically to predicting the horizontal mean baseline y_bar.\n   R^2 < 0.0  --> Model performs WORSE than predicting y_bar! (Indicates severe overfitting/breakdown).\n```\n\n#### The Fatal Flaw of $R^2$ & The Adjusted $R^2$ Solution\n**Mathematical Flaw**: Adding a completely random, useless feature column to design matrix $\\\\mathbf{X}$ will **never decrease training $R^2$**. It will either marginally increase $R^2$ or keep it identical, because Ordinary Least Squares can always assign a near-zero weight to the useless feature.\n\nTo penalize model complexity and prevent feature bloating, **Adjusted $R^2$** incorporates degrees of freedom:\n\n$$R^2_{\\\\text{adj}} = 1 - \\\\left( \\\\frac{\\\\text{SSE} / (m - d - 1)}{\\\\text{SST} / (m - 1)} \\\\right) = 1 - (1 - R^2) \\\\frac{m - 1}{m - d - 1}$$\n\nWhere:\n- $m$ is sample size.\n- $d$ is number of features (excluding intercept).\n- $R^2_{\\\\text{adj}}$ increases **only if** a newly added feature reduces SSE by an amount greater than what would be expected by pure random chance."
+      "heading": "6. Model Evaluation Metrics: MAE, MSE, RMSE, R-squared & Adjusted R-squared",
+      "section_id": "cml-l03-sec06"
     },
     {
-      "section_id": "cml-l03-sec07",
-      "heading": "7. Coefficient Interpretation: Partial Slopes, Association vs. Causation",
+      "body": "### 7.1 Interpreting Regression Weights as Partial Slopes\n\nIn multiple linear regression, each coefficient $\\theta_j$ ($j \\ge 1$) represents a **partial slope**:\n\n$$\\theta_j = \\frac{\\partial h_{\\boldsymbol{\\theta}}(\\mathbf{x})}{\\partial x_j}$$\n\n> **The Ceteris Paribus Principle**:\n> Coefficient $\\theta_j$ quantifies the expected change in target $y$ when feature $x_j$ increases by exactly one unit, **holding all other $d-1$ features strictly constant**.\n\n#### The Intercept $\\theta_0$\n$\\theta_0$ represents the expected baseline prediction when every input feature equals zero: $h_{\\boldsymbol{\\theta}}(\\mathbf{0}) = \\theta_0$.\n- In many domains, $\\mathbf{x} = \\mathbf{0}$ is physically impossible (e.g., a house with 0 square feet, 0 rooms, and 0 income).\n- Centering features around their means ($x_j - \\bar{x}_j$) shifts the intercept such that $\\theta_0 = \\bar{y}$, providing immediate physical meaning as the average expected outcome for an average subject.\n\n---\n\n### 7.2 Scaled vs. Unscaled Coefficients\n\nWhen comparing features to determine which attribute has the greatest predictive influence, comparing raw unscaled coefficients $\\theta_j$ is misleading:\n\n$$\\hat{y} = 250,000 + 0.05 \\cdot (\\text{Annual Income in INR}) + 80,000 \\cdot (\\text{Number of Bedrooms})$$\n\nAt first glance, $\\theta_{\\text{bedrooms}} = 80,000$ appears $1{,}600{,}000$ times more influential than $\\theta_{\\text{income}} = 0.05$. \nHowever, annual income varies by 500,000 INR, while bedrooms vary by $1$ or $2$. \n- **Standardized Coefficients**: When features are standardized via Z-score scaling ($x_j' = \\frac{x_j - \\mu_j}{\\sigma_j}$), each standardized coefficient $\\beta_j$ represents the expected standard deviation change in $y$ per one-standard-deviation change in $x_j$.\n- In the California housing lab: The standardized coefficient for `median_income` ($\\approx +82,000$) dominates all other features, proving that median district wealth is the primary linear driver of parcel value.\n\n---\n\n### 7.3 The Iron Boundary: Association $\\neq$ Causation\n\nA foundational error in machine learning applications is confusing statistical regression weights with causal real-world levers:\n\n```\nObserved Empirical Correlation:\n   High Ice Cream Sales <-------------------- Correlation --------------------> High Drowning Deaths\n          ^                                                                             ^\n          |                                                                             |\n          +----------------------------- Hot Summer Sun --------------------------------+\n                                       (Confounding Variable Z)\n   Fitting OLS: Drowning = theta0 + theta1 * IceCreamSales yields a large positive theta1!\n   Causal Fallacy: \"Banning ice cream sales will prevent drownings.\" (Completely false).\n```\n\n1. **The Confounder Problem**: In observational tabular data, omitted variables (confounders) simultaneously influence both $x_j$ and $y$. Regression coefficients absorb these confounding paths.\n2. **Reverse Causality**: The regression model treats $x \\to y$ as directional, but observational data cannot rule out $y \\to x$ or bidirectional feedback loops.\n3. **The Executive Statement**:\n   - **Correct Engineering Phrasing**: *\"In this fitted model, a 1-standard-deviation increase in median income is associated with an estimated 82,000 USD increase in median house value, holding all other features in the dataset constant.\"*\n   - **Incorrect Causal Claim**: *\"Raising district income by 10,000 USD will cause house prices to rise by 82,000 USD.\"*",
       "citations": [
         "Pearl, J. (2009). Causality: Models, Reasoning, and Inference (2nd ed.). Cambridge University Press.",
         "Angrist, J. D., & Pischke, J. S. (2009). Mostly Harmless Econometrics. Princeton University Press."
       ],
-      "body": "### 7.1 Interpreting Regression Weights as Partial Slopes\n\nIn multiple linear regression, each coefficient $\\\\theta_j$ ($j \\\\ge 1$) represents a **partial slope**:\n\n$$\\\\theta_j = \\\\frac{\\\\partial h_{\\\\boldsymbol{\\\\theta}}(\\\\mathbf{x})}{\\\\partial x_j}$$\n\n> **The Ceteris Paribus Principle**:\n> Coefficient $\\\\theta_j$ quantifies the expected change in target $y$ when feature $x_j$ increases by exactly one unit, **holding all other $d-1$ features strictly constant**.\n\n#### The Intercept $\\\\theta_0$\n$\\\\theta_0$ represents the expected baseline prediction when every input feature equals zero: $h_{\\\\boldsymbol{\\\\theta}}(\\\\mathbf{0}) = \\\\theta_0$.\n- In many domains, $\\\\mathbf{x} = \\\\mathbf{0}$ is physically impossible (e.g., a house with 0 square feet, 0 rooms, and 0 income).\n- Centering features around their means ($x_j - \\\\bar{x}_j$) shifts the intercept such that $\\\\theta_0 = \\\\bar{y}$, providing immediate physical meaning as the average expected outcome for an average subject.\n\n---\n\n### 7.2 Scaled vs. Unscaled Coefficients\n\nWhen comparing features to determine which attribute has the greatest predictive influence, comparing raw unscaled coefficients $\\\\theta_j$ is misleading:\n\n$$\\\\hat{y} = 250,000 + 0.05 \\\\cdot (\\\\text{Annual Income in INR}) + 80,000 \\\\cdot (\\\\text{Number of Bedrooms})$$\n\nAt first glance, $\\\\theta_{\\\\text{bedrooms}} = 80,000$ appears $1,600,000$ times more influential than $\\\\theta_{\\\\text{income}} = 0.05$. \nHowever, annual income varies by $500,000$ INR, while bedrooms vary by $1$ or $2$. \n- **Standardized Coefficients**: When features are standardized via Z-score scaling ($x_j' = \\\\frac{x_j - \\\\mu_j}{\\\\sigma_j}$), each standardized coefficient $\\\\beta_j$ represents the expected standard deviation change in $y$ per one-standard-deviation change in $x_j$.\n- In the California housing lab: The standardized coefficient for `median_income` ($\\approx +82,000$) dominates all other features, proving that median district wealth is the primary linear driver of parcel value.\n\n---\n\n### 7.3 The Iron Boundary: Association $\\\\neq$ Causation\n\nA foundational error in machine learning applications is confusing statistical regression weights with causal real-world levers:\n\n```\nObserved Empirical Correlation:\n   High Ice Cream Sales <-------------------- Correlation --------------------> High Drowning Deaths\n          ^                                                                             ^\n          |                                                                             |\n          +----------------------------- Hot Summer Sun --------------------------------+\n                                       (Confounding Variable Z)\n   Fitting OLS: Drowning = theta0 + theta1 * IceCreamSales yields a large positive theta1!\n   Causal Fallacy: \"Banning ice cream sales will prevent drownings.\" (Completely false).\n```\n\n1. **The Confounder Problem**: In observational tabular data, omitted variables (confounders) simultaneously influence both $x_j$ and $y$. Regression coefficients absorb these confounding paths.\n2. **Reverse Causality**: The regression model treats $x \\\\to y$ as directional, but observational data cannot rule out $y \\\\to x$ or bidirectional feedback loops.\n3. **The Executive Statement**:\n   - **Correct Engineering Phrasing**: *\"In this fitted model, a 1-standard-deviation increase in median income is associated with an estimated $82,000 increase in median house value, holding all other features in the dataset constant.\"*\n   - **Incorrect Causal Claim**: *\"Raising district income by $10,000 will cause house prices to rise by $82,000.\"*"
+      "heading": "7. Coefficient Interpretation: Partial Slopes, Association vs. Causation",
+      "section_id": "cml-l03-sec07"
     },
     {
-      "section_id": "cml-l03-sec08",
-      "heading": "8. End-to-End California Housing Pipeline Implementation & Residual Analysis",
+      "body": "### 8.1 Industrial Code Walkthrough\n\nWe assemble the complete California housing linear regression pipeline, adhering strictly to the train/test hygiene rules established in Lecture 2:\n\n```python\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.compose import ColumnTransformer\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.impute import SimpleImputer\nfrom sklearn.preprocessing import StandardScaler, OneHotEncoder\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score\n\n# 1. Ingest Data and Separate Features\ndf = pd.read_csv(\"data/california_housing.csv\")\nX = df.drop(columns=[\"median_house_value\"])\ny = df[\"median_house_value\"]\n\n# 2. Strict Partitioning First (80% Train, 20% Test)\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.20, random_state=42\n)\n\n# 3. Define Column Categories\nnum_cols = [\"median_income\", \"housing_median_age\", \"total_rooms\", \n            \"total_bedrooms\", \"population\", \"households\", \"latitude\", \"longitude\"]\ncat_cols = [\"ocean_proximity\"]\n\n# 4. Construct Sub-Pipelines\nnumeric_pipeline = Pipeline([\n    (\"imputer\", SimpleImputer(strategy=\"median\")),\n    (\"scaler\", StandardScaler())\n])\n\ncategorical_pipeline = Pipeline([\n    (\"imputer\", SimpleImputer(strategy=\"most_frequent\")),\n    (\"onehot\", OneHotEncoder(drop=\"first\", handle_unknown=\"ignore\", sparse_output=False))\n])\n\npreprocessor = ColumnTransformer(transformers=[\n    (\"num\", numeric_pipeline, num_cols),\n    (\"cat\", categorical_pipeline, cat_cols)\n])\n\n# 5. Assemble Master Pipeline with OLS Solver\nmodel_pipeline = Pipeline([\n    (\"prep\", preprocessor),\n    (\"ols\", LinearRegression())\n])\n\n# 6. Fit Once on Train; Evaluate on Held-Out Test\nmodel_pipeline.fit(X_train, y_train)\ny_pred = model_pipeline.predict(X_test)\n\n# 7. Compute Test Performance Metrics\nrmse = np.sqrt(mean_squared_error(y_test, y_pred))\nmae = mean_absolute_error(y_test, y_pred)\nr2 = r2_score(y_test, y_pred)\n\nn_test = len(y_test)\np_features = len(model_pipeline.named_steps[\"ols\"].coef_)\nadj_r2 = 1 - (1 - r2) * ((n_test - 1) / (n_test - p_features - 1))\n\nprint(f\"Test RMSE:     ${rmse:,.2f}\")\nprint(f\"Test MAE:      ${mae:,.2f}\")\nprint(f\"Test R^2:      {r2:.4f}\")\nprint(f\"Adjusted R^2:  {adj_r2:.4f}\")\n```\n\n---\n\n### 8.2 Inspecting Standardized Regression Weights\n\n```python\n# Extract feature names after transformation\nohe_feature_names = model_pipeline.named_steps[\"prep\"].named_transformers_[\"cat\"].named_steps[\"onehot\"].get_feature_names_out(cat_cols)\nall_feature_names = num_cols + list(ohe_feature_names)\ncoefficients = model_pipeline.named_steps[\"ols\"].coef_\n\ncoef_df = pd.DataFrame({\n    \"Feature\": all_feature_names,\n    \"Standardized_Coefficient\": coefficients\n}).sort_values(by=\"Standardized_Coefficient\", ascending=False)\n\nprint(\"\\nTop Positive & Negative Features by Influence:\")\nprint(coef_df.to_string(index=False))\n```\n\n---\n\n### 8.3 Core Diagnostic Visualizations\n\n```python\nresiduals = y_test - y_pred\n\nfig, axes = plt.subplots(1, 2, figsize=(14, 5))\n\n# Plot 1: Predicted vs. Actual\naxes[0].scatter(y_test, y_pred, alpha=0.25, color=\"teal\", edgecolors=\"none\")\naxes[0].plot([y.min(), y.max()], [y.min(), y.max()], \"r--\", linewidth=2, label=\"Perfect Fit (y = x)\")\naxes[0].set_xlabel(\"Actual Median House Value ($)\")\naxes[0].set_ylabel(\"Predicted Median House Value ($)\")\naxes[0].set_title(f\"Predicted vs. Actual (R^2 = {r2:.3f})\")\naxes[0].legend()\naxes[0].grid(True, linestyle=\":\", alpha=0.6)\n\n# Plot 2: Residuals vs. Fitted Values\naxes[1].scatter(y_pred, residuals, alpha=0.25, color=\"purple\", edgecolors=\"none\")\naxes[1].axhline(0, color=\"black\", linestyle=\"--\", linewidth=2)\naxes[1].set_xlabel(\"Fitted Values y_hat ($)\")\naxes[1].set_ylabel(\"Residuals e = y - y_hat ($)\")\naxes[1].set_title(\"Residuals vs. Fitted Values (Checking Homoscedasticity)\")\naxes[1].grid(True, linestyle=\":\", alpha=0.6)\n\nplt.tight_layout()\nplt.show()\n```\n\n#### Diagnostic Takeaway\nIn Plot 2, observe the horizontal ceiling cap at $y = 500,001$ present in the California housing dataset (censored data). Furthermore, notice the widening fan shape as $\\hat{y}$ increases, signaling **heteroscedasticity**—the exact statistical violation explored in Lecture 4.",
       "citations": [
         "Pedregosa et al. (2011). Scikit-learn: Machine Learning in Python.",
         "Géron, A. (2022). Hands-On Machine Learning with Scikit-Learn. O'Reilly Media."
       ],
-      "body": "### 8.1 Industrial Code Walkthrough\n\nWe assemble the complete California housing linear regression pipeline, adhering strictly to the train/test hygiene rules established in Lecture 2:\n\n```python\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.compose import ColumnTransformer\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.impute import SimpleImputer\nfrom sklearn.preprocessing import StandardScaler, OneHotEncoder\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score\n\n# 1. Ingest Data and Separate Features\ndf = pd.read_csv(\"data/california_housing.csv\")\nX = df.drop(columns=[\"median_house_value\"])\ny = df[\"median_house_value\"]\n\n# 2. Strict Partitioning First (80% Train, 20% Test)\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.20, random_state=42\n)\n\n# 3. Define Column Categories\nnum_cols = [\"median_income\", \"housing_median_age\", \"total_rooms\", \n            \"total_bedrooms\", \"population\", \"households\", \"latitude\", \"longitude\"]\ncat_cols = [\"ocean_proximity\"]\n\n# 4. Construct Sub-Pipelines\nnumeric_pipeline = Pipeline([\n    (\"imputer\", SimpleImputer(strategy=\"median\")),\n    (\"scaler\", StandardScaler())\n])\n\ncategorical_pipeline = Pipeline([\n    (\"imputer\", SimpleImputer(strategy=\"most_frequent\")),\n    (\"onehot\", OneHotEncoder(drop=\"first\", handle_unknown=\"ignore\", sparse_output=False))\n])\n\npreprocessor = ColumnTransformer(transformers=[\n    (\"num\", numeric_pipeline, num_cols),\n    (\"cat\", categorical_pipeline, cat_cols)\n])\n\n# 5. Assemble Master Pipeline with OLS Solver\nmodel_pipeline = Pipeline([\n    (\"prep\", preprocessor),\n    (\"ols\", LinearRegression())\n])\n\n# 6. Fit Once on Train; Evaluate on Held-Out Test\nmodel_pipeline.fit(X_train, y_train)\ny_pred = model_pipeline.predict(X_test)\n\n# 7. Compute Test Performance Metrics\nrmse = np.sqrt(mean_squared_error(y_test, y_pred))\nmae = mean_absolute_error(y_test, y_pred)\nr2 = r2_score(y_test, y_pred)\n\nn_test = len(y_test)\np_features = len(model_pipeline.named_steps[\"ols\"].coef_)\nadj_r2 = 1 - (1 - r2) * ((n_test - 1) / (n_test - p_features - 1))\n\nprint(f\"Test RMSE:     ${rmse:,.2f}\")\nprint(f\"Test MAE:      ${mae:,.2f}\")\nprint(f\"Test R^2:      {r2:.4f}\")\nprint(f\"Adjusted R^2:  {adj_r2:.4f}\")\n```\n\n---\n\n### 8.2 Inspecting Standardized Regression Weights\n\n```python\n# Extract feature names after transformation\nohe_feature_names = model_pipeline.named_steps[\"prep\"].named_transformers_[\"cat\"].named_steps[\"onehot\"].get_feature_names_out(cat_cols)\nall_feature_names = num_cols + list(ohe_feature_names)\ncoefficients = model_pipeline.named_steps[\"ols\"].coef_\n\ncoef_df = pd.DataFrame({\n    \"Feature\": all_feature_names,\n    \"Standardized_Coefficient\": coefficients\n}).sort_values(by=\"Standardized_Coefficient\", ascending=False)\n\nprint(\"\\nTop Positive & Negative Features by Influence:\")\nprint(coef_df.to_string(index=False))\n```\n\n---\n\n### 8.3 Core Diagnostic Visualizations\n\n```python\nresiduals = y_test - y_pred\n\nfig, axes = plt.subplots(1, 2, figsize=(14, 5))\n\n# Plot 1: Predicted vs. Actual\naxes[0].scatter(y_test, y_pred, alpha=0.25, color=\"teal\", edgecolors=\"none\")\naxes[0].plot([y.min(), y.max()], [y.min(), y.max()], \"r--\", linewidth=2, label=\"Perfect Fit (y = x)\")\naxes[0].set_xlabel(\"Actual Median House Value ($)\")\naxes[0].set_ylabel(\"Predicted Median House Value ($)\")\naxes[0].set_title(f\"Predicted vs. Actual (R^2 = {r2:.3f})\")\naxes[0].legend()\naxes[0].grid(True, linestyle=\":\", alpha=0.6)\n\n# Plot 2: Residuals vs. Fitted Values\naxes[1].scatter(y_pred, residuals, alpha=0.25, color=\"purple\", edgecolors=\"none\")\naxes[1].axhline(0, color=\"black\", linestyle=\"--\", linewidth=2)\naxes[1].set_xlabel(\"Fitted Values y_hat ($)\")\naxes[1].set_ylabel(\"Residuals e = y - y_hat ($)\")\naxes[1].set_title(\"Residuals vs. Fitted Values (Checking Homoscedasticity)\")\naxes[1].grid(True, linestyle=\":\", alpha=0.6)\n\nplt.tight_layout()\nplt.show()\n```\n\n#### Diagnostic Takeaway\nIn Plot 2, observe the horizontal ceiling cap at $y = 500,001$ present in the California housing dataset (censored data). Furthermore, notice the widening fan shape as $\\\\hat{y}$ increases, signaling **heteroscedasticity**—the exact statistical violation explored in Lecture 4."
+      "heading": "8. End-to-End California Housing Pipeline Implementation & Residual Analysis",
+      "section_id": "cml-l03-sec08"
     }
   ],
-  "quiz": {
-    "title": "Comprehensive Examination: Linear Regression Deep Dive & Optimization",
-    "description": "25-question examination testing vector dot product formulation, OLS derivation, Normal Equations, Batch vs. Stochastic Gradient Descent, feature scaling condition numbers, evaluation metrics, and coefficient interpretation.",
-    "time_limit": "30 mins",
-    "questions": [
-      {
-        "id": "q-cml-l03-01",
-        "type": "single_choice",
-        "difficulty": "easy",
-        "subtopic": "The Intercept Trick",
-        "question": "In linear regression mathematical notation, what is the purpose of the 'intercept trick' (introducing a dummy feature x_0 = 1)?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "To convert the hypothesis into a non-linear quadratic polynomial.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-2",
-            "text": "To pack both the intercept theta_0 and feature weights theta_1...theta_d into a single compact vector dot product theta^T x.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-3",
-            "text": "To eliminate the need for training labels y.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "To ensure that the residual error is identically equal to zero.",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-2"
-        ],
-        "explanation": "By defining x_0 = 1 and appending it to feature vector x, the linear hypothesis h_theta(x) = theta_0 + theta_1 x_1 + ... + theta_d x_d simplifies to the vector dot product theta^T x, enabling vectorized matrix operations."
-      },
-      {
-        "id": "q-cml-l03-02",
-        "type": "single_choice",
-        "difficulty": "easy",
-        "subtopic": "OLS Objective Function",
-        "question": "What is the mathematical cost function J(theta) minimized by Ordinary Least Squares linear regression?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "J(theta) = sum |y_i - h_theta(x_i)|",
-            "is_correct": false
-          },
-          {
-            "id": "opt-2",
-            "text": "J(theta) = (1/2) sum (h_theta(x_i) - y_i)^2",
-            "is_correct": true
-          },
-          {
-            "id": "opt-3",
-            "text": "J(theta) = - sum [y_i log(h_theta(x_i))]",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "J(theta) = max |y_i - h_theta(x_i)|",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-2"
-        ],
-        "explanation": "Ordinary Least Squares minimizes the sum of squared differences between predictions and true labels: J(theta) = (1/2) sum (h_theta(x_i) - y_i)^2. The factor (1/2) is introduced for convenience when differentiating."
-      },
-      {
-        "id": "q-cml-l03-03",
-        "type": "single_choice",
-        "difficulty": "easy",
-        "subtopic": "Normal Equation Matrix Formula",
-        "question": "What is the closed-form analytical solution (the Normal Equation) for the optimal parameter vector theta in Ordinary Least Squares?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "theta = (X X^T)^(-1) X y",
-            "is_correct": false
-          },
-          {
-            "id": "opt-2",
-            "text": "theta = (X^T X)^(-1) X^T y",
-            "is_correct": true
-          },
-          {
-            "id": "opt-3",
-            "text": "theta = X^T (X X^T)^(-1) y",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "theta = X^T y / (X^T X)",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-2"
-        ],
-        "explanation": "Setting the matrix gradient of J(theta) to zero yields X^T X theta = X^T y. Assuming X^T X is invertible, pre-multiplying by (X^T X)^(-1) gives theta = (X^T X)^(-1) X^T y."
-      },
-      {
-        "id": "q-cml-l03-04",
-        "type": "single_choice",
-        "difficulty": "easy",
-        "subtopic": "Gradient Descent Learning Rate",
-        "question": "In gradient descent optimization, what occurs if the learning rate alpha is set excessively large?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "The algorithm will converge instantaneously in a single iteration.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-2",
-            "text": "The cost function J(theta) may oscillate wildly, overshoot the minimum, and diverge to infinity.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-3",
-            "text": "The algorithm will convert into closed-form OLS.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "The feature weights will all become strictly zero.",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-2"
-        ],
-        "explanation": "If alpha is too large, the parameter updates overshoot the bottom of the convex bowl, stepping across to regions of higher cost and causing the optimization trajectory to diverge."
-      },
-      {
-        "id": "q-cml-l03-05",
-        "type": "single_choice",
-        "difficulty": "easy",
-        "subtopic": "Simultaneous Parameter Updates",
-        "question": "In batch gradient descent for linear regression, why must all parameters theta_0, theta_1, ..., theta_d be updated SIMULTANEOUSLY?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "To prevent Scikit-Learn from throwing a threading exception.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-2",
-            "text": "To ensure that every partial derivative is computed using the identical old parameter state theta before any parameter is overwritten.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-3",
-            "text": "Because simultaneous updates make J(theta) non-convex.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "To ensure that all features receive identical weights.",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-2"
-        ],
-        "explanation": "Simultaneous updating ensures that the gradient vector represents the true slope of the loss surface at the current point theta_old. Updating parameters sequentially would evaluate subsequent derivatives at altered parameter locations."
-      },
-      {
-        "id": "q-cml-l03-06",
-        "type": "single_choice",
-        "difficulty": "easy",
-        "subtopic": "Holdout Metric Units",
-        "question": "Which of the following regression evaluation metrics is expressed in the EXACT SAME physical measurement units as the target variable y?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "Mean Squared Error (MSE)",
-            "is_correct": false
-          },
-          {
-            "id": "opt-2",
-            "text": "Root Mean Squared Error (RMSE)",
-            "is_correct": true
-          },
-          {
-            "id": "opt-3",
-            "text": "Coefficient of Determination (R-squared)",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "Variance Inflation Factor (VIF)",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-2"
-        ],
-        "explanation": "RMSE takes the square root of MSE, returning the metric back to the original units of y (e.g., dollars, meters, degrees). MSE is in squared units, while R^2 is a dimensionless ratio."
-      },
-      {
-        "id": "q-cml-l03-07",
-        "type": "single_choice",
-        "difficulty": "easy",
-        "subtopic": "Coefficient Interpretation Basics",
-        "question": "In an unstandardized multiple linear regression model predicting house prices, the coefficient on 'median_income' (measured in tens of thousands of dollars) is +40,000. How is this interpreted?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "Raising a neighborhood's income by $10,000 will directly cause house prices to rise by $40,000.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-2",
-            "text": "Holding all other features in the model fixed, a 1-unit ($10,000) increase in median income is associated with an expected $40,000 increase in predicted house price.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-3",
-            "text": "Income explains exactly 40% of the total variance in house prices.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "The model has an RMSE of $40,000.",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-2"
-        ],
-        "explanation": "Regression coefficients represent partial slopes under ceteris paribus ('holding other variables constant'). They indicate associative correlation within the model, not proven physical causation."
-      },
-      {
-        "id": "q-cml-l03-08",
-        "type": "single_choice",
-        "difficulty": "easy",
-        "subtopic": "R-squared Baseline Definition",
-        "question": "What is the reference baseline model against which R^2 compares the fitted regression model?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "A baseline predicting zero (y_hat = 0) for all observations.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-2",
-            "text": "A horizontal baseline predicting the sample mean of the target variable (y_hat = y_bar) for all observations.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-3",
-            "text": "A random uniform number generator.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "A Decision Tree with unlimited depth.",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-2"
-        ],
-        "explanation": "R^2 = 1 - (SSE / SST). SST measures the squared dispersion around the horizontal mean baseline y_bar. An R^2 of 0 indicates the model performs no better than predicting y_bar for every sample."
-      },
-      {
-        "id": "q-cml-l03-09",
-        "type": "multiple_choice",
-        "difficulty": "medium",
-        "subtopic": "Convexity of OLS Cost",
-        "question": "Which of the following statements correctly describe the mathematical properties of the OLS cost function J(theta)? (Select all that apply)",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "For linear models, J(theta) is a strictly convex quadratic bowl if X^T X is positive definite.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-2",
-            "text": "J(theta) contains numerous saddle points and local minima that trap gradient descent.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-3",
-            "text": "At the global minimum of J(theta), the gradient vector nabla J(theta) is equal to zero.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-4",
-            "text": "The Hessian matrix of J(theta) is given by X^T X.",
-            "is_correct": true
-          }
-        ],
-        "correctOptionIds": [
-          "opt-1",
-          "opt-3",
-          "opt-4"
-        ],
-        "explanation": "The OLS cost function is a quadratic form in theta whose Hessian is X^T X. When X has full column rank, X^T X is positive definite, making J(theta) strictly convex with a single unique global minimum and zero local minima (Option 2 is false)."
-      },
-      {
-        "id": "q-cml-l03-10",
-        "type": "single_choice",
-        "difficulty": "medium",
-        "subtopic": "Normal Equation vs Gradient Descent Trade-off",
-        "question": "When would a machine learning engineer choose Gradient Descent (e.g., SGDRegressor) over the closed-form Normal Equation (LinearRegression)?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "When the feature dimensionality d is very large (e.g., d > 50,000) or data arrives in a continuous stream.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-2",
-            "text": "Only when the target variable y is discrete.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-3",
-            "text": "Whenever R^2 is below 0.50.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "When we refuse to perform feature scaling.",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-1"
-        ],
-        "explanation": "Inverting the (d+1) x (d+1) matrix in the Normal Equation requires O(d^3) operations, which becomes computationally prohibitive when d is large. Gradient descent scales linearly in d per iteration and supports out-of-core streaming."
-      },
-      {
-        "id": "q-cml-l03-11",
-        "type": "single_choice",
-        "difficulty": "medium",
-        "subtopic": "Feature Scaling for Optimization",
-        "question": "Why does Z-score feature standardization accelerate the convergence rate of Gradient Descent in linear regression?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "It eliminates the need to compute partial derivatives.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-2",
-            "text": "It spherizes the elliptical loss contours of J(theta), reducing the condition number and allowing gradients to point directly toward the minimum without oscillation.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-3",
-            "text": "It guarantees that the model will achieve an R^2 of 1.0.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "It forces all parameters to update sequentially.",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-2"
-        ],
-        "explanation": "When feature scales are disparate, level curves of J(theta) are elongated ellipses with high condition numbers, causing gradients to oscillate wildly perpendicular to the valley. Scaling makes contours circular, enabling direct descent."
-      },
-      {
-        "id": "q-cml-l03-12",
-        "type": "multiple_choice",
-        "difficulty": "medium",
-        "subtopic": "Batch GD vs SGD vs Mini-Batch",
-        "question": "Which of the following statements correctly compare Gradient Descent variants? (Select all that apply)",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "Batch GD computes exact gradients using all m samples, producing a smooth monotonic trajectory toward the minimum.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-2",
-            "text": "Stochastic GD (SGD) updates parameters using 1 sample per step, introducing noisy oscillations that can help escape shallow local plateaus.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-3",
-            "text": "Mini-Batch GD balances vectorization hardware efficiency (GPUs) with gradient stability by using small sample batches (e.g., 32-256).",
-            "is_correct": true
-          },
-          {
-            "id": "opt-4",
-            "text": "SGD requires significantly more memory than Batch GD because it stores multiple gradient matrices.",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-1",
-          "opt-2",
-          "opt-3"
-        ],
-        "explanation": "Options 1, 2, and 3 are correct. Option 4 is false: SGD processes one sample at a time and has minimal memory overhead compared to full-batch GD."
-      },
-      {
-        "id": "q-cml-l03-13",
-        "type": "single_choice",
-        "difficulty": "medium",
-        "subtopic": "MAE vs RMSE Comparison",
-        "question": "An environmental agency is predicting atmospheric pollutant levels. In evaluating two models, Model A has MAE = 12, RMSE = 14. Model B has MAE = 11, RMSE = 28. What does the large gap between MAE and RMSE in Model B indicate?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "Model B has lower overall variance than Model A.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-2",
-            "text": "Model B makes occasional severe, large-magnitude outlier errors that are heavily penalized by the squared term in RMSE.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-3",
-            "text": "Model B was trained without an intercept term.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "Model A has perfect correlation.",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-2"
-        ],
-        "explanation": "RMSE squares errors before averaging. When a model has a low MAE but a high RMSE, it indicates that while most errors are small, the model produces occasional extreme outlier errors that heavily inflate RMSE."
-      },
-      {
-        "id": "q-cml-l03-14",
-        "type": "single_choice",
-        "difficulty": "medium",
-        "subtopic": "Adjusted R-squared Role",
-        "question": "An analyst adds 50 completely random noise variables into a linear regression model. What will happen to the training R^2 and the Adjusted R^2?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "Both R^2 and Adjusted R^2 will increase substantially.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-2",
-            "text": "R^2 will increase (or stay constant), while Adjusted R^2 will decrease.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-3",
-            "text": "Both R^2 and Adjusted R^2 will automatically drop to 0.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "Adjusted R^2 will become exactly equal to MAE.",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-2"
-        ],
-        "explanation": "Standard R^2 never decreases when adding features because OLS can always assign small weights to reduce training SSE. Adjusted R^2 penalizes the loss of degrees of freedom (m - d - 1) and will decrease if the new features do not add predictive value."
-      },
-      {
-        "id": "q-cml-l03-15",
-        "type": "single_choice",
-        "difficulty": "medium",
-        "subtopic": "Geometric Orthogonality of Residuals",
-        "question": "In the geometric vector space formulation of Ordinary Least Squares, what is the geometric relationship between the residual error vector e = y - X theta and the column space Col(X)?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "The residual vector e lies strictly inside the column space Col(X).",
-            "is_correct": false
-          },
-          {
-            "id": "opt-2",
-            "text": "The residual vector e is orthogonal (perpendicular) to every column vector in X, meaning X^T e = 0.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-3",
-            "text": "The residual vector e is parallel to the target vector y.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "The angle between e and Col(X) is exactly 45 degrees.",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-2"
-        ],
-        "explanation": "By the Orthogonal Projection Theorem, the minimum distance from y to the subspace Col(X) occurs when the error vector e is orthogonal to the subspace, which mathematically yields the condition X^T e = X^T (y - X theta) = 0."
-      },
-      {
-        "id": "q-cml-l03-16",
-        "type": "multiple_choice",
-        "difficulty": "medium",
-        "subtopic": "Negative R-squared Conditions",
-        "question": "Under which of the following conditions can R^2 be mathematically NEGATIVE? (Select all that apply)",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "When evaluated on an unseen test set where the model's predictions have larger residual error than simply predicting the training target mean y_bar.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-2",
-            "text": "When fitting an unconstrained linear regression without an intercept term on non-centered data.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-3",
-            "text": "When training an ordinary linear regression with an intercept on the training set using an exact OLS solver.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "When the model is heavily overfitted to training noise and fails to generalize to test data.",
-            "is_correct": true
-          }
-        ],
-        "correctOptionIds": [
-          "opt-1",
-          "opt-2",
-          "opt-4"
-        ],
-        "explanation": "On unseen test data, an overfitted model can produce predictions with SSE > SST, resulting in R^2 < 0. Similarly, fitting without an intercept on training data can yield negative R^2. On training data with an intercept, OLS guarantees 0 <= R^2 <= 1 (Option 3 is false)."
-      },
-      {
-        "id": "q-cml-l03-17",
-        "type": "single_choice",
-        "difficulty": "medium",
-        "subtopic": "Standardized vs Unstandardized Weights",
-        "question": "A model predicts customer spending y: y_hat = 150 + 0.02 * income + 50 * visits. Income has mean $50,000, std $15,000. Visits has mean 3, std 1. Why is comparing 0.02 to 50 misleading for assessing feature importance?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "Because visits has a higher p-value.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-2",
-            "text": "Because raw coefficients depend on measurement units; a 1-std shift in income ($15,000 * 0.02 = $300) actually affects predictions six times more than a 1-std shift in visits (1 * 50 = $50).",
-            "is_correct": true
-          },
-          {
-            "id": "opt-3",
-            "text": "Because the intercept term absorbs the effect of income.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "Because linear regression cannot accept two features simultaneously.",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-2"
-        ],
-        "explanation": "Raw coefficients reflect measurement scales (dollars vs count). To compare feature importance fairly, one must inspect standardized coefficients, which scale the weights by feature standard deviations."
-      },
-      {
-        "id": "q-cml-l03-18",
-        "type": "single_choice",
-        "difficulty": "hard",
-        "subtopic": "Matrix Rank & Singularity",
-        "question": "Suppose a design matrix X has dimensions 1,000 x 5 (1,000 rows, 4 features + intercept). Feature column 4 is exactly equal to 3 * column 2 - 2 * column 3. What is the mathematical consequence when attempting to solve theta = (X^T X)^(-1) X^T y?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "The matrix X^T X is strictly singular (determinant = 0) and non-invertible, causing the analytical OLS solver to fail.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-2",
-            "text": "The learning rate automatically increases by a factor of 3.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-3",
-            "text": "The model's R^2 becomes 1.0.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "Gradient descent will converge in exactly 1 iteration.",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-1"
-        ],
-        "explanation": "Because column 4 is an exact linear combination of columns 2 and 3, X does not have full column rank (rank = 4 instead of 5). Consequently, X^T X has a zero eigenvalue, determinant 0, and is non-invertible."
-      },
-      {
-        "id": "q-cml-l03-19",
-        "type": "single_choice",
-        "difficulty": "hard",
-        "subtopic": "Hessian Condition Number Bounds",
-        "question": "In optimizing linear regression via Batch Gradient Descent, if the maximum eigenvalue of the Hessian matrix H = X^T X is lambda_max = 500, what is the theoretical upper bound on learning rate alpha to ensure convergence?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "alpha < 2 / lambda_max = 0.004",
-            "is_correct": true
-          },
-          {
-            "id": "opt-2",
-            "text": "alpha < 500",
-            "is_correct": false
-          },
-          {
-            "id": "opt-3",
-            "text": "alpha > 1 / 500",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "alpha = 1.0",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-1"
-        ],
-        "explanation": "In convex quadratic optimization, the spectral radius of the iteration matrix (I - alpha H) must be strictly less than 1 for convergence, which mandates 0 < alpha < 2 / lambda_max. Here, 2 / 500 = 0.004."
-      },
-      {
-        "id": "q-cml-l03-20",
-        "type": "multiple_choice",
-        "difficulty": "hard",
-        "subtopic": "Gauss-Markov Theorem Conditions",
-        "question": "According to the Gauss-Markov Theorem, under what conditions is the Ordinary Least Squares estimator theta_hat the Best Linear Unbiased Estimator (BLUE)? (Select all that apply)",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "The error terms have an expected value of zero: E[epsilon | X] = 0.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-2",
-            "text": "The error terms are homoscedastic: Var(epsilon_i | X) = sigma^2 for all i.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-3",
-            "text": "The error terms are uncorrelated: Cov(epsilon_i, epsilon_j | X) = 0 for all i != j.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-4",
-            "text": "The error terms must follow a strictly Gaussian distribution for OLS to be BLUE.",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-1",
-          "opt-2",
-          "opt-3"
-        ],
-        "explanation": "The Gauss-Markov theorem states that OLS is BLUE (minimum variance among linear unbiased estimators) under zero conditional mean, homoscedasticity, and no autocorrelation. Crucially, normality is NOT required for BLUE (it is only needed for exact hypothesis tests and CIs). Option 4 is false."
-      },
-      {
-        "id": "q-cml-l03-21",
-        "type": "single_choice",
-        "difficulty": "hard",
-        "subtopic": "Omitted Variable Bias Derivation",
-        "question": "Suppose the true data-generating process is y = beta_1 x_1 + beta_2 x_2 + epsilon. An analyst omits x_2 and fits the simple regression y = alpha_1 x_1 + u. What is the expected value of the estimated coefficient alpha_hat_1?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "E[alpha_hat_1] = beta_1 + beta_2 * Cov(x_1, x_2) / Var(x_1)",
-            "is_correct": true
-          },
-          {
-            "id": "opt-2",
-            "text": "E[alpha_hat_1] = beta_1",
-            "is_correct": false
-          },
-          {
-            "id": "opt-3",
-            "text": "E[alpha_hat_1] = beta_1 * beta_2",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "E[alpha_hat_1] = 0",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-1"
-        ],
-        "explanation": "This is the classic Omitted Variable Bias formula: E[alpha_hat_1] = beta_1 + beta_2 * (Cov(x_1, x_2) / Var(x_1)). The omitted variable biases the estimated coefficient unless beta_2 = 0 or x_1 and x_2 are uncorrelated."
-      },
-      {
-        "id": "q-cml-l03-22",
-        "type": "single_choice",
-        "difficulty": "hard",
-        "subtopic": "Adjusted R-squared Calculation",
-        "question": "A model evaluated on a test set of m = 101 samples with d = 10 features achieves an R^2 of 0.80. What is the Adjusted R^2 for this test set?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "0.7778",
-            "is_correct": true
-          },
-          {
-            "id": "opt-2",
-            "text": "0.8000",
-            "is_correct": false
-          },
-          {
-            "id": "opt-3",
-            "text": "0.7200",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "0.8222",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-1"
-        ],
-        "explanation": "Formula: Adj R^2 = 1 - (1 - R^2) * [(m - 1) / (m - d - 1)]. Here, m = 101, d = 10, so m - 1 = 100, and m - d - 1 = 101 - 10 - 1 = 90. Adj R^2 = 1 - (1 - 0.80) * (100 / 90) = 1 - 0.20 * 1.1111 = 1 - 0.2222 = 0.7778."
-      },
-      {
-        "id": "q-cml-l03-23",
-        "type": "single_choice",
-        "difficulty": "hard",
-        "subtopic": "Hat Matrix & Leverage",
-        "question": "In linear regression matrix algebra, the 'Hat Matrix' H is defined as H = X (X^T X)^(-1) X^T, mapping y to predictions y_hat = H y. What mathematical properties characterize the Hat Matrix?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "H is symmetric (H^T = H) and idempotent (H^2 = H).",
-            "is_correct": true
-          },
-          {
-            "id": "opt-2",
-            "text": "H is an upper triangular matrix with zero trace.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-3",
-            "text": "H is always an invertible matrix of full rank m.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "H has eigenvalues strictly equal to 2.",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-1"
-        ],
-        "explanation": "As an orthogonal projection operator, the Hat Matrix H satisfies symmetry H^T = H and idempotence H^2 = H * H = H (projecting an already projected vector changes nothing). Its rank equals trace(H) = d + 1."
-      },
-      {
-        "id": "q-cml-l03-24",
-        "type": "single_choice",
-        "difficulty": "hard",
-        "subtopic": "LMS Stochastic Gradient Derivation",
-        "question": "For a single observation (x, y) with cost J_i(theta) = (1/2) (h_theta(x) - y)^2, what is the exact gradient update rule for parameter theta_j?",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "theta_j := theta_j + alpha * (y - h_theta(x)) * x_j",
-            "is_correct": true
-          },
-          {
-            "id": "opt-2",
-            "text": "theta_j := theta_j - alpha * (y - h_theta(x)) * x_j",
-            "is_correct": false
-          },
-          {
-            "id": "opt-3",
-            "text": "theta_j := theta_j - alpha * (h_theta(x) - y)^2",
-            "is_correct": false
-          },
-          {
-            "id": "opt-4",
-            "text": "theta_j := theta_j + alpha * x_j",
-            "is_correct": false
-          }
-        ],
-        "correctOptionIds": [
-          "opt-1"
-        ],
-        "explanation": "By chain rule, dJ_i/dtheta_j = (h_theta(x) - y) * x_j. The descent step is theta_j := theta_j - alpha * (h_theta(x) - y) * x_j = theta_j + alpha * (y - h_theta(x)) * x_j. This is the Widrow-Hoff / LMS update rule."
-      },
-      {
-        "id": "q-cml-l03-25",
-        "type": "multiple_choice",
-        "difficulty": "hard",
-        "subtopic": "Scikit-Learn OLS Solver Architecture",
-        "question": "How does Scikit-Learn's LinearRegression class compute optimal coefficients under the hood? (Select all that apply)",
-        "options": [
-          {
-            "id": "opt-1",
-            "text": "It uses scipy.linalg.lstsq, which computes the solution via Singular Value Decomposition (SVD) of matrix X rather than explicitly inverting X^T X.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-2",
-            "text": "It executes an iterative from-scratch batch gradient descent loop with learning rate 0.01.",
-            "is_correct": false
-          },
-          {
-            "id": "opt-3",
-            "text": "Using SVD avoids numerical instability and handles rank-deficient matrices via the pseudoinverse.",
-            "is_correct": true
-          },
-          {
-            "id": "opt-4",
-            "text": "It computes parameter estimates using closed-form analytical least squares.",
-            "is_correct": true
-          }
-        ],
-        "correctOptionIds": [
-          "opt-1",
-          "opt-3",
-          "opt-4"
-        ],
-        "explanation": "Scikit-Learn's LinearRegression wraps scipy.linalg.lstsq, which uses LAPACK's DGELSD driver based on SVD of X. This analytical solver avoids explicitly computing the ill-conditioned product X^T X and handles singularities gracefully. It does NOT use gradient descent (Option 2 is false; SGDRegressor does)."
-      }
-    ]
-  }
+  "subject_code": "CML",
+  "summary": "An exhaustive, mathematically rigorous deep dive into Linear Regression. Covers vector formulation with the intercept trick, geometric projection in column space, calculus derivation of the Normal Equation, Batch vs. Stochastic Gradient Descent dynamics, feature scaling condition numbers, comprehensive holdout evaluation metrics (MAE, MSE, RMSE, R^2, Adjusted R^2), coefficient interpretation pitfalls, and complete scikit-learn pipeline implementations.",
+  "tags": [
+    "Linear Regression",
+    "Ordinary Least Squares",
+    "Normal Equation",
+    "Gradient Descent",
+    "Cost Functions",
+    "Evaluation Metrics",
+    "R-squared",
+    "Residuals"
+  ],
+  "term": "Term 5",
+  "topic_title": "3. Linear Regression Deep Dive: Ordinary Least Squares, Normal Equations & Optimization"
 }

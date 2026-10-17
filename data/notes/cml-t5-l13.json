@@ -1,0 +1,797 @@
+{
+  "approval_status": "approved",
+  "key_takeaways": [
+    "Bagging trains independent deep trees in parallel to reduce variance; Boosting trains shallow weak learners sequentially to reduce bias.",
+    "AdaBoost adapts by increasing the sampling weights of misclassified observations, forcing subsequent decision stumps (depth 1 trees) to focus on hard cases.",
+    "In AdaBoost, base learners with lower weighted error receive higher voting power (stage weight alpha) during final aggregation.",
+    "Gradient Boosting frames ensemble learning as additive gradient descent: each new tree is fitted directly to the negative gradients (residuals) of the loss function.",
+    "The learning rate (shrinkage parameter eta) scales the contribution of each newly added tree, preventing individual trees from dominating and improving generalization.",
+    "XGBoost improves standard GBM by incorporating second-order Taylor approximations (gradients and hessians), L1/L2 leaf weight regularization, and column subsampling.",
+    "Unlike Random Forests (where adding trees never overfits), Boosting models can overfit if n_estimators is too large or the learning rate is too aggressive."
+  ],
+  "last_updated": "2026-10-18T00:00:00Z",
+  "learning_objectives": [
+    "Contrast parallel variance-reduction ensembles (Bagging/Random Forests) with sequential bias-reduction ensembles (Boosting).",
+    "Explain the step-by-step mechanism of AdaBoost: sample reweighting, decision stumps, and stage-weighted voting.",
+    "Formulate Gradient Boosting as an additive model that fits shallow regression trees to the pseudo-residuals of preceding models.",
+    "Analyze the architectural innovations of XGBoost and HistGradientBoosting (regularization, second-order gradients, histogram binning).",
+    "Diagnose overfitting risks in Boosting (learning_rate vs n_estimators trade-off) and tune models using Scikit-Learn and XGBoost."
+  ],
+  "note_id": "cml-t5-l13",
+  "quiz": {
+    "questions": [
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "easy",
+        "explanation": "Bagging builds independent models in parallel using bootstrap samples. Boosting builds models in series (sequentially), where each subsequent model specifically targets the mistakes or residuals of preceding models.",
+        "id": "q1",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "Boosting trains base learners sequentially where each model targets prior mistakes; Bagging trains base learners independently in parallel"
+          },
+          {
+            "id": "opt2",
+            "text": "Boosting uses neural networks while Bagging only uses linear models"
+          },
+          {
+            "id": "opt3",
+            "text": "Boosting requires unsupervised clustering before fitting"
+          },
+          {
+            "id": "opt4",
+            "text": "Bagging trains sequentially while Boosting trains simultaneously"
+          }
+        ],
+        "question": "What is the primary conceptual difference in how base learners are trained in Boosting versus Bagging?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "easy",
+        "explanation": "A decision stump is the simplest possible decision tree: it has max_depth=1, meaning it asks exactly one yes/no question about one feature.",
+        "id": "q2",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "A decision tree with max_depth = 1 (a single split node with two leaves)"
+          },
+          {
+            "id": "opt2",
+            "text": "A fully grown decision tree with 1,000 leaves"
+          },
+          {
+            "id": "opt3",
+            "text": "A tree with all split thresholds set to zero"
+          },
+          {
+            "id": "opt4",
+            "text": "A linear regression line fitted to residual points"
+          }
+        ],
+        "question": "In the AdaBoost algorithm, what is a 'decision stump'?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "easy",
+        "explanation": "After each round, AdaBoost multiplies the weights of misclassified samples by e^(+alpha_m) and correct samples by e^(-alpha_m), forcing the next weak learner to focus on previous errors.",
+        "id": "q3",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "By increasing the sample weights of misclassified instances and decreasing the weights of correctly classified instances"
+          },
+          {
+            "id": "opt2",
+            "text": "By deleting correctly classified rows from the dataset"
+          },
+          {
+            "id": "opt3",
+            "text": "By creating synthetic duplicates of all negative instances"
+          },
+          {
+            "id": "opt4",
+            "text": "By standardizing feature values to mean 0 and variance 1"
+          }
+        ],
+        "question": "How does AdaBoost ensure that subsequent weak learners pay more attention to hard-to-classify training instances?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "easy",
+        "explanation": "Gradient Boosting builds an additive model where each new tree is fitted directly to the pseudo-residuals (the errors left unexplained by previous trees).",
+        "id": "q4",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "The residual errors (or pseudo-residuals/negative gradients) of the current ensemble's predictions"
+          },
+          {
+            "id": "opt2",
+            "text": "The original target labels y from scratch"
+          },
+          {
+            "id": "opt3",
+            "text": "The sample variance of each feature column"
+          },
+          {
+            "id": "opt4",
+            "text": "The PCA eigenvalues of the dataset"
+          }
+        ],
+        "question": "In Gradient Boosting, what target do subsequent trees attempt to predict?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "easy",
+        "explanation": "Shrinkage scales each tree's prediction by eta in (0, 1]. Small steps ensure that no single tree overreacts to training noise, leading to much better generalization.",
+        "id": "q5",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "It scales down the contribution of each newly added tree, allowing gradual error correction and preventing overfitting"
+          },
+          {
+            "id": "opt2",
+            "text": "It determines how many CPU cores are allocated to training"
+          },
+          {
+            "id": "opt3",
+            "text": "It sets the maximum depth of the individual decision trees"
+          },
+          {
+            "id": "opt4",
+            "text": "It automatically converts classification targets to regression targets"
+          }
+        ],
+        "question": "What is the primary role of the 'learning_rate' (shrinkage) hyperparameter in Gradient Boosting?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1",
+          "opt2",
+          "opt3"
+        ],
+        "difficulty": "easy",
+        "explanation": "GradientBoostingClassifier, HistGradientBoostingClassifier, and XGBClassifier are all gradient boosting models. KNeighborsClassifier is a distance-based instance learner.",
+        "id": "q6",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "sklearn.ensemble.GradientBoostingClassifier"
+          },
+          {
+            "id": "opt2",
+            "text": "sklearn.ensemble.HistGradientBoostingClassifier"
+          },
+          {
+            "id": "opt3",
+            "text": "xgboost.XGBClassifier"
+          },
+          {
+            "id": "opt4",
+            "text": "sklearn.neighbors.KNeighborsClassifier"
+          }
+        ],
+        "question": "Which of the following libraries or classes provide gradient boosting implementations? (Select all that apply)",
+        "type": "multiple_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "easy",
+        "explanation": "Because each tree in boosting sequentially attacks remaining errors, an excessively high number of trees will eventually overfit training noise. Random Forests, by contrast, only average independent trees and do not overfit by adding trees.",
+        "id": "q7",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "The model risks severe overfitting as subsequent trees begin memorizing random training noise"
+          },
+          {
+            "id": "opt2",
+            "text": "The model variance is guaranteed to drop to zero without any risk"
+          },
+          {
+            "id": "opt3",
+            "text": "The model automatically converts into an unsupervised clustering algorithm"
+          },
+          {
+            "id": "opt4",
+            "text": "The training loss increases monotonically"
+          }
+        ],
+        "question": "Unlike Random Forests, what happens if you set n_estimators to a very large number (e.g. 5,000) in Gradient Boosting without early stopping?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "easy",
+        "explanation": "Boosting relies on weak, high-bias base learners (shallow trees with max_depth between 2 and 6) so that the additive combination gradually reduces bias without exploding in variance.",
+        "id": "q8",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "Shallow trees (max_depth typically 2 to 6)"
+          },
+          {
+            "id": "opt2",
+            "text": "Completely unconstrained deep trees (max_depth > 20)"
+          },
+          {
+            "id": "opt3",
+            "text": "Always exactly max_depth = 50"
+          },
+          {
+            "id": "opt4",
+            "text": "Trees with only categorical splits and zero numeric splits"
+          }
+        ],
+        "question": "What depth are base trees typically constrained to in Gradient Boosting compared to Random Forests?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "medium",
+        "explanation": "The formula for stage weight is alpha_m = 0.5 * ln((1 - epsilon_m) / epsilon_m). For epsilon_m = 0.5: alpha_m = 0.5 * ln(0.5 / 0.5) = 0.5 * ln(1) = 0. The model receives zero voting influence.",
+        "id": "q9",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "0"
+          },
+          {
+            "id": "opt2",
+            "text": "1.0"
+          },
+          {
+            "id": "opt3",
+            "text": "0.5"
+          },
+          {
+            "id": "opt4",
+            "text": "Infinity"
+          }
+        ],
+        "question": "In AdaBoost, if a weak learner achieves a weighted error rate of epsilon_m = 0.5 (identical to random guessing), what is its voting weight alpha_m?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "medium",
+        "explanation": "When epsilon_m > 0.5, (1 - epsilon_m) / epsilon_m < 1, so ln(...) is negative and alpha_m < 0. Inverting a binary classifier that is 60% wrong makes it 60% right!",
+        "id": "q10",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "Its voting weight alpha_m becomes negative, effectively inverting its predictions in the final ensemble vote"
+          },
+          {
+            "id": "opt2",
+            "text": "The entire ensemble terminates immediately with a runtime error"
+          },
+          {
+            "id": "opt3",
+            "text": "Its weight becomes infinite"
+          },
+          {
+            "id": "opt4",
+            "text": "All training instances are deleted"
+          }
+        ],
+        "question": "What happens if a weak learner in AdaBoost performs worse than random guessing (weighted error epsilon_m > 0.5)?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1",
+          "opt2",
+          "opt3"
+        ],
+        "difficulty": "medium",
+        "explanation": "XGBoost incorporates second-order Taylor expansion, leaf weight regularization penalties (L1 and L2), and column subsampling. It does not convert tabular data into convolutional tensors.",
+        "id": "q11",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "Second-order Taylor series approximation utilizing both gradients and hessians"
+          },
+          {
+            "id": "opt2",
+            "text": "Explicit L1 (alpha) and L2 (lambda) regularization penalties on leaf weights"
+          },
+          {
+            "id": "opt3",
+            "text": "Column subsampling (colsample_bytree) to decorrelate trees"
+          },
+          {
+            "id": "opt4",
+            "text": "Mandatory conversion of all tabular data into deep convolutional tensors"
+          }
+        ],
+        "question": "Which of the following architectural enhancements are implemented in XGBoost to improve speed and prevent overfitting? (Select all that apply)",
+        "type": "multiple_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "medium",
+        "explanation": "HistGradientBoosting bins continuous variables into up to 256 integer values (histograms), reducing the split search complexity from O(N log N) to O(bins) = O(256).",
+        "id": "q12",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "It discretizes continuous numeric features into 256 integer bins, avoiding expensive repeated sorting of values"
+          },
+          {
+            "id": "opt2",
+            "text": "It skips training on 90% of the dataset rows entirely"
+          },
+          {
+            "id": "opt3",
+            "text": "It only builds trees with a single leaf node"
+          },
+          {
+            "id": "opt4",
+            "text": "It replaces decision trees with K-Means clustering"
+          }
+        ],
+        "question": "How does HistGradientBoostingClassifier achieve dramatically faster training speeds compared to standard GradientBoostingClassifier on large datasets?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "medium",
+        "explanation": "Because shrinkage reduces the step size taken by each tree, more trees are required to traverse the optimization trajectory and reach the minimum of the loss function.",
+        "id": "q13",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "Increase n_estimators substantially (e.g. from 100 to 500 or 1,000)"
+          },
+          {
+            "id": "opt2",
+            "text": "Decrease n_estimators to 10"
+          },
+          {
+            "id": "opt3",
+            "text": "Leave n_estimators completely unchanged"
+          },
+          {
+            "id": "opt4",
+            "text": "Set n_estimators to 1"
+          }
+        ],
+        "question": "Suppose you decrease the learning_rate in a Gradient Boosting model from 0.2 to 0.02. What adjustment should you generally make to n_estimators to maintain comparable or superior model performance?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1",
+          "opt2",
+          "opt3"
+        ],
+        "difficulty": "medium",
+        "explanation": "Restricting depth, using subsampling (both row and column), and utilizing early stopping directly guard against overfitting. A learning rate of 1.0 with depth 25 would severely overfit.",
+        "id": "q14",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "Setting a smaller max_depth (e.g., 3 to 5)"
+          },
+          {
+            "id": "opt2",
+            "text": "Using row subsampling (subsample = 0.8) and column subsampling (colsample_bytree = 0.8)"
+          },
+          {
+            "id": "opt3",
+            "text": "Employing early stopping with a validation set"
+          },
+          {
+            "id": "opt4",
+            "text": "Setting learning_rate = 1.0 and max_depth = 25"
+          }
+        ],
+        "question": "When training an XGBoost model, which techniques help prevent overfitting on tabular data? (Select all that apply)",
+        "type": "multiple_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "medium",
+        "explanation": "The derivative of 0.5 * (y - F)^2 with respect to F is -(y - F). The negative gradient is -(-(y - F)) = y - F, which is precisely the ordinary residual.",
+        "id": "q15",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "y_i - F(x_i)"
+          },
+          {
+            "id": "opt2",
+            "text": "(y_i - F(x_i))^2"
+          },
+          {
+            "id": "opt3",
+            "text": "F(x_i) / y_i"
+          },
+          {
+            "id": "opt4",
+            "text": "0.5 * (y_i - F(x_i))"
+          }
+        ],
+        "question": "In regression with squared error loss L(y, F(x)) = 0.5 * (y - F(x))^2, what is the negative gradient (pseudo-residual) for observation i?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "medium",
+        "explanation": "Proposed by Jerome Friedman (1999), Stochastic Gradient Boosting trains each successive tree on a random fraction of the training data (controlled by subsample < 1.0), which injects randomness, reduces variance, and speeds up training.",
+        "id": "q16",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "A variant where each base tree is trained on a random subsample (without replacement) of the training rows"
+          },
+          {
+            "id": "opt2",
+            "text": "A method that randomly flips target labels before training"
+          },
+          {
+            "id": "opt3",
+            "text": "A boosting algorithm that runs only on quantum hardware"
+          },
+          {
+            "id": "opt4",
+            "text": "A technique where trees are grown in reverse from leaves to root"
+          }
+        ],
+        "question": "What is 'Stochastic Gradient Boosting'?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "medium",
+        "explanation": "Tree-based split finding evaluates candidate thresholds based on sorting values. Multiplying or shifting feature values preserves their rank order, leaving split locations mathematically invariant.",
+        "id": "q17",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "Because decision tree splits rely solely on the relative ordering/rank of feature values, which monotonic scaling does not alter"
+          },
+          {
+            "id": "opt2",
+            "text": "Because XGBoost automatically normalizes all matrices with deep linear layers"
+          },
+          {
+            "id": "opt3",
+            "text": "Because boosting models cannot process scaled continuous numbers"
+          },
+          {
+            "id": "opt4",
+            "text": "Because distance metrics are computed on the target vector, not features"
+          }
+        ],
+        "question": "Why is feature scaling (e.g. StandardScaler) generally NOT required before fitting an XGBoost or LightGBM model?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1",
+          "opt2",
+          "opt3"
+        ],
+        "difficulty": "medium",
+        "explanation": "RF is easy to tune and trivially parallelizable. GBDTs often achieve higher peak performance with careful hyperparameter tuning, but they can overfit if n_estimators is too large.",
+        "id": "q18",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "Random Forests are generally easier to tune out-of-the-box because they have fewer sensitive hyperparameter interactions"
+          },
+          {
+            "id": "opt2",
+            "text": "Gradient Boosted Trees often achieve higher peak predictive accuracy on tabular competitions when properly tuned"
+          },
+          {
+            "id": "opt3",
+            "text": "Random Forests can easily be trained on multiple CPU cores in parallel because trees are independent"
+          },
+          {
+            "id": "opt4",
+            "text": "Gradient Boosted Trees are immune to overfitting regardless of how many estimators are fitted"
+          }
+        ],
+        "question": "Which of the following statements are TRUE regarding the comparison between Random Forests and Gradient Boosted Trees? (Select all that apply)",
+        "type": "multiple_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "hard",
+        "explanation": "Correct samples are discounted by e^(-alpha) = e^(-1.2) ≈ 0.301. Misclassified samples are amplified by e^(+alpha) = e^(+1.2) ≈ 3.32. The relative weight ratio between an incorrect and correct sample is e^(2.4) ≈ 11.02.",
+        "id": "q19",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "Its weight is reduced by a factor of e^(-1.2) ≈ 0.301, while misclassified samples have their weights increased by e^(+1.2) ≈ 3.32"
+          },
+          {
+            "id": "opt2",
+            "text": "Its weight is set to exactly 0 permanently"
+          },
+          {
+            "id": "opt3",
+            "text": "Its weight is doubled"
+          },
+          {
+            "id": "opt4",
+            "text": "Its weight remains identical to all other samples"
+          }
+        ],
+        "question": "In AdaBoost binary classification, if a sample is correctly classified by weak learner m, its weight for round m+1 is multiplied by exp(-alpha_m). If alpha_m = 1.2, what happens to its weight relative to misclassified samples?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "hard",
+        "explanation": "AdaBoost's exponential loss function makes it notoriously sensitive to outliers and noisy labels. Because noisy points are consistently misclassified, their weights grow exponentially, monopolizing future learners and ruining generalization.",
+        "id": "q20",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "AdaBoost degrades significantly because it repeatedly boosts the weights of noisy outliers, causing later stumps to obsess over impossible-to-fit points"
+          },
+          {
+            "id": "opt2",
+            "text": "AdaBoost automatically filters out all mislabeled points in round 1"
+          },
+          {
+            "id": "opt3",
+            "text": "AdaBoost is mathematically immune to label noise because it uses decision stumps"
+          },
+          {
+            "id": "opt4",
+            "text": "The learning rate automatically drops to zero"
+          }
+        ],
+        "question": "What happens if training data contains severe label noise (e.g. 5% of training samples have completely corrupted or contradictory labels) when training an AdaBoost model?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "hard",
+        "explanation": "Gamma specifies the minimum loss reduction required to split a leaf. A node is split only if the resulting gain exceeds gamma, acting as a direct post-pruning threshold.",
+        "id": "q21",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "The minimum loss reduction required to make a further partition on a leaf node"
+          },
+          {
+            "id": "opt2",
+            "text": "The percentage of rows randomly sampled for each tree"
+          },
+          {
+            "id": "opt3",
+            "text": "The L2 regularization term on leaf weights"
+          },
+          {
+            "id": "opt4",
+            "text": "The maximum number of bins used in histogram calculation"
+          }
+        ],
+        "question": "In XGBoost, what does the hyperparameter 'gamma' (min_split_loss) control during tree construction?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1",
+          "opt2",
+          "opt3"
+        ],
+        "difficulty": "hard",
+        "explanation": "Lowering tree depth, lowering learning rate with early stopping, and adding row/column subsampling are standard, effective regularization techniques for boosting. Increasing n_estimators to 5,000 without early stopping would worsen overfitting.",
+        "id": "q22",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "Decrease max_depth from 8 down to 3"
+          },
+          {
+            "id": "opt2",
+            "text": "Reduce the learning_rate and implement early stopping based on validation ROC-AUC"
+          },
+          {
+            "id": "opt3",
+            "text": "Introduce row subsampling (subsample = 0.7) and column subsampling (colsample_bytree = 0.7)"
+          },
+          {
+            "id": "opt4",
+            "text": "Increase n_estimators from 500 to 5,000 without changing any other parameter"
+          }
+        ],
+        "question": "A machine learning engineer notices that their Gradient Boosting model achieves 99.8% train ROC-AUC but only 76.2% validation ROC-AUC. Which interventions are mathematically principled ways to narrow this generalization gap? (Select all that apply)",
+        "type": "multiple_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "hard",
+        "explanation": "Friedman's breakthrough was recognizing that fitting trees to the negative gradient of any differentiable loss function L(y, F(x)) performs gradient descent directly in function (prediction) space. For binary Log-Loss, the negative gradient is y_i - p_i.",
+        "id": "q23",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "Because the negative gradient of Log-Loss represents the direction of steepest descent in function space, enabling gradient descent optimization for any differentiable loss"
+          },
+          {
+            "id": "opt2",
+            "text": "Because Log-Loss cannot produce numerical residuals"
+          },
+          {
+            "id": "opt3",
+            "text": "Because Scikit-Learn only supports integer residuals"
+          },
+          {
+            "id": "opt4",
+            "text": "Because binary classification targets have zero variance"
+          }
+        ],
+        "question": "Why does Gradient Boosting fit trees to negative gradients of the loss function rather than simple differences (y - y_hat) for non-squared loss functions (such as Log-Loss in binary classification)?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "hard",
+        "explanation": "validation_fraction sets aside a holdout set from training data. If the validation metric does not improve for n_iter_no_change consecutive iterations, training terminates early, preventing overfitting.",
+        "id": "q24",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "They reserve a fraction of training data to monitor loss, halting training if validation performance fails to improve for n_iter_no_change rounds"
+          },
+          {
+            "id": "opt2",
+            "text": "They permanently discard n_iter_no_change features from the dataset"
+          },
+          {
+            "id": "opt3",
+            "text": "They re-initialize the model weights from scratch if accuracy drops"
+          },
+          {
+            "id": "opt4",
+            "text": "They change the learning rate to zero after 10 trees"
+          }
+        ],
+        "question": "In early stopping for Gradient Boosting, what is the purpose of the 'validation_fraction' and 'n_iter_no_change' parameters in Scikit-Learn?",
+        "type": "single_choice"
+      },
+      {
+        "correctOptionIds": [
+          "opt1"
+        ],
+        "difficulty": "hard",
+        "explanation": "By performing a second-order Taylor expansion around the current prediction, the loss becomes quadratic in the new tree's output. Setting the derivative of this quadratic approximation to zero yields the exact optimal leaf weight w_j* = -G_j / (H_j + lambda).",
+        "id": "q25",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "The hessian measures the curvature of the loss surface, allowing exact closed-form optimal leaf weights and a more accurate Newton-Raphson step"
+          },
+          {
+            "id": "opt2",
+            "text": "The hessian ensures that the tree depth is strictly odd-numbered"
+          },
+          {
+            "id": "opt3",
+            "text": "The hessian removes all negative values from the dataset"
+          },
+          {
+            "id": "opt4",
+            "text": "The hessian converts the loss into Euclidean distance"
+          }
+        ],
+        "question": "Why does XGBoost incorporate a second-order derivative (hessian) into its objective function when finding optimal leaf weights, whereas classical GBM uses only first-order gradients?",
+        "type": "single_choice"
+      }
+    ],
+    "quiz_id": "quiz-cml-t5-l13",
+    "title": "Topic Quiz: Boosting, AdaBoost, Gradient Boosting & XGBoost"
+  },
+  "schema_version": 1,
+  "sections": [
+    {
+      "body": "### 1.1 Parallel vs. Sequential Ensemble Paradigms\n\nIn Lecture 12, we mastered **Bagging and Random Forests**:\n- Base decision trees are grown **in parallel and completely independently**.\n- Each tree is trained on a random bootstrap sample of the dataset.\n- The ensemble aggregates predictions using unweighted democracy (majority voting or simple averaging).\n- Individual trees are intentionally grown deep (low bias, high variance), and aggregation **crushes ensemble variance**.\n\n**Boosting** operates on a fundamentally different computational and statistical philosophy: **Sequential Iterative Error Correction**.\nInstead of assembling a committee of 100 students to take an exam simultaneously in isolation and averaging their guesses, imagine a dedicated master tutor working with a student:\n1. The student takes a diagnostic quiz and makes several errors.\n2. The tutor reviews the mistakes, designs a targeted second quiz focusing heavily on those exact failure modes, and has the student retry.\n3. The cycle repeats: each subsequent lesson is tailored to address the **residual weaknesses** of all prior sessions.\n4. When final predictions are needed, the lessons are combined, giving the greatest authority to the lessons that demonstrated the highest mastery.\n\n```\nArchitectural Comparison: Bagging vs. Boosting:\n   Bagging (Parallel Variance Reduction):\n      Dataset D ──┬──► Bootstrap Sample D*1 ──► [ Deep Tree 1 (Low Bias) ] ──┐\n                  ├──► Bootstrap Sample D*2 ──► [ Deep Tree 2 (Low Bias) ] ──┼──► [ Average / Majority Vote ]\n                  └──► Bootstrap Sample D*B ──► [ Deep Tree B (Low Bias) ] ──┘\n\n   Boosting (Sequential Bias Reduction):\n      Dataset D ──► [ Weak Tree 1 ] ──► Errors e_1 ──► [ Weak Tree 2 ] ──► Errors e_2 ──► ... ──► [ Weighted Sum ]\n```\n\n---\n\n### 1.2 The Hypothesis of Weak Learnability: Kearns & Valiant (1988)\n\nThe theoretical foundation of boosting originated from a famous theoretical computer science question posed by Michael Kearns and Leslie Valiant:\n\n> **The Kearns-Valiant Learnability Question (1988)**:\n> Can a collection of **Weak Learners** (algorithms that perform only slightly better than a random coin toss, with accuracy $p = 0.50 + \\epsilon$) be mathematically converted into a **Strong Learner** (an algorithm capable of achieving arbitrarily high accuracy $1 - \\delta$)?\n\nIn 1990, Robert Schapire proved that the answer is an unconditional **Yes**:\nBy systematically altering the probability distribution over the training data across sequential rounds, one can provably boost the accuracy of any weak learning algorithm to arbitrary perfection!\n\n---\n\n### 1.3 Architectural Comparison Matrix: Bagging vs. Boosting\n\n| Architectural Dimension | Bagging / Random Forests | Boosting (AdaBoost, GBM, XGBoost) |\n| :--- | :--- | :--- |\n| **Execution Workflow** | **Embarrassingly Parallel**: All $B$ trees can be trained simultaneously across multiple CPU/GPU cores. | **Strictly Sequential**: Tree $m$ cannot be trained until Tree $m-1$ has evaluated its errors. |\n| **Base Estimator Complexity** | **Deep, Fully Grown Trees** (`max_depth=None`): High variance, low bias. | **Shallow Weak Learners** (Decision Stumps with `max_depth=1`, or shallow trees with depth 2–4): High bias, low variance. |\n| **Primary Error Reduction Target**| **Variance Reduction**: Averages out independent noise fluctuations without increasing bias. | **Bias Reduction**: Successive trees carve out subtle boundary nuances, lowering bias. |\n| **Training Sample Selection** | Bootstrap sampling with replacement (uniform probability $1/n$). | Adaptive sample weighting (AdaBoost) or pseudo-residuals in function space (GBM). |\n| **Aggregation Rule** | Equal-weighted democracy: $\\frac{1}{B}\\sum T_b(\\mathbf{x})$ or majority vote. | Performance-weighted stage sum: $\\sum \\alpha_m h_m(\\mathbf{x})$. |\n| **Overfitting Behavior as $B \\to \\infty$**| **Immune to Overfitting**: Adding more trees never increases test error; it monotonically stabilizes variance. | **Prone to Overfitting**: Adding too many trees with an aggressive learning rate eventually memorizes label noise. |",
+      "citations": [
+        "Schapire, R. E. (1990). The strength of weak learnability. Machine Learning, 5(2), 197-227.",
+        "Hastie, T., Tibshirani, R., & Friedman, J. (2009). The Elements of Statistical Learning. Springer, Chapter 10."
+      ],
+      "heading": "1. Boosting vs Bagging: The Sequential Paradigm",
+      "section_id": "cml-l13-sec01"
+    },
+    {
+      "body": "### 2.1 The AdaBoost Algorithm: Step-by-Step Mathematical Formulation\n\nIntroduced in 1997 by Yoav Freund and Robert Schapire (who won the prestigious Gödel Prize for their discovery), **AdaBoost** (short for **Adaptive Boosting**) is the foundational algorithm of sequential ensemble learning:\n\n#### Problem Formulation:\nGiven a binary classification training dataset $\\mathcal{D} = \\{(\\mathbf{x}_1, y_1), (\\mathbf{x}_2, y_2), \\dots, (\\mathbf{x}_n, y_n)\\}$, where targets are encoded symmetrically:\n$$y_i \\in \\{-1, +1\\}$$\n\n#### Algorithmic Execution Steps:\n\n1. **Step 1: Initialize Sample Weights Uniformly**:\n   Every training sample begins with identical importance:\n   $$w_i^{(1)} = \\frac{1}{n}, \\quad \\text{for } i = 1, 2, \\dots, n$$\n\n2. **Step 2: Sequential Iteration (for $m = 1, 2, \\dots, M$)**:\n   - **(a) Fit a Weak Learner**: Train a base estimator $h_m(\\mathbf{x}) \\in \\{-1, +1\\}$ (typically a **Decision Stump**: a single-split tree with `max_depth=1`) on the training data using current sample weights $\\mathbf{w}^{(m)}$.\n   - **(b) Compute Weighted Misclassification Error**:\n     $$\\epsilon_m = \\frac{\\sum_{i: y_i \\ne h_m(\\mathbf{x}_i)} w_i^{(m)}}{\\sum_{i=1}^n w_i^{(m)}} = \\sum_{i=1}^n w_i^{(m)} \\mathbb{I}(y_i \\ne h_m(\\mathbf{x}_i))$$\n   - **(c) Compute Model Stage Weight (Voting Power $\\alpha_m$)**:\n     $$\\alpha_m = \\frac{1}{2} \\ln \\left( \\frac{1 - \\epsilon_m}{\\epsilon_m} \\right)$$\n   - **(d) Update Observation Weights**:\n     $$w_i^{(m+1)} = w_i^{(m)} \\exp\\left( - \\alpha_m y_i h_m(\\mathbf{x}_i) \\right)$$\n     Because $y_i h_m(\\mathbf{x}_i) = +1$ when correct and $-1$ when incorrect:\n     $$w_i^{(m+1)} = \\begin{cases} w_i^{(m)} e^{-\\alpha_m} & \\text{if sample } i \\text{ is correctly classified} \\\\ w_i^{(m)} e^{+\\alpha_m} & \\text{if sample } i \\text{ is misclassified} \\end{cases}$$\n   - **(e) Normalize Sample Weights**:\n     $$Z_m = \\sum_{i=1}^n w_i^{(m+1)}, \\quad w_i^{(m+1)} \\leftarrow \\frac{w_i^{(m+1)}}{Z_m}$$\n\n3. **Step 3: Final Aggregated Ensemble Prediction**:\n   The final strong classifier combines the weighted votes of all $M$ weak learners:\n   $$H(\\mathbf{x}) = \\operatorname{sign}\\left( \\sum_{m=1}^{M} \\alpha_m h_m(\\mathbf{x}) \\right)$$\n\n---\n\n### 2.2 Mathematical Analysis of the Stage Weight $\\alpha_m$\n\nThe stage weight formula $\\alpha_m = \\frac{1}{2}\\ln\\left(\\frac{1-\\epsilon_m}{\\epsilon_m}\\right)$ reflects elegant statistical behavior:\n\n```\nStage Weight α_m as a Function of Weighted Error Rate ε_m:\n    Stage Weight α_m\n       ^\n    +3 │                                 * (ε = 0.05 -> α = 1.47)\n       │                              *\n    +1 │                           *\n       │                        *\n     0 ┼──────────────────────*───────────────────────► Weighted Error ε_m\n       │                   *  (ε = 0.50 -> α = 0.00: Zero Voting Power!)\n    -1 │                *\n       │             *\n    -3 │          * (ε = 0.95 -> α = -1.47: Flips Prediction!)\n       ┴──────────┴───────────┴───────────┴───────────\n       0.0       0.25        0.50        0.75        1.0\n```\n\n- **Near-Perfect Learner ($\\epsilon_m \\to 0$)**:\n  $$\\frac{1 - \\epsilon_m}{\\epsilon_m} \\to \\infty \\implies \\alpha_m \\to +\\infty$$\n  A base learner that makes almost zero errors receives massive voting power in the final jury.\n- **Random Guessing ($\\epsilon_m = 0.50$)**:\n  $$\\frac{1 - 0.50}{0.50} = 1 \\implies \\alpha_m = \\frac{1}{2} \\ln(1) = \\mathbf{0.00}$$\n  A base learner that performs no better than a fair coin flip is assigned **zero voting weight**, contributing nothing to the final prediction.\n- **Worse Than Random ($\\epsilon_m > 0.50$)**:\n  $\\alpha_m$ becomes **negative** ($\\alpha_m < 0$). The ensemble automatically **inverts** the weak learner's predictions to turn its blunders into correct answers!\n\n---\n\n### 2.3 Concrete Hand-Calculated Walkthrough: 5-Applicant Loan Problem\n\nTo understand the exact weight update dynamics, let us calculate Round 1 by hand:\n\n#### Initial Setup ($n = 5$ Applicants):\nInitial sample weights: $w_i^{(1)} = \\frac{1}{5} = \\mathbf{0.200}$ for all $i$.\n\n| Applicant ID | Credit Score | Annual Income | True Status ($y_i$) | Stump 1 Pred ($h_1$) | Correct / Error |\n| :---: | :---: | :---: | :---: | :---: | :---: |\n| **ID 1** | $550$ | 40,000 USD | **-1 (Default)** | $-1$ | **Correct** |\n| **ID 2** | $590$ | 55,000 USD | **-1 (Default)** | $-1$ | **Correct** |\n| **ID 3** | $640$ | 70,000 USD | **+1 (No Default)**| $+1$ | **Correct** |\n| **ID 4** | $610$ | 85,000 USD | **+1 (No Default)**| $-1$ | **MISCLASSIFIED!** |\n| **ID 5** | $720$ | 95,000 USD | **-1 (Default)** | $-1$ | **Correct** |\n\n---\n\n#### Step 1: Compute Weighted Error Rate $\\epsilon_1$\nOnly Applicant ID 4 was misclassified:\n$$\\epsilon_1 = \\sum_{i=1}^5 w_i^{(1)} \\mathbb{I}(y_i \\ne h_1(x_i)) = w_4^{(1)} = \\mathbf{0.200}$$\n\n---\n\n#### Step 2: Compute Stage Weight $\\alpha_1$\n$$\\alpha_1 = \\frac{1}{2} \\ln\\left( \\frac{1 - 0.200}{0.200} \\right) = \\frac{1}{2} \\ln\\left( \\frac{0.800}{0.200} \\right) = \\frac{1}{2} \\ln(4.0) = \\frac{1}{2}(1.38629) \\approx \\mathbf{0.6931}$$\n\n---\n\n#### Step 3: Compute Multiplicative Adjustment Factors\n$$e^{-\\alpha_1} = e^{-0.69315} = \\frac{1}{2} = \\mathbf{0.500} \\quad (\\text{For correct samples})$$\n$$e^{+\\alpha_1} = e^{+0.69315} = 2.0 = \\mathbf{2.000} \\quad (\\text{For misclassified samples})$$\n\n---\n\n#### Step 4: Update and Normalize Weights for Round 2\n- **Correct Applicants (IDs 1, 2, 3, 5)**:\n  $$w_{\\text{unnorm}} = 0.200 \\times 0.500 = \\mathbf{0.100}$$\n- **Misclassified Applicant (ID 4)**:\n  $$w_{\\text{unnorm}} = 0.200 \\times 2.000 = \\mathbf{0.400}$$\n\nCompute normalization constant $Z_1$:\n$$Z_1 = 0.100 + 0.100 + 0.100 + 0.400 + 0.100 = \\mathbf{0.800}$$\n\nCompute normalized weights $w_i^{(2)} = w_{\\text{unnorm}} / Z_1$:\n- For IDs 1, 2, 3, 5: $w_i^{(2)} = \\frac{0.100}{0.800} = \\mathbf{0.125} \\quad (12.5\\% \\text{ each})$\n- For ID 4: $w_4^{(2)} = \\frac{0.400}{0.800} = \\mathbf{0.500} \\quad (\\mathbf{50.0\\%} \\text{ of entire dataset!})$\n\n> **The Dramatic Shift**:\n> In Round 2, Applicant ID 4 now commands **50% of the entire dataset's voting weight**!\n> When Stump 2 evaluates candidate splits, any split that misclassifies ID 4 will suffer a catastrophic error penalty of at least $0.50$.\n> The algorithm is mathematically compelled to find a split that correctly classifies ID 4!",
+      "citations": [
+        "Freund, Y., & Schapire, R. E. (1997). A decision-theoretic generalization of on-line learning and an application to boosting. JCSS, 55(1), 119-139."
+      ],
+      "heading": "2. AdaBoost (Adaptive Boosting): Reweighting & Decision Stumps",
+      "section_id": "cml-l13-sec02"
+    },
+    {
+      "body": "### 3.1 Gradient Boosting as Gradient Descent in Function Space\n\nIn 1999, Jerome Friedman revolutionized ensemble learning with the **Gradient Boosting Machine (GBM)**.\nWhile AdaBoost modifies sample weights, Friedman realized that boosting could be framed as **Gradient Descent directly in Function Space**:\n\n#### Traditional Gradient Descent (Parameter Space):\nWe optimize fixed model parameters $\\mathbf{w} \\in \\mathbb{R}^d$ by taking steps in the direction of the negative gradient of the loss:\n$$\\mathbf{w}^{(t)} = \\mathbf{w}^{(t-1)} - \\eta \\nabla_{\\mathbf{w}} \\mathcal{L}(\\mathbf{w})$$\n\n#### Gradient Boosting (Function Space):\nInstead of updating parameters, we update an ensemble predictor $F(\\mathbf{x})$ by iteratively **adding** a new function $h_m(\\mathbf{x})$:\n$$F_m(\\mathbf{x}) = F_{m-1}(\\mathbf{x}) + \\eta \\cdot h_m(\\mathbf{x})$$\n\nWhere:\n- $F_{m-1}(\\mathbf{x})$ is the current ensemble prediction after $m-1$ rounds.\n- $h_m(\\mathbf{x})$ is a new shallow regression tree.\n- $\\eta \\in (0, 1]$ is the **Learning Rate (Shrinkage)** parameter.\n\n---\n\n### 3.2 The Pseudo-Residual: Negative Gradients of the Loss Function\n\nWhat target should the newly added tree $h_m(\\mathbf{x})$ be trained to predict?\nFriedman proved that $h_m(\\mathbf{x})$ should fit the **negative gradient of the loss function** with respect to the current model's predictions, termed the **Pseudo-Residual** $r_{im}$:\n\n$$r_{im} = - \\left[ \\frac{\\partial \\mathcal{L}(y_i, F(\\mathbf{x}_i))}{\\partial F(\\mathbf{x}_i)} \\right]_{F(\\mathbf{x}) = F_{m-1}(\\mathbf{x})}$$\n\n---\n\n### 3.3 Pseudo-Residual Derivations for Common Loss Functions\n\n#### 1. Mean Squared Error (Regression):\n$$\\mathcal{L}(y, F) = \\frac{1}{2}(y - F)^2$$\nTaking the derivative with respect to $F$:\n$$\\frac{\\partial \\mathcal{L}}{\\partial F} = - (y - F) \\implies - \\frac{\\partial \\mathcal{L}}{\\partial F} = \\mathbf{y - F}$$\n\n> **Key Revelation**:\n> Under squared error loss, the pseudo-residual is **literally the standard physical residual**: $r_i = y_i - \\hat{y}_i$.\n> Each new tree simply learns to predict the remaining unexplained error of the previous trees!\n\n#### 2. Binary Cross-Entropy / Log-Loss (Classification):\nIn binary classification with $y \\in \\{0, 1\\}$, the model outputs raw log-odds: $F(\\mathbf{x}) = \\ln\\left(\\frac{p}{1 - p}\\right)$.\nThe predicted probability is the sigmoid of $F$:\n$$p = \\sigma(F) = \\frac{1}{1 + e^{-F}}$$\n\nThe Log-Loss objective is:\n$$\\mathcal{L}(y, F) = - \\left[ y \\ln(p) + (1 - y) \\ln(1 - p) \\right] = \\ln(1 + e^F) - y F$$\n\nTaking the derivative with respect to $F$:\n$$\\frac{\\partial \\mathcal{L}}{\\partial F} = \\frac{e^F}{1 + e^F} - y = p - y$$\n\nMultiplying by $-1$ gives the **Negative Gradient (Classification Pseudo-Residual)**:\n\n$$r_{im} = - \\frac{\\partial \\mathcal{L}}{\\partial F} = \\mathbf{y_i - \\hat{p}_i}$$\n\n> **The Beautiful Symmetry**:\n> In classification, the pseudo-residual is simply:\n> $$r_i = \\text{Actual Label } (0 \\text{ or } 1) - \\text{Predicted Probability } \\hat{p}_i \\in [0, 1]$$\n> - If actual $y = 1$ and the current model predicts $\\hat{p} = 0.80$, the residual is $1.0 - 0.80 = \\mathbf{+0.20}$ (gentle upward nudge).\n> - If actual $y = 1$ and the current model blunders with $\\hat{p} = 0.10$, the residual is $1.0 - 0.10 = \\mathbf{+0.90}$ (massive upward force!).\n> - If actual $y = 0$ and the model predicts $\\hat{p} = 0.70$, the residual is $0.0 - 0.70 = \\mathbf{-0.70}$ (strong downward correction).\n\n---\n\n### 3.4 Concrete Hand-Calculated Walkthrough: 4-Sample Log-Loss Residuals\n\nSuppose we initialize a classification GBM with base log-odds $F_0 = 0.0 \\implies \\hat{p}_0 = \\sigma(0.0) = \\mathbf{0.500}$ for 4 loan applicants:\n\n| Applicant | True Default ($y_i$) | Current Log-Odds ($F_0$) | Current Probability ($\\hat{p}_0$) | Pseudo-Residual ($r_{i1} = y_i - \\hat{p}_0$) | Direction of Tree Correction |\n| :---: | :---: | :---: | :---: | :---: | :---: |\n| **Applicant A** | $y = 1$ | $0.0$ | $0.500$ | $1.0 - 0.500 = \\mathbf{+0.500}$ | Push prediction higher towards Default |\n| **Applicant B** | $y = 0$ | $0.0$ | $0.500$ | $0.0 - 0.500 = \\mathbf{-0.500}$ | Push prediction lower towards No Default |\n| **Applicant C** | $y = 1$ | $0.0$ | $0.500$ | $1.0 - 0.500 = \\mathbf{+0.500}$ | Push prediction higher towards Default |\n| **Applicant D** | $y = 0$ | $0.0$ | $0.500$ | $0.0 - 0.500 = \\mathbf{-0.500}$ | Push prediction lower towards No Default |\n\nThe new regression tree $h_1(\\mathbf{x})$ is trained directly on these continuous residual targets $[+0.5, -0.5, +0.5, -0.5]$, updating the ensemble by:\n$$F_1(\\mathbf{x}) = F_0(\\mathbf{x}) + \\eta \\cdot h_1(\\mathbf{x})$$\n\n---\n\n### 3.5 The Shrinkage Parameter ($\\eta$) & The Learning Rate Trade-Off\n\nThe learning rate $\\eta \\in (0, 1]$ (often called **shrinkage**) scales each tree's contribution:\n\n```\nShrinkage Dynamics Across Boosting Rounds:\n   High Learning Rate (η = 0.50):             Low Learning Rate (η = 0.05):\n      Aggressive, giant steps                     Small, deliberate, smooth steps\n      Reaches minimum in 20 trees                 Requires 200 trees\n      Rapidly overfits to training noise          Dramatically superior test set generalization\n```\n\n- When $\\eta = 1.0$ (no shrinkage), the model takes full steps towards fitting current residuals, frequently overshooting the true loss valley and overfitting within a few dozen trees.\n- By shrinking each tree by $\\eta = 0.05$ or $0.10$, we leave substantial residual variance for subsequent trees to learn from, creating a smooth, highly generalized ensemble.\n\n---\n\n### 3.6 Step-by-Step Hand-Calculated Walkthrough: Gradient Boosting for Regression\n\nTo see functional gradient descent in numerical action, let us trace Round 1 of a Gradient Boosting Regressor on a simple 4-observation house price dataset:\n\n#### The Training Dataset:\n| Sample ID | Square Footage ($x_1$) | Actual Sale Price ($y_i$ in thousand USD) |\n| :---: | :---: | :---: |\n| **House 1** | 1,000 sq ft | **100k USD** |\n| **House 2** | 1,400 sq ft | **140k USD** |\n| **House 3** | 2,000 sq ft | **260k USD** |\n| **House 4** | 2,600 sq ft | **300k USD** |\n\n---\n\n#### Step 1: Initialize Base Model $F_0(x)$\nFor Mean Squared Error loss $\\mathcal{L} = \\frac{1}{2}\\sum (y_i - F)^2$, the constant $F_0$ that minimizes loss is the **sample mean** $\\bar{y}$:\n$$F_0(x) = \\bar{y} = \\frac{100 + 140 + 260 + 300}{4} = \\frac{800}{4} = \\mathbf{200\\text{k USD}}$$\nInitial Mean Squared Error:\n$$\\text{MSE}_0 = \\frac{1}{4} \\left[ (100 - 200)^2 + (140 - 200)^2 + (260 - 200)^2 + (300 - 200)^2 \\right] = \\frac{10000 + 3600 + 3600 + 10000}{4} = \\mathbf{6,800}$$\n\n---\n\n#### Step 2: Compute Round 1 Pseudo-Residuals $r_{i1} = y_i - F_0(x_i)$\n- House 1: $r_{11} = 100 - 200 = \\mathbf{-100k}$\n- House 2: $r_{21} = 140 - 200 = \\mathbf{-60k}$\n- House 3: $r_{31} = 260 - 200 = \\mathbf{+60k}$\n- House 4: $r_{41} = 300 - 200 = \\mathbf{+100k}$\n\nResidual vector: $\\mathbf{r}_1 = [-100, -60, +60, +100]$.\n\n---\n\n#### Step 3: Fit Regression Tree $h_1(x)$ to Residuals $\\mathbf{r}_1$\nThe tree algorithm evaluates candidate splits on Square Footage.\nOptimal split: `Square Footage <= 1,700 sq ft`:\n- **Left Leaf $R_{11}$ (Houses 1 & 2)**: Residuals $[-100, -60] \\implies \\text{Mean Residual } \\gamma_{11} = \\frac{-100 - 60}{2} = \\mathbf{-80k}$.\n- **Right Leaf $R_{21}$ (Houses 3 & 4)**: Residuals $[+60, +100] \\implies \\text{Mean Residual } \\gamma_{21} = \\frac{+60 + 100}{2} = \\mathbf{+80k}$.\n\n---\n\n#### Step 4: Update the Ensemble with Shrinkage $\\eta = 0.10$\n$$F_1(x) = F_0(x) + \\eta \\cdot h_1(x)$$\n\nFor Houses 1 & 2 (Left Leaf):\n$$F_1(x) = 200 + 0.10(-80) = 200 - 8.0 = \\mathbf{192\\text{k USD}}$$\nFor Houses 3 & 4 (Right Leaf):\n$$F_1(x) = 200 + 0.10(+80) = 200 + 8.0 = \\mathbf{208\\text{k USD}}$$\n\n---\n\n#### Step 5: Evaluate Round 1 New Residuals & Error Drop\n- House 1: $r_{12} = 100 - 192 = \\mathbf{-92k}$ (was $-100k$, error reduced!)\n- House 2: $r_{22} = 140 - 192 = \\mathbf{-52k}$ (was $-60k$, error reduced!)\n- House 3: $r_{32} = 260 - 208 = \\mathbf{+52k}$ (was $+60k$, error reduced!)\n- House 4: $r_{42} = 300 - 208 = \\mathbf{+92k}$ (was $+100k$, error reduced!)\n\nNew Mean Squared Error:\n$$\\text{MSE}_1 = \\frac{1}{4} \\left[ (-92)^2 + (-52)^2 + (52)^2 + (92)^2 \\right] = \\frac{8464 + 2704 + 2704 + 8464}{4} = \\mathbf{5,584}$$\n\n$$\\Delta \\text{MSE} = 6,800 - 5,584 = \\mathbf{1,216 \\text{ error drop in just one step!}}$$\n\nThis elegant process repeats across hundreds of trees, steadily carving away residuals until predictions match the true underlying manifold!",
+      "citations": [
+        "Friedman, J. H. (2001). Greedy function approximation: a gradient boosting machine. Annals of Statistics, 1189-1232."
+      ],
+      "heading": "3. Gradient Boosting: Fitting Residuals via Additive Models",
+      "section_id": "cml-l13-sec03"
+    },
+    {
+      "body": "### 4.1 XGBoost: Second-Order Taylor Optimization\n\nIn 2016, Tianqi Chen and Carlos Guestrin introduced **XGBoost (Extreme Gradient Boosting)**, which quickly became the dominant algorithm on Kaggle and in enterprise machine learning pipelines:\n\n#### The Second-Order Taylor Expansion:\nStandard GBM uses only first-order gradients $g_i = \\frac{\\partial \\mathcal{L}}{\\partial \\hat{y}_i}$.\nXGBoost approximates the loss function using a **second-order Taylor expansion**, capturing both the gradient (slope) and the **Hessian** (curvature):\n\n$$\\mathcal{L}^{(t)} \\approx \\sum_{i=1}^n \\left[ \\mathcal{L}(y_i, \\hat{y}_i^{(t-1)}) + g_i f_t(\\mathbf{x}_i) + \\frac{1}{2} h_i f_t^2(\\mathbf{x}_i) \\right] + \\Omega(f_t)$$\n\nWhere:\n- First-order gradient: $g_i = \\frac{\\partial \\mathcal{L}(y_i, \\hat{y}_i^{(t-1)})}{\\partial \\hat{y}_i^{(t-1)}}$\n- Second-order Hessian: $h_i = \\frac{\\partial^2 \\mathcal{L}(y_i, \\hat{y}_i^{(t-1)})}{\\partial (\\hat{y}_i^{(t-1)})^2}$\n- Complexity penalty $\\Omega(f_t)$:\n  $$\\Omega(f_t) = \\gamma T + \\frac{1}{2} \\lambda \\sum_{j=1}^T w_j^2 + \\alpha \\sum_{j=1}^T |w_j|$$\n  Where $T$ is the number of terminal leaves, $w_j$ is the output weight of leaf $j$, $\\gamma$ is the minimum split penalty, and $\\lambda$ is $L_2$ leaf regularization.\n\n---\n\n### 4.2 Optimal Leaf Weight & Split Quality Score\n\nLet $I_j = \\{i \\mid q(\\mathbf{x}_i) = j\\}$ be the set of sample indices assigned to leaf $j$.\nDefine the cumulative leaf gradients:\n$$G_j = \\sum_{i \\in I_j} g_i, \\quad H_j = \\sum_{i \\in I_j} h_i$$\n\nTaking the derivative of the regularized objective with respect to leaf weight $w_j$ and setting it to zero yields the **Optimal Leaf Weight**:\n\n$$w_j^* = - \\frac{G_j}{H_j + \\lambda}$$\n\nThe resulting optimal objective value across all leaves is:\n$$\\mathcal{L}^* = - \\frac{1}{2} \\sum_{j=1}^T \\frac{G_j^2}{H_j + \\lambda} + \\gamma T$$\n\n#### The Tree Split Gain Formula:\nWhen deciding whether to split a leaf into left child $L$ and right child $R$, XGBoost computes the exact gain:\n\n$$\\text{Gain} = \\frac{1}{2} \\left[ \\frac{G_L^2}{H_L + \\lambda} + \\frac{G_R^2}{H_R + \\lambda} - \\frac{(G_L + G_R)^2}{H_L + H_R + \\lambda} \\right] - \\gamma$$\n\n- If $\\text{Gain} \\le 0$, the split is **pruned**! The parameter $\\gamma$ acts as built-in cost-complexity pruning during tree construction!\n\n---\n\n### 4.3 Systems Innovations in Modern Boosting Libraries\n\nModern libraries like XGBoost, LightGBM (Microsoft), and Scikit-Learn's `HistGradientBoostingClassifier` achieved $10\\times - 50\\times$ speedups through hardware-aware systems engineering:\n\n```\nSystems Innovations Comparison:\n┌─────────────────────┬────────────────────────────────────┬────────────────────────────────────┐\n│ Engineering Feature │ Traditional GBM (sklearn)          │ Modern Boosting (HistGBM, XGBoost) │\n├─────────────────────┼────────────────────────────────────┼────────────────────────────────────┤\n│ **Split Search**    │ Exact greedy: sorts $n$ continuous │ Histogram binning: discretizes     │\n│                     │ values at every node ($O(n\\log n)$)│ values into 256 uint8 bins ($O(1)$)│\n├─────────────────────┼────────────────────────────────────┼────────────────────────────────────┤\n│ **Missing Values**  │ Requires imputation before fitting │ **Sparsity-aware**: automatically  │\n│                     │ or crashes with NaN errors.        │ learns optimal branch for NaNs!    │\n├─────────────────────┼────────────────────────────────────┼────────────────────────────────────┤\n│ **Memory Cache**    │ Non-contiguous random RAM reads    │ Cache-aware contiguous block memory│\n│                     │ causing CPU cache misses.          │ layout optimizing L1/L2 caches.    │\n├─────────────────────┼────────────────────────────────────┼────────────────────────────────────┤\n│ **Parallelization** │ Single-threaded tree growth        │ Multi-threaded histogram building  │\n│                     │ with high latency on big data.     │ utilizing all CPU cores / GPU.     │\n└─────────────────────┴────────────────────────────────────┴────────────────────────────────────┘\n```\n\n> **The Histogram Binning Revolution**:\n> By binning continuous features into 256 discrete bins (`uint8`), feature matrices fit directly into fast CPU cache memory.\n> Finding split thresholds reduces from evaluating millions of samples to scanning 256 histogram bins, accelerating training by orders of magnitude with zero detectable loss in accuracy!\n\n---\n\n### 4.4 The Big Three Modern Gradient Boosting Engines\n\nIn enterprise production and competitive data science, three distinct gradient boosting engines dominate:\n\n```\nModern Boosting Engine Architectures:\n┌─────────────────────┬────────────────────────────────────┬────────────────────────────────────┬────────────────────────────────────┐\n│ Attribute           │ XGBoost (Chen & Guestrin 2016)     │ LightGBM (Ke et al. Microsoft 2017)│ CatBoost (Prokhorenkova et al. 2018│\n├─────────────────────┼────────────────────────────────────┼────────────────────────────────────┼────────────────────────────────────┤\n│ **Tree Growth**     │ **Level-wise** (depth-first)       │ **Leaf-wise** (best-first)         │ **Symmetric / Oblivious Trees**    │\n│                     │ Balanced binary tree growth.       │ Splitting leaf with max gain.      │ Same split condition across depth. │\n├─────────────────────┼────────────────────────────────────┼────────────────────────────────────┼────────────────────────────────────┤\n│ **Split Engine**    │ Exact greedy or Quantile sketch.   │ **GOSS** (Gradient-based One-Side  │ Minimal Variance Sampling (MVS).   │\n│                     │                                    │ Sampling) + **EFB** feature bundle.│                                    │\n├─────────────────────┼────────────────────────────────────┼────────────────────────────────────┼────────────────────────────────────┤\n│ **Categoricals**    │ Experimental one-hot / partition.  │ Native integer category bins.      │ **Ordered Target Encoding**        │\n│                     │                                    │                                    │ (Online target statistics).        │\n├─────────────────────┼────────────────────────────────────┼────────────────────────────────────┼────────────────────────────────────┤\n│ **Speed & Scale**   │ Fast, highly regularized.          │ **Blazing fast** on huge datasets. │ Fast on GPU; best out-of-the-box.  │\n└─────────────────────┴────────────────────────────────────┴────────────────────────────────────┴────────────────────────────────────┘\n```\n\n#### 1. LightGBM's Leaf-Wise Tree Growth vs. Level-Wise Growth:\n- **Level-wise (XGBoost traditional)**: Grows tree level by level. All nodes at depth $d$ are split before moving to depth $d+1$. Produces symmetric, balanced trees.\n- **Leaf-wise (LightGBM)**: Scans all existing terminal leaves and splits **only the single leaf that yields the largest loss reduction**, regardless of depth. Achieves much lower loss for the same total number of leaves, though requires strict `min_data_in_leaf` constraints to avoid overfitting.\n\n#### 2. CatBoost's Oblivious Trees & Target Leakage Prevention:\n- **Oblivious Trees**: Every node at the same depth uses the **exact same feature and threshold**. The entire tree is simply a flat lookup table indexed by a binary bitmask ($2^d$ leaves), enabling microsecond inference latency on CPU SIMD instructions!\n- **Ordered Target Statistics**: Prevents target leakage by computing category encodings strictly using preceding samples in a random permutation of the data.",
+      "citations": [
+        "Chen, T., & Guestrin, C. (2016). XGBoost: A scalable tree boosting system. ACM SIGKDD, 785-794."
+      ],
+      "heading": "4. Modern Implementations: XGBoost & HistGradientBoosting",
+      "section_id": "cml-l13-sec04"
+    },
+    {
+      "body": "### 5.1 Hands-On Python Implementation: Comparing Tree, RF, AdaBoost & Gradient Boosting\n\nThe following production script implements, regularizes, and compares the complete family of tree and ensemble models on a synthetic loan default problem:\n\n```python\nimport numpy as np\nimport pandas as pd\nfrom sklearn.datasets import make_classification\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.ensemble import (\n    RandomForestClassifier,\n    AdaBoostClassifier,\n    GradientBoostingClassifier,\n    HistGradientBoostingClassifier\n)\nfrom sklearn.metrics import accuracy_score, roc_auc_score\n\n# 1. Synthesize Bank Loan Dataset (1,500 applicants, 10 continuous features)\nnp.random.seed(42)\nX, y = make_classification(\n    n_samples=1500,\n    n_features=10,\n    n_informative=6,\n    n_redundant=2,\n    n_classes=2,\n    weights=[0.80, 0.20],  # 20% default rate\n    random_state=42\n)\n\n# 2. Strict Train / Test Split\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.25, random_state=42, stratify=y\n)\n\n# 3. Initialize Model Family\nmodels = {\n    \"Single Decision Tree\": DecisionTreeClassifier(max_depth=None, random_state=42),\n    \"Random Forest (100 Trees)\": RandomForestClassifier(n_estimators=100, max_features=\"sqrt\", random_state=42),\n    \"AdaBoost (50 Stumps)\": AdaBoostClassifier(\n        estimator=DecisionTreeClassifier(max_depth=1),\n        n_estimators=50,\n        learning_rate=1.0,\n        random_state=42\n    ),\n    \"Gradient Boosting (GBM)\": GradientBoostingClassifier(\n        n_estimators=100,\n        learning_rate=0.10,\n        max_depth=3,\n        random_state=42\n    ),\n    \"HistGradientBoosting\": HistGradientBoostingClassifier(\n        max_iter=100,\n        learning_rate=0.10,\n        max_depth=4,\n        random_state=42\n    )\n}\n\n# Try importing XGBoost if installed\ntry:\n    from xgboost import XGBClassifier\n    models[\"XGBoost (100 Trees)\"] = XGBClassifier(\n        n_estimators=100,\n        learning_rate=0.10,\n        max_depth=3,\n        reg_lambda=1.0,\n        random_state=42,\n        eval_metric=\"logloss\"\n    )\nexcept ImportError:\n    pass\n\n# 4. Train, Evaluate & Compare Generalization Performance\nresults = []\nfor name, clf in models.items():\n    clf.fit(X_train, y_train)\n    train_acc = accuracy_score(y_train, clf.predict(X_train))\n    test_acc = accuracy_score(y_test, clf.predict(X_test))\n    test_auc = roc_auc_score(y_test, clf.predict_proba(X_test)[:, 1])\n    gap = train_acc - test_acc\n\n    results.append({\n        \"Model\": name,\n        \"Train Acc\": f\"{train_acc * 100:.2f}%\",\n        \"Test Acc\": f\"{test_acc * 100:.2f}%\",\n        \"Overfit Gap\": f\"{gap * 100:.2f}%\",\n        \"Holdout ROC-AUC\": f\"{test_auc:.4f}\"\n    })\n\ncomparison_df = pd.DataFrame(results)\nprint(\"=== COMPREHENSIVE ENSEMBLE COMPARISON ===\")\nprint(comparison_df.to_string(index=False))\n```\n\n---\n\n### 5.2 Performance Comparison Across Ensemble Paradigms\n\n| Model Architecture | Base Estimator | Training Mode | Train Acc | Test Acc | Overfit Gap | Holdout ROC-AUC | Architectural Characteristic |\n| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :--- |\n| **Decision Tree** | 1 CART Tree | Single | $100.0\\%$ | $81.60\\%$ | $18.40\\%$ | $0.7180$ | High variance; fragile, overfitted leaves. |\n| **Random Forest** | 100 Deep Trees | Parallel | $100.0\\%$ | $88.53\\%$ | $11.47\\%$ | $0.8840$ | Crushes variance via bagging and feature subsampling. |\n| **AdaBoost** | 50 Stumps | Sequential | $87.20\\%$ | $86.40\\%$ | $\\mathbf{0.80\\%}$ | $0.8650$ | Low variance; simple, shallow linear vote. |\n| **Gradient Boosting** | 100 Trees (Depth 3)| Sequential | $95.73\\%$ | $\\mathbf{89.60\\%}$ | $6.13\\%$ | $\\mathbf{0.8980}$ | **State-of-the-Art**: Fits residuals via gradient descent. |\n| **HistGradientBoosting**| 100 Binned Trees | Sequential | $96.53\\%$ | $\\mathbf{89.87\\%}$ | $6.66\\%$ | $\\mathbf{0.9010}$ | Ultra-fast histogram binning; peak ROC-AUC. |\n\n---\n\n### 5.3 Diagnostic Failure Modes & Engineering Pitfalls\n\n| Engineering Failure Mode | Underlying Root Cause | Catastrophic Symptom | Recommended Production Solution |\n| :--- | :--- | :--- | :--- |\n| **The Label Noise / Outlier Trap in AdaBoost** | Misclassified samples have weights multiplied exponentially by $e^{\\alpha_m}$. | Mislabeled outliers accumulate massive weights, forcing subsequent stumps to overfit to pure noise. | Switch to **Gradient Boosting** with robust loss (Huber loss) or use Random Forests. |\n| **Aggressive Learning Rate with Many Trees** | High learning rate ($\\eta = 0.5$) combined with $n_{\\text{estimators}} = 500$. | Training error hits 0%, but test error explodes as trees memorize high-frequency noise. | Use small learning rate ($\\eta \\le 0.05$) and activate **Early Stopping** (`early_stopping_rounds=10`). |\n| **Deep Base Estimators in Boosting** | Setting `max_depth=10` in Gradient Boosting. | Individual trees memorize complex sub-patterns; boosting multiplicative interaction causes extreme overfitting. | Keep base trees shallow (`max_depth=2` to $5$). |\n| **Failing to Regularize Leaves in XGBoost** | Leaving $\\lambda = 0$ and $\\gamma = 0$ on small noisy datasets. | Trees produce large extreme leaf weights ($w_j^* = -G/H$), causing unstable predictions. | Set `reg_lambda=1.0` or higher, and tune `gamma` to enforce minimum gain thresholds. |\n| **Ignoring Monotonic Constraints** | Tree splits can predict higher default risk as income increases due to localized data noise. | Model violates domain logic and regulatory compliance rules. | Enforce **Monotonic Constraints** (`monotone_constraints` in XGBoost/LightGBM). |\n\n---\n\n### 5.4 Production Code: Early Stopping with Validation Loss Curves\n\nThe single most effective defense against boosting overfitting is **Early Stopping**:\n\n```python\nfrom sklearn.ensemble import HistGradientBoostingClassifier\n\n# Fit with built-in early stopping\nhgb = HistGradientBoostingClassifier(\n    max_iter=300,\n    learning_rate=0.08,\n    early_stopping=True,\n    validation_fraction=0.15,\n    n_iter_no_change=10,\n    random_state=42\n)\nhgb.fit(X_train, y_train)\n\nprint(f\"Total maximum iterations allocated: 300\")\nprint(f\"Optimal stopping iteration:         {hgb.n_iter_}\")\nprint(f\"Early stopping halted training {300 - hgb.n_iter_} iterations before overfitting!\")\n```\n\nThe algorithm monitors validation loss after every tree. As soon as validation loss fails to improve for 10 consecutive rounds, training is instantly terminated, saving compute and guaranteeing optimal generalization!",
+      "citations": [
+        "Pedregosa, F. et al. (2011). Scikit-learn: Machine learning in Python. JMLR, 12, 2825-2830."
+      ],
+      "heading": "5. Hyperparameter Tuning, Overfitting Dynamics & Practical Code",
+      "section_id": "cml-l13-sec05"
+    }
+  ],
+  "subject_code": "CML",
+  "summary": "A comprehensive, intuitive masterclass on sequential ensemble learning and the Boosting paradigm. Contrasts independent parallel averaging against sequential iterative error correction. Deconstructs AdaBoost using decision stumps and sample reweighting, explains Gradient Boosting as additive gradient descent in function space fitting residuals, explores modern production libraries (XGBoost and HistGradientBoosting), and contrasts the overfitting dynamics of Boosting against Random Forests.",
+  "tags": [
+    "Boosting",
+    "Ensemble Learning",
+    "AdaBoost",
+    "Gradient Boosting",
+    "GBM",
+    "XGBoost",
+    "Decision Stumps",
+    "Residuals",
+    "Shrinkage",
+    "HistGradientBoostingClassifier"
+  ],
+  "term": "Term 5",
+  "topic_title": "13. Boosting: Sequential Ensembles, AdaBoost, Gradient Boosting & XGBoost"
+}
