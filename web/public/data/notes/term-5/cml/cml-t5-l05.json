@@ -42,7 +42,7 @@
             "text": "The vector pointing directly toward the origin (0, 0)"
           }
         ],
-        "question": "In iterative optimization, what does the gradient vector \\nabla J(\\mathbf{w}) geometrically represent on the loss surface?",
+        "question": "In iterative optimization, what does the gradient vector $\\nabla J(\\mathbf{w})$ geometrically represent on the loss surface?",
         "subtopic": "Fundamental Concept of Gradient Descent",
         "type": "single_choice",
         "correctOptionIds": [
@@ -71,7 +71,7 @@
             "text": "To ensure that the Hessian matrix remains positive semi-definite"
           }
         ],
-        "question": "Why is there a negative sign in the standard gradient descent parameter update rule \\mathbf{w}^{(t+1)} := \\mathbf{w}^{(t)} - \\eta \\nabla J(\\mathbf{w}^{(t)})?",
+        "question": "Why is there a negative sign in the standard gradient descent parameter update rule $\\mathbf{w}^{(t+1)} := \\mathbf{w}^{(t)} - \\eta \\nabla J(\\mathbf{w}^{(t)})$?",
         "subtopic": "Update Rule Operator",
         "type": "single_choice",
         "correctOptionIds": [
@@ -126,7 +126,7 @@
           },
           {
             "id": "opt-d",
-            "text": "The square root of the number of features (sqrt(d))"
+            "text": "The square root of the number of features ($\\sqrt{d}$)"
           }
         ],
         "question": "What is the batch size in Batch Gradient Descent (BGD)?",
@@ -158,7 +158,7 @@
             "text": "It controls the number of hidden layers in a neural network"
           }
         ],
-        "question": "What is the primary role of the learning rate hyperparameter (\\eta or \\alpha) in Gradient Descent?",
+        "question": "What is the primary role of the learning rate hyperparameter ($\\eta$ or $\\alpha$) in Gradient Descent?",
         "subtopic": "Learning Rate Role",
         "type": "single_choice",
         "correctOptionIds": [
@@ -187,7 +187,7 @@
             "text": "The optimization path becomes perfectly straight and smooth"
           }
         ],
-        "question": "What typically happens during training if the learning rate \\eta is set excessively large?",
+        "question": "What typically happens during training if the learning rate $\\eta$ is set excessively large?",
         "subtopic": "Symptom of High Learning Rate",
         "type": "single_choice",
         "correctOptionIds": [
@@ -216,7 +216,7 @@
             "text": "The model switches automatically to closed-form OLS"
           }
         ],
-        "question": "What is the consequence of selecting a learning rate that is severely too small (e.g., \\eta = 10^{-9})?",
+        "question": "What is the consequence of selecting a learning rate that is severely too small (e.g., $\\eta = 10^{-9}$)?",
         "subtopic": "Symptom of Low Learning Rate",
         "type": "single_choice",
         "correctOptionIds": [
@@ -259,22 +259,22 @@
         "options": [
           {
             "id": "opt-a",
-            "text": "\\frac{1}{m} \\sum_{i=1}^m (\\hat{y}_i - y_i)"
+            "text": "$\\frac{1}{m} \\sum_{i=1}^m (\\hat{y}_i - y_i)$"
           },
           {
             "id": "opt-b",
-            "text": "\\frac{2}{m} \\sum_{i=1}^m (\\hat{y}_i - y_i) x_{ij}"
+            "text": "$\\frac{2}{m} \\sum_{i=1}^m (\\hat{y}_i - y_i) x_{ij}$"
           },
           {
             "id": "opt-c",
-            "text": "\\frac{2}{m} \\sum_{i=1}^m (\\hat{y}_i - y_i)^2 x_{ij}"
+            "text": "$\\frac{2}{m} \\sum_{i=1}^m (\\hat{y}_i - y_i)^2 x_{ij}$"
           },
           {
             "id": "opt-d",
-            "text": "\\frac{1}{2m} \\sum_{i=1}^m (\\hat{y}_i - y_i) x_{ij}^2"
+            "text": "$\\frac{1}{2m} \\sum_{i=1}^m (\\hat{y}_i - y_i) x_{ij}^2$"
           }
         ],
-        "question": "What is the analytical scalar partial derivative \\frac{\\partial J}{\\partial w_j} for Mean Squared Error J(\\mathbf{w}) = \\frac{1}{m} \\sum_{i=1}^m (\\hat{y}_i - y_i)^2?",
+        "question": "What is the analytical scalar partial derivative $\\frac{\\partial J}{\\partial w_j}$ for Mean Squared Error $J(\\mathbf{w}) = \\frac{1}{m} \\sum_{i=1}^m (\\hat{y}_i - y_i)^2$?",
         "subtopic": "MSE Gradient Formula",
         "type": "single_choice",
         "correctOptionIds": [
@@ -288,22 +288,22 @@
         "options": [
           {
             "id": "opt-a",
-            "text": "\\frac{2}{m} (\\mathbf{X}\\mathbf{w} - \\mathbf{y})"
+            "text": "$\\frac{2}{m} (\\mathbf{X}\\mathbf{w} - \\mathbf{y})$"
           },
           {
             "id": "opt-b",
-            "text": "\\frac{2}{m} \\mathbf{X}^T (\\mathbf{X}\\mathbf{w} - \\mathbf{y})"
+            "text": "$\\frac{2}{m} \\mathbf{X}^T (\\mathbf{X}\\mathbf{w} - \\mathbf{y})$"
           },
           {
             "id": "opt-c",
-            "text": "\\frac{1}{m} (\\mathbf{X}^T \\mathbf{X})^{-1} \\mathbf{y}"
+            "text": "$\\frac{1}{m} (\\mathbf{X}^T \\mathbf{X})^{-1} \\mathbf{y}$"
           },
           {
             "id": "opt-d",
-            "text": "\\frac{2}{m} \\mathbf{X} (\\mathbf{X}^T \\mathbf{w} - \\mathbf{y})"
+            "text": "$\\frac{2}{m} \\mathbf{X} (\\mathbf{X}^T \\mathbf{w} - \\mathbf{y})$"
           }
         ],
-        "question": "In compact matrix notation, what is the gradient \\nabla_{\\mathbf{w}} J(\\mathbf{w}) of Mean Squared Error with design matrix \\mathbf{X} \\in \\mathbb{R}^{m \\times (d+1)}?",
+        "question": "In compact matrix notation, what is the gradient $\\nabla_{\\mathbf{w}} J(\\mathbf{w})$ of Mean Squared Error with design matrix $\\mathbf{X} \\in \\mathbb{R}^{m \\times (d+1)}$?",
         "subtopic": "Vectorized Gradient Formulation",
         "type": "single_choice",
         "correctOptionIds": [
@@ -390,7 +390,7 @@
             "text": "It will freeze and stop taking steps"
           }
         ],
-        "question": "If pure SGD is run with a constant learning rate \\eta > 0 on a convex loss surface, what will happen to the parameter vector as iterations approach infinity?",
+        "question": "If pure SGD is run with a constant learning rate $\\eta > 0$ on a convex loss surface, what will happen to the parameter vector as iterations approach infinity?",
         "subtopic": "SGD Non-Convergence at Constant Learning Rate",
         "type": "single_choice",
         "correctOptionIds": [
@@ -419,7 +419,7 @@
             "text": "The data contains severe multicollinearity"
           }
         ],
-        "question": "An engineer monitors Gradient Descent and observes that ||\\nabla J(\\mathbf{w}^{(t)})||_2 < 10^{-5}. What does this diagnostic signal indicate?",
+        "question": "An engineer monitors Gradient Descent and observes that $\\|\\nabla J(\\mathbf{w}^{(t)})\\|_2 < 10^{-5}$. What does this diagnostic signal indicate?",
         "subtopic": "Stopping Criteria Mechanics",
         "type": "single_choice",
         "correctOptionIds": [
@@ -448,7 +448,7 @@
             "text": "To force all parameter weights to zero"
           }
         ],
-        "question": "What is the primary motivation for implementing a decaying learning rate schedule (such as step decay or inverse scaling \\eta_t = \\frac{\\eta_0}{(1 + decay \\cdot t)^p})?",
+        "question": "What is the primary motivation for implementing a decaying learning rate schedule (such as step decay or inverse scaling $\\eta_t = \\frac{\\eta_0}{(1 + \\text{decay} \\cdot t)^p}$)?",
         "subtopic": "Learning Rate Schedules",
         "type": "single_choice",
         "correctOptionIds": [
@@ -520,22 +520,22 @@
         "options": [
           {
             "id": "opt-a",
-            "text": "\\eta < \\frac{1}{\\det(\\mathbf{H})}"
+            "text": "$\\eta < \\frac{1}{\\det(\\mathbf{H})}$"
           },
           {
             "id": "opt-b",
-            "text": "\\eta < \\frac{2}{\\lambda_{\\max}(\\mathbf{H})}, where \\lambda_{\\max} is the largest eigenvalue of the Hessian"
+            "text": "$\\eta < \\frac{2}{\\lambda_{\\max}(\\mathbf{H})}$, where $\\lambda_{\\max}$ is the largest eigenvalue of the Hessian"
           },
           {
             "id": "opt-c",
-            "text": "\\eta < \\frac{\\text{trace}(\\mathbf{H})}{m}"
+            "text": "$\\eta < \\frac{\\text{trace}(\\mathbf{H})}{m}$"
           },
           {
             "id": "opt-d",
-            "text": "\\eta < 2 \\cdot \\lambda_{\\min}(\\mathbf{H})"
+            "text": "$\\eta < 2 \\cdot \\lambda_{\\min}(\\mathbf{H})$"
           }
         ],
-        "question": "For a quadratic loss function with Hessian matrix \\mathbf{H} = \\nabla^2 J(\\mathbf{w}), what is the exact theoretical upper bound on the learning rate \\eta to guarantee convergence of Batch Gradient Descent?",
+        "question": "For a quadratic loss function with Hessian matrix $\\mathbf{H} = \\nabla^2 J(\\mathbf{w})$, what is the exact theoretical upper bound on the learning rate $\\eta$ to guarantee convergence of Batch Gradient Descent?",
         "subtopic": "Mathematical Convergence Bound",
         "type": "single_choice",
         "correctOptionIds": [
@@ -549,22 +549,22 @@
         "options": [
           {
             "id": "opt-a",
-            "text": "\\kappa = 1; gradient descent converges in exactly one iteration"
+            "text": "$\\kappa = 1$; gradient descent converges in exactly one iteration"
           },
           {
             "id": "opt-b",
-            "text": "\\kappa = 10,000; the loss contours form an extreme ravine where gradients oscillate violently across the narrow axis while making minuscule progress along the flat axis"
+            "text": "$\\kappa = 10,000$; the loss contours form an extreme ravine where gradients oscillate violently across the narrow axis while making minuscule progress along the flat axis"
           },
           {
             "id": "opt-c",
-            "text": "\\kappa = 0.0001; the learning rate can be safely set to 100"
+            "text": "$\\kappa = 0.0001$; the learning rate can be safely set to 100"
           },
           {
             "id": "opt-d",
-            "text": "\\kappa = 9,999; the loss function is non-convex and possesses multiple local minima"
+            "text": "$\\kappa = 9,999$; the loss function is non-convex and possesses multiple local minima"
           }
         ],
-        "question": "Suppose the Hessian matrix of an unscaled dataset has eigenvalues \\lambda_{\\max} = 10,000 and \\lambda_{\\min} = 1. What is the condition number \\kappa, and what is its effect on gradient descent?",
+        "question": "Suppose the Hessian matrix of an unscaled dataset has eigenvalues $\\lambda_{\\max} = 10,000$ and $\\lambda_{\\min} = 1$. What is the condition number $\\kappa$, and what is its effect on gradient descent?",
         "subtopic": "Condition Number & Ravine Geometry",
         "type": "single_choice",
         "correctOptionIds": [
@@ -593,7 +593,7 @@
             "text": "[1.6, 5.4]^T"
           }
         ],
-        "question": "Given 2 training samples: x^{(1)} = [1, 2]^T with y^{(1)} = 5, and x^{(2)} = [1, 4]^T with y^{(2)} = 11. Let initial weights be \\mathbf{w} = [0, 0]^T, loss J(\\mathbf{w}) = \\frac{1}{m}\\sum (\\hat{y}_i - y_i)^2, and \\eta = 0.05. What is the weight vector \\mathbf{w}^{(1)} after ONE Batch GD update?",
+        "question": "Given 2 training samples: $\\mathbf{x}^{(1)} = [1, 2]^T$ with $y^{(1)} = 5$, and $\\mathbf{x}^{(2)} = [1, 4]^T$ with $y^{(2)} = 11$. Let initial weights be $\\mathbf{w} = [0, 0]^T$, loss $J(\\mathbf{w}) = \\frac{1}{m}\\sum (\\hat{y}_i - y_i)^2$, and $\\eta = 0.05$. What is the weight vector $\\mathbf{w}^{(1)}$ after ONE Batch GD update?",
         "subtopic": "Numerical Calculation of Gradient Step",
         "type": "single_choice",
         "correctOptionIds": [
@@ -607,7 +607,7 @@
         "options": [
           {
             "id": "opt-a",
-            "text": "The learning rate \\eta was slightly above the stability threshold; reducing \\eta by a factor of 5-10 will prevent overflow"
+            "text": "The learning rate $\\eta$ was slightly above the stability threshold; reducing $\\eta$ by a factor of 5-10 will prevent overflow"
           },
           {
             "id": "opt-b",
@@ -638,22 +638,22 @@
         "options": [
           {
             "id": "opt-a",
-            "text": "\\sum_{t=1}^\\infty \\eta_t < \\infty \\quad \\text{and} \\quad \\sum_{t=1}^\\infty \\eta_t^2 < \\infty"
+            "text": "$\\sum_{t=1}^\\infty \\eta_t < \\infty \\quad \\text{and} \\quad \\sum_{t=1}^\\infty \\eta_t^2 < \\infty$"
           },
           {
             "id": "opt-b",
-            "text": "\\sum_{t=1}^\\infty \\eta_t = \\infty \\quad \\text{and} \\quad \\sum_{t=1}^\\infty \\eta_t^2 < \\infty"
+            "text": "$\\sum_{t=1}^\\infty \\eta_t = \\infty \\quad \\text{and} \\quad \\sum_{t=1}^\\infty \\eta_t^2 < \\infty$"
           },
           {
             "id": "opt-c",
-            "text": "\\lim_{t \\to \\infty} \\eta_t = 1 \\quad \\text{and} \\quad \\eta_t > 0"
+            "text": "$\\lim_{t \\to \\infty} \\eta_t = 1 \\quad \\text{and} \\quad \\eta_t > 0$"
           },
           {
             "id": "opt-d",
-            "text": "\\eta_{t+1} = \\frac{1}{2} \\eta_t \\quad \\text{for all } t"
+            "text": "$\\eta_{t+1} = \\frac{1}{2} \\eta_t \\quad \\text{for all } t$"
           }
         ],
-        "question": "What are the formal Robbins-Monro conditions on the learning rate sequence \\{\\eta_t\\} required to guarantee asymptotic convergence of Stochastic Gradient Descent to the true minimum?",
+        "question": "What are the formal Robbins-Monro conditions on the learning rate sequence $\\{\\eta_t\\}$ required to guarantee asymptotic convergence of Stochastic Gradient Descent to the true minimum?",
         "subtopic": "Robbins-Monro Conditions",
         "type": "single_choice",
         "correctOptionIds": [
@@ -698,22 +698,22 @@
         "options": [
           {
             "id": "opt-a",
-            "text": "k \\cdot \\sigma^2"
+            "text": "$k \\cdot \\sigma^2$"
           },
           {
             "id": "opt-b",
-            "text": "\\frac{\\sigma^2}{k}"
+            "text": "$\\frac{\\sigma^2}{k}$"
           },
           {
             "id": "opt-c",
-            "text": "\\frac{\\sigma^2}{\\sqrt{k}}"
+            "text": "$\\frac{\\sigma^2}{\\sqrt{k}}$"
           },
           {
             "id": "opt-d",
-            "text": "\\sigma^2 - k"
+            "text": "$\\sigma^2 - k$"
           }
         ],
-        "question": "If the variance of a single sample's gradient in pure SGD is \\sigma^2, what is the variance of the mini-batch gradient estimator when using batch size k?",
+        "question": "If the variance of a single sample's gradient in pure SGD is $\\sigma^2$, what is the variance of the mini-batch gradient estimator when using batch size $k$?",
         "subtopic": "Variance Reduction in Mini-Batches",
         "type": "single_choice",
         "correctOptionIds": [
@@ -731,7 +731,7 @@
           },
           {
             "id": "opt-b",
-            "text": "Setting \\eta > \\frac{2}{\\lambda_{\\max}}, causing exponential divergence of the parameter norms"
+            "text": "Setting $\\eta > \\frac{2}{\\lambda_{\\max}}$, causing exponential divergence of the parameter norms"
           },
           {
             "id": "opt-c",
@@ -739,7 +739,7 @@
           },
           {
             "id": "opt-d",
-            "text": "Initializing weights to exact zeros (\\mathbf{w} = \\mathbf{0}) for linear regression"
+            "text": "Initializing weights to exact zeros ($\\mathbf{w} = \\mathbf{0}$) for linear regression"
           }
         ],
         "question": "Which of the following scenarios will cause a standard Gradient Descent implementation on Mean Squared Error to fail or produce pathological behavior?",

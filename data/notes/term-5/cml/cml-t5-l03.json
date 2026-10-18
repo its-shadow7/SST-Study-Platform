@@ -67,25 +67,25 @@
           {
             "id": "opt-1",
             "is_correct": false,
-            "text": "J(theta) = sum |y_i - h_theta(x_i)|"
+            "text": "$J(\\theta) = \\sum_{i=1}^m |y_i - h_\\theta(x_i)|$"
           },
           {
             "id": "opt-2",
             "is_correct": true,
-            "text": "J(theta) = (1/2) sum (h_theta(x_i) - y_i)^2"
+            "text": "$J(\\theta) = \\frac{1}{2} \\sum_{i=1}^m (h_\\theta(x_i) - y_i)^2$"
           },
           {
             "id": "opt-3",
             "is_correct": false,
-            "text": "J(theta) = - sum [y_i log(h_theta(x_i))]"
+            "text": "$J(\\theta) = - \\sum_{i=1}^m [y_i \\log(h_\\theta(x_i))]$"
           },
           {
             "id": "opt-4",
             "is_correct": false,
-            "text": "J(theta) = max |y_i - h_theta(x_i)|"
+            "text": "$J(\\theta) = \\max_i |y_i - h_\\theta(x_i)|$"
           }
         ],
-        "question": "What is the mathematical cost function J(theta) minimized by Ordinary Least Squares linear regression?",
+        "question": "What is the mathematical cost function $J(\\theta)$ minimized by Ordinary Least Squares linear regression?",
         "subtopic": "OLS Objective Function",
         "type": "single_choice"
       },
@@ -100,22 +100,22 @@
           {
             "id": "opt-1",
             "is_correct": false,
-            "text": "theta = (X X^T)^(-1) X y"
+            "text": "$\\theta = (X X^T)^{-1} X y$"
           },
           {
             "id": "opt-2",
             "is_correct": true,
-            "text": "theta = (X^T X)^(-1) X^T y"
+            "text": "$\\theta = (X^T X)^{-1} X^T y$"
           },
           {
             "id": "opt-3",
             "is_correct": false,
-            "text": "theta = X^T (X X^T)^(-1) y"
+            "text": "$\\theta = X^T (X X^T)^{-1} y$"
           },
           {
             "id": "opt-4",
             "is_correct": false,
-            "text": "theta = X^T y / (X^T X)"
+            "text": "$\\theta = X^T y / (X^T X)$"
           }
         ],
         "question": "What is the closed-form analytical solution (the Normal Equation) for the optimal parameter vector theta in Ordinary Least Squares?",

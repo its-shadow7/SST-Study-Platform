@@ -124,31 +124,31 @@
           "opt-2"
         ],
         "difficulty": "easy",
-        "explanation": "Euclidean distance is the square root of the sum of squared coordinate differences: sqrt( sum (x_j - z_j)^2 ). Option 1 is Manhattan, and Option 3 is Chebyshev.",
+        "explanation": "Euclidean distance is the square root of the sum of squared coordinate differences: $\\sqrt{\\sum_{j=1}^d (x_j - z_j)^2}$. Option 1 is Manhattan ($L_1$), and Option 3 is Chebyshev ($L_\\infty$).",
         "id": "q-cml-l09-04",
         "options": [
           {
             "id": "opt-1",
             "is_correct": false,
-            "text": "sum |x_j - z_j|"
+            "text": "$\\sum_{j=1}^d |x_j - z_j|$"
           },
           {
             "id": "opt-2",
             "is_correct": true,
-            "text": "sqrt( sum (x_j - z_j)^2 )"
+            "text": "$\\sqrt{\\sum_{j=1}^d (x_j - z_j)^2}$"
           },
           {
             "id": "opt-3",
             "is_correct": false,
-            "text": "max |x_j - z_j|"
+            "text": "$\\max_{j \\in \\{1, \\dots, d\\}} |x_j - z_j|$"
           },
           {
             "id": "opt-4",
             "is_correct": false,
-            "text": "1 - (x . z)"
+            "text": "$1 - (\\mathbf{x} \\cdot \\mathbf{z})$"
           }
         ],
-        "question": "Which mathematical distance formula corresponds to the straight-line Euclidean distance (L2 norm) between vectors x and z in d dimensions?",
+        "question": "Which mathematical distance formula corresponds to the straight-line Euclidean distance ($L_2$ norm) between vectors $\\mathbf{x}$ and $\\mathbf{z}$ in $d$ dimensions?",
         "subtopic": "Distance Metric Formulation",
         "type": "single_choice"
       },

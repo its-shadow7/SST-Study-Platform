@@ -91,6 +91,16 @@
   color: #f1f5f9 !important;
 }
 
+.quiz-markdown .katex {
+  color: inherit !important;
+  font-size: 1.02em;
+}
+
+.quiz-markdown .katex-display {
+  margin: 0.5rem 0 !important;
+  padding: 0.5rem !important;
+}
+
 /* ==============================================================================
    Markdown Reader Typography Spacing
    ============================================================================== */

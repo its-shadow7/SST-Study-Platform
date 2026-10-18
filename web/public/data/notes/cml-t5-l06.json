@@ -305,7 +305,7 @@
             "text": "The proportion of test samples in train_test_split"
           }
         ],
-        "question": "In the formula for Adjusted R^2, R^2_{adj} = 1 - (1 - R^2) \\frac{m - 1}{m - p - 1}, what does p represent when evaluating polynomial regression?",
+        "question": "In the formula for Adjusted $R^2$, $R^2_{adj} = 1 - (1 - R^2) \\frac{m - 1}{m - p - 1}$, what does $p$ represent when evaluating polynomial regression?",
         "subtopic": "Adjusted R^2 Mechanics",
         "type": "single_choice",
         "correctOptionIds": [

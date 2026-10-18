@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Quiz, QuizQuestion } from '@/types/note';
 import { api } from '@/services/apiClient';
 import { useAuth } from '@/context/AuthContext';
+import { QuizMarkdown } from './QuizMarkdown';
 import {
   CheckCircle2,
   XCircle,
@@ -510,24 +511,42 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
                   )}
                 </div>
 
-                <p className="font-semibold text-sm text-zinc-100 mb-3 leading-relaxed">{q.question}</p>
+                <div className="font-semibold text-sm text-zinc-100 mb-3 leading-relaxed">
+                  <QuizMarkdown content={q.question} />
+                </div>
 
-                <div className="text-xs space-y-1 mb-3">
-                  <div className="text-zinc-400">
-                    Your answer:{' '}
-                    <span className="font-semibold text-zinc-200">
-                      {userAns.map((id) => q.options.find((o) => o.id === id)?.text || id).join(', ') || 'Not answered'}
-                    </span>
+                <div className="text-xs space-y-2 mb-3">
+                  <div className="text-zinc-400 flex flex-wrap items-baseline gap-1.5">
+                    <span>Your answer:</span>
+                    {userAns.length > 0 ? (
+                      <span className="font-semibold text-zinc-200 inline-flex flex-wrap items-center gap-1">
+                        {userAns.map((id, uIdx) => (
+                          <span key={id} className="inline-flex items-center">
+                            {uIdx > 0 && <span className="mr-1 text-zinc-500">,</span>}
+                            <QuizMarkdown content={q.options.find((o) => o.id === id)?.text || id} isInline />
+                          </span>
+                        ))}
+                      </span>
+                    ) : (
+                      <span className="font-semibold text-zinc-400 italic">Not answered</span>
+                    )}
                   </div>
-                  <div className="text-emerald-400 font-semibold">
-                    Correct answer:{' '}
-                    {q.correctOptionIds.map((id) => q.options.find((o) => o.id === id)?.text || id).join(', ')}
+                  <div className="text-emerald-400 font-semibold flex flex-wrap items-baseline gap-1.5">
+                    <span>Correct answer:</span>
+                    <span className="inline-flex flex-wrap items-center gap-1">
+                      {q.correctOptionIds.map((id, cIdx) => (
+                        <span key={id} className="inline-flex items-center">
+                          {cIdx > 0 && <span className="mr-1 text-emerald-500/60">,</span>}
+                          <QuizMarkdown content={q.options.find((o) => o.id === id)?.text || id} isInline />
+                        </span>
+                      ))}
+                    </span>
                   </div>
                 </div>
 
                 <div className="text-xs p-3 rounded-lg bg-black/40 border border-white/[0.06] text-zinc-300">
                   <span className="font-bold text-zinc-100">Explanation: </span>
-                  {q.explanation}
+                  <QuizMarkdown content={q.explanation} isInline />
                 </div>
               </div>
             );
@@ -728,9 +747,9 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
           </div>
         </div>
 
-        <h3 className="text-base sm:text-lg font-semibold text-zinc-100 mb-6 leading-relaxed">
-          {currentQ.question}
-        </h3>
+        <div className="text-base sm:text-lg font-semibold text-zinc-100 mb-6 leading-relaxed">
+          <QuizMarkdown content={currentQ.question} />
+        </div>
 
         {/* Options List */}
         <div className="space-y-3 mb-6">
@@ -785,7 +804,9 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
                     )
                   ) : null}
                 </div>
-                <div className="text-sm leading-relaxed flex-1">{opt.text}</div>
+                <div className="text-sm leading-relaxed flex-1">
+                  <QuizMarkdown content={opt.text} isInline />
+                </div>
                 {isChecked && isCorrectOption && (
                   <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                 )}
@@ -821,9 +842,9 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
                 </button>
               )}
             </div>
-            <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-sans">
-              {currentQ.explanation}
-            </p>
+            <div className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-sans">
+              <QuizMarkdown content={currentQ.explanation} />
+            </div>
           </div>
         )}
 
