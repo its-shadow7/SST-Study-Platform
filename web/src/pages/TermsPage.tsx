@@ -114,18 +114,18 @@ export const TermsPage: React.FC<TermsPageProps> = ({ notes }) => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-3.5rem)] bg-[#09090b] text-zinc-200 py-8 sm:py-10 px-4 sm:px-6 lg:px-8 max-w-[1440px] mx-auto">
+    <div className="min-h-[calc(100vh-3.5rem)] bg-slate-50 dark:bg-[#09090b] text-zinc-800 dark:text-zinc-200 py-8 sm:py-10 px-4 sm:px-6 lg:px-8 max-w-[1440px] mx-auto transition-colors">
       {/* Page Header */}
-      <div className="mb-8 border-b border-white/[0.08] pb-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="mb-8 border-b border-zinc-200 dark:border-white/[0.08] pb-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-500/20 bg-blue-500/10 text-xs font-medium text-blue-400 mb-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-500/20 bg-blue-500/10 text-xs font-medium text-blue-600 dark:text-blue-400 mb-3">
             <Layers className="w-3.5 h-3.5" />
             <span>Curriculum Hub</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-100">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
             Academic Terms
           </h1>
-          <p className="text-sm text-zinc-400 mt-2 max-w-2xl leading-relaxed">
+          <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-2 max-w-2xl leading-relaxed">
             Browse course notes, lecture materials, and curriculum archives. The degree comprises
             4 years with 4 terms per academic year (16 terms total).
           </p>
@@ -133,21 +133,21 @@ export const TermsPage: React.FC<TermsPageProps> = ({ notes }) => {
 
         {/* Student Academic Standing Badge */}
         {user && (
-          <div className="p-3.5 rounded-xl border border-white/10 bg-white/[0.02] flex items-center gap-3 shrink-0 self-start md:self-auto">
-            <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+          <div className="p-3.5 rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/[0.02] shadow-sm dark:shadow-none flex items-center gap-3 shrink-0 self-start md:self-auto">
+            <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
               <GraduationCap className="w-5 h-5" />
             </div>
             <div className="text-left text-xs">
-              <div className="font-semibold text-zinc-200 flex items-center gap-1.5">
+              <div className="font-semibold text-zinc-900 dark:text-zinc-200 flex items-center gap-1.5">
                 <span>Year {yearOfStudy} Student</span>
                 {batchYear && (
-                  <span className="text-blue-400 font-mono text-[11px]">
+                  <span className="text-blue-600 dark:text-blue-400 font-mono text-[11px]">
                     (Batch '{String(batchYear).slice(2)})
                   </span>
                 )}
               </div>
-              <div className="text-zinc-400 text-[11px] font-mono mt-0.5">
-                Access: Terms 1–{maxAllowedTerm} • <span className="text-emerald-400 font-semibold">Current: Term {user.active_term || 1}</span>
+              <div className="text-zinc-500 dark:text-zinc-400 text-[11px] font-mono mt-0.5">
+                Access: Terms 1–{maxAllowedTerm} • <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Current: Term {user.active_term || 1}</span>
               </div>
             </div>
           </div>
@@ -162,7 +162,7 @@ export const TermsPage: React.FC<TermsPageProps> = ({ notes }) => {
             onClick={() => setSelectedFilter('all')}
             className={`px-3 py-1.5 rounded-lg border font-medium transition-all shrink-0 ${selectedFilter === 'all'
                 ? 'bg-blue-600 border-blue-500 text-white shadow-sm'
-                : 'bg-white/[0.03] border-white/10 text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.06]'
+                : 'bg-white dark:bg-white/[0.03] border-zinc-200 dark:border-white/10 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-white/[0.06] shadow-sm dark:shadow-none'
               }`}
           >
             All Terms (16)
@@ -171,7 +171,7 @@ export const TermsPage: React.FC<TermsPageProps> = ({ notes }) => {
             onClick={() => setSelectedFilter('unlocked')}
             className={`px-3 py-1.5 rounded-lg border font-medium transition-all shrink-0 ${selectedFilter === 'unlocked'
                 ? 'bg-blue-600 border-blue-500 text-white shadow-sm'
-                : 'bg-white/[0.03] border-white/10 text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.06]'
+                : 'bg-white dark:bg-white/[0.03] border-zinc-200 dark:border-white/10 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-white/[0.06] shadow-sm dark:shadow-none'
               }`}
           >
             Unlocked (1–{maxAllowedTerm})
@@ -182,7 +182,7 @@ export const TermsPage: React.FC<TermsPageProps> = ({ notes }) => {
               onClick={() => setSelectedFilter(year as YearFilter)}
               className={`px-3 py-1.5 rounded-lg border font-medium transition-all shrink-0 flex items-center gap-1.5 ${selectedFilter === year
                   ? 'bg-blue-600 border-blue-500 text-white shadow-sm'
-                  : 'bg-white/[0.03] border-white/10 text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.06]'
+                  : 'bg-white dark:bg-white/[0.03] border-zinc-200 dark:border-white/10 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-white/[0.06] shadow-sm dark:shadow-none'
                 }`}
             >
               <span>Year {year}</span>
@@ -195,12 +195,12 @@ export const TermsPage: React.FC<TermsPageProps> = ({ notes }) => {
 
         {/* Dynamic Order Selector */}
         <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 text-xs">
-          <ArrowUpDown className="w-3.5 h-3.5 text-zinc-400" />
-          <span className="text-zinc-400 font-medium">Order:</span>
+          <ArrowUpDown className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
+          <span className="text-zinc-600 dark:text-zinc-400 font-medium">Order:</span>
           <select
             value={orderMode}
             onChange={(e) => setOrderMode(e.target.value as OrderMode)}
-            className="bg-zinc-900 border border-white/10 text-zinc-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-blue-500 cursor-pointer"
+            className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 text-zinc-800 dark:text-zinc-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-blue-500 cursor-pointer shadow-sm dark:shadow-none"
           >
             <option value="standard">Curriculum (1 → 16)</option>
             <option value="current-year-first">My Year First (Year {yearOfStudy})</option>
@@ -221,14 +221,14 @@ export const TermsPage: React.FC<TermsPageProps> = ({ notes }) => {
               key={term.id}
               onClick={() => handleSelectTerm(term)}
               className={`group relative p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between min-h-[190px] ${isLocked
-                  ? 'border-white/[0.04] bg-black/40 opacity-40 cursor-not-allowed hover:opacity-60'
+                  ? 'border-zinc-200/60 dark:border-white/[0.04] bg-zinc-100/60 dark:bg-black/40 opacity-40 cursor-not-allowed hover:opacity-60'
                   : term.isActiveTerm
-                    ? 'border-emerald-500/60 bg-blue-500/[0.03] hover:bg-blue-500/[0.07] hover:border-emerald-500/80 hover:shadow-xl hover:shadow-emerald-950/20 cursor-pointer ring-1 ring-emerald-500/30'
+                    ? 'border-emerald-500/60 bg-white dark:bg-blue-500/[0.03] hover:border-emerald-500/80 hover:shadow-xl hover:shadow-emerald-500/10 cursor-pointer ring-1 ring-emerald-500/30'
                   : term.isCurrentYear
-                    ? 'border-blue-500/30 bg-blue-500/[0.03] hover:bg-blue-500/[0.07] hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-950/30 cursor-pointer ring-1 ring-blue-500/20'
+                    ? 'border-blue-500/40 bg-white dark:bg-blue-500/[0.03] hover:border-blue-500/60 hover:shadow-xl hover:shadow-blue-500/10 cursor-pointer ring-1 ring-blue-500/20'
                     : hasNotes
-                      ? 'border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20 hover:shadow-xl cursor-pointer'
-                      : 'border-white/5 bg-black/20 opacity-70 hover:opacity-100 hover:border-white/10 cursor-pointer'
+                      ? 'border-zinc-200 dark:border-white/10 bg-white dark:bg-white/[0.02] hover:bg-zinc-50 dark:hover:bg-white/[0.05] hover:border-zinc-300 dark:hover:border-white/20 hover:shadow-xl cursor-pointer shadow-sm dark:shadow-none'
+                      : 'border-zinc-200/60 dark:border-white/5 bg-zinc-50 dark:bg-black/20 opacity-70 hover:opacity-100 hover:border-zinc-300 dark:hover:border-white/10 cursor-pointer'
                 }`}
             >
               <div>
@@ -237,33 +237,33 @@ export const TermsPage: React.FC<TermsPageProps> = ({ notes }) => {
                   <div className="flex items-center gap-1.5">
                     <span
                       className={`text-[11px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded border ${isLocked
-                          ? 'text-zinc-500 bg-white/[0.02] border-white/5'
+                          ? 'text-zinc-500 bg-zinc-100 dark:bg-white/[0.02] border-zinc-200 dark:border-white/5'
                           : term.isCurrentYear || term.isActiveTerm
-                            ? 'text-blue-300 bg-blue-500/20 border-blue-500/30 font-bold'
-                            : 'text-zinc-300 bg-white/5 border-white/10'
+                            ? 'text-blue-700 dark:text-blue-300 bg-blue-500/10 dark:bg-blue-500/20 border-blue-500/30 font-bold'
+                            : 'text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-white/5 border-zinc-200 dark:border-white/10'
                         }`}
                     >
                       Y{term.yearNumber} • T{term.termInYear}
                     </span>
 
                     {term.isActiveTerm ? (
-                      <span className="text-[10px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 border border-blue-500/30 font-bold">
+                      <span className="text-[10px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/30 font-bold">
                         Current Term
                       </span>
                     ) : term.isCurrentYear && !isLocked ? (
-                      <span className="text-[10px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                      <span className="text-[10px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
                         Current Year
                       </span>
                     ) : null}
                   </div>
 
                   {isLocked ? (
-                    <span className="flex items-center gap-1 text-[11px] text-zinc-500 font-mono">
-                      <Lock className="w-3 h-3 text-zinc-500" />
+                    <span className="flex items-center gap-1 text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">
+                      <Lock className="w-3 h-3 text-zinc-400 dark:text-zinc-500" />
                       <span>Locked</span>
                     </span>
                   ) : (
-                    <span className="text-[11px] text-zinc-400 font-mono">
+                    <span className="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono">
                       {term.notesCount} {term.notesCount === 1 ? 'note' : 'notes'}
                     </span>
                   )}
@@ -273,21 +273,21 @@ export const TermsPage: React.FC<TermsPageProps> = ({ notes }) => {
                 <div className="flex items-center gap-2">
                   <h3
                     className={`text-lg sm:text-xl font-bold tracking-tight transition-colors ${isLocked
-                        ? 'text-zinc-500'
+                        ? 'text-zinc-400 dark:text-zinc-500'
                         : term.isCurrentYear || term.isActiveTerm
-                          ? 'text-blue-100 group-hover:text-white'
-                          : 'text-zinc-100 group-hover:text-white'
+                          ? 'text-zinc-900 dark:text-blue-100 group-hover:text-blue-600 dark:group-hover:text-white'
+                          : 'text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-white'
                       }`}
                   >
                     {term.name}
                   </h3>
-                  {isLocked && <Lock className="w-3.5 h-3.5 text-zinc-500" />}
+                  {isLocked && <Lock className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500" />}
                 </div>
 
                 {/* Subject Badges */}
                 <div className="flex flex-wrap gap-1.5 mt-2.5">
                   {isLocked ? (
-                    <span className="text-[11px] text-zinc-500 italic">
+                    <span className="text-[11px] text-zinc-400 dark:text-zinc-500 italic">
                       Unlocked in Year {term.yearNumber}
                     </span>
                   ) : term.subjects.length > 0 ? (
@@ -295,27 +295,27 @@ export const TermsPage: React.FC<TermsPageProps> = ({ notes }) => {
                       {term.subjects.slice(0, 3).map((s) => (
                         <span
                           key={s}
-                          className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-zinc-300"
+                          className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-700 dark:text-zinc-300"
                         >
                           {s}
                         </span>
                       ))}
                       {term.subjects.length > 3 && (
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-zinc-400">
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-zinc-400">
                           +{term.subjects.length - 3} more
                         </span>
                       )}
                     </>
                   ) : (
-                    <span className="text-[11px] text-zinc-500 italic">No notes uploaded yet</span>
+                    <span className="text-[11px] text-zinc-400 dark:text-zinc-500 italic">No notes uploaded yet</span>
                   )}
                 </div>
               </div>
 
               {/* Bottom Card Action */}
-              <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs font-medium">
+              <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-white/[0.06] flex items-center justify-between text-xs font-medium">
                 {isLocked ? (
-                  <span className="text-zinc-500 flex items-center gap-1.5 font-mono text-[11px]">
+                  <span className="text-zinc-400 dark:text-zinc-500 flex items-center gap-1.5 font-mono text-[11px]">
                     <Lock className="w-3 h-3" />
                     <span>Future Curriculum</span>
                   </span>
@@ -323,16 +323,16 @@ export const TermsPage: React.FC<TermsPageProps> = ({ notes }) => {
                   <>
                     <span
                       className={`transition-colors ${term.isCurrentYear || term.isActiveTerm
-                          ? 'text-blue-400 group-hover:text-blue-300'
-                          : 'text-zinc-400 group-hover:text-blue-400'
+                          ? 'text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300'
+                          : 'text-zinc-500 dark:text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400'
                         }`}
                     >
                       {hasNotes ? 'Explore notes' : 'View term'}
                     </span>
                     <ArrowRight
                       className={`w-3.5 h-3.5 transition-all group-hover:translate-x-1 ${term.isCurrentYear || term.isActiveTerm
-                          ? 'text-blue-400 group-hover:text-blue-300'
-                          : 'text-zinc-400 group-hover:text-blue-400'
+                          ? 'text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300'
+                          : 'text-zinc-500 dark:text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400'
                         }`}
                     />
                   </>

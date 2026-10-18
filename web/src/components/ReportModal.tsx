@@ -80,25 +80,25 @@ export const ReportModal: React.FC<ReportModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="report-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-150 select-none"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150 select-none"
       onClick={(e) => {
         if (e.target === e.currentTarget && !submitting) {
           onClose();
         }
       }}
     >
-      <div className="relative w-full max-w-md overflow-hidden rounded-xl border border-white/10 bg-[#09090b] shadow-2xl text-zinc-200 p-6 animate-in zoom-in-95 duration-150">
+      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-[#09090b] shadow-2xl text-zinc-800 dark:text-zinc-200 p-6 animate-in zoom-in-95 duration-150">
         {/* Header */}
         <div className="flex items-start justify-between gap-3 mb-5">
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500">
               <Flag size={15} />
             </div>
             <div>
-              <h3 id="report-modal-title" className="text-sm font-semibold text-zinc-100">
+              <h3 id="report-modal-title" className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
                 Report Comment
               </h3>
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
                 Flag comment for review on SST Study Platform
               </p>
             </div>
@@ -108,7 +108,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
             onClick={onClose}
             disabled={submitting}
             aria-label="Close report modal"
-            className="text-zinc-400 hover:text-zinc-200 p-1 rounded-md hover:bg-white/5 transition-colors disabled:opacity-50"
+            className="text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 p-1 rounded-md hover:bg-zinc-100 dark:hover:bg-white/5 transition-colors disabled:opacity-50"
           >
             <X size={16} />
           </button>
@@ -119,7 +119,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
           <div>
             <label
               htmlFor="report-reason"
-              className="block text-xs font-medium text-zinc-400 mb-1.5"
+              className="block text-xs font-medium text-zinc-700 dark:text-zinc-400 mb-1.5"
             >
               Reason for reporting
             </label>
@@ -129,10 +129,10 @@ export const ReportModal: React.FC<ReportModalProps> = ({
                 value={selectedReason}
                 onChange={(e) => setSelectedReason(e.target.value as ReportReason)}
                 disabled={submitting}
-                className="w-full appearance-none rounded-lg border border-white/10 bg-transparent px-3 py-2 text-xs text-zinc-200 focus:ring-1 focus:ring-zinc-700 focus:outline-none transition-colors disabled:opacity-60 cursor-pointer"
+                className="w-full appearance-none rounded-xl border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-transparent px-3 py-2 text-xs text-zinc-900 dark:text-zinc-200 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors disabled:opacity-60 cursor-pointer"
               >
                 {REPORT_REASONS.map((reason) => (
-                  <option key={reason} value={reason} className="bg-[#09090b] text-zinc-200 py-1">
+                  <option key={reason} value={reason} className="bg-white dark:bg-[#09090b] text-zinc-900 dark:text-zinc-200 py-1">
                     {reason}
                   </option>
                 ))}
@@ -149,7 +149,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
             <div className="space-y-1.5 animate-in fade-in duration-100">
               <label
                 htmlFor="report-details"
-                className="block text-xs font-medium text-zinc-400"
+                className="block text-xs font-medium text-zinc-700 dark:text-zinc-400"
               >
                 Additional Details (optional)
               </label>
@@ -161,7 +161,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
                 onChange={(e) => setDetails(e.target.value)}
                 placeholder="Briefly describe the reason for this report..."
                 disabled={submitting}
-                className="w-full rounded-lg border border-white/10 bg-transparent px-3 py-2 text-xs text-zinc-200 placeholder-zinc-600 focus:ring-1 focus:ring-zinc-700 focus:outline-none resize-none transition-colors disabled:opacity-60"
+                className="w-full rounded-xl border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-transparent px-3 py-2 text-xs text-zinc-900 dark:text-zinc-200 placeholder-zinc-400 dark:placeholder-zinc-600 focus:ring-1 focus:ring-blue-500 focus:outline-none resize-none transition-colors disabled:opacity-60"
               />
               <div className="text-right text-[10px] text-zinc-500 font-mono">
                 {details.length}/300
@@ -169,7 +169,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
             </div>
           )}
 
-          <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-2.5 text-xs text-zinc-400 flex items-start gap-2">
+          <div className="rounded-xl border border-zinc-200 dark:border-white/[0.06] bg-zinc-50 dark:bg-white/[0.02] p-2.5 text-xs text-zinc-600 dark:text-zinc-400 flex items-start gap-2">
             <AlertCircle size={14} className="text-zinc-400 mt-0.5 shrink-0" />
             <span className="text-[11px] leading-relaxed">
               Reports are queued for student moderation review. False or spam reports violate guidelines.
@@ -177,19 +177,19 @@ export const ReportModal: React.FC<ReportModalProps> = ({
           </div>
 
           {/* Action buttons */}
-          <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/[0.06]">
+          <div className="flex items-center justify-end gap-2 pt-2 border-t border-zinc-100 dark:border-white/[0.06]">
             <button
               type="button"
               onClick={onClose}
               disabled={submitting}
-              className="px-3.5 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 hover:bg-white/5 rounded-lg transition-colors disabled:opacity-50"
+              className="px-3.5 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-white/5 rounded-xl transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold bg-red-500/10 text-red-600 dark:text-red-500 border border-red-500/20 hover:bg-red-500/20 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? (
                 <>

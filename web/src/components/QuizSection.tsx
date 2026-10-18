@@ -406,31 +406,31 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
 
     return (
       <div className="max-w-3xl mx-auto py-6 px-4 animate-in fade-in duration-300">
-        <div className="bg-[#0c0c0f] border border-white/10 rounded-2xl p-8 shadow-2xl text-center relative overflow-hidden">
+        <div className="bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-white/10 rounded-2xl p-8 shadow-xl dark:shadow-2xl text-center relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
 
-          <div className="inline-flex p-4 rounded-2xl bg-blue-500/10 text-blue-400 mb-4 border border-blue-500/20 shadow-inner">
+          <div className="inline-flex p-4 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 mb-4 border border-blue-500/20 shadow-inner">
             <Award className="w-12 h-12" />
           </div>
-          <h2 className="text-3xl font-bold tracking-tight text-zinc-100 mb-2">Topic Quiz Completed!</h2>
-          <p className="text-zinc-400 text-sm max-w-md mx-auto mb-6">
-            You scored <span className="font-bold text-zinc-100">{finalScore}</span> out of{' '}
-            <span className="font-bold text-zinc-100">{totalQuestions}</span> questions ({percentage}%).
+          <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 mb-2">Topic Quiz Completed!</h2>
+          <p className="text-zinc-600 dark:text-zinc-400 text-sm max-w-md mx-auto mb-6">
+            You scored <span className="font-bold text-zinc-900 dark:text-zinc-100">{finalScore}</span> out of{' '}
+            <span className="font-bold text-zinc-900 dark:text-zinc-100">{totalQuestions}</span> questions ({percentage}%).
             Your progress is saved to your student profile.
           </p>
 
           <div className="grid grid-cols-3 gap-3 max-w-md mx-auto mb-8">
-            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.08]">
-              <div className="text-2xl font-bold text-emerald-400">{finalScore}</div>
-              <div className="text-xs text-zinc-400 mt-1">Correct</div>
+            <div className="p-4 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] shadow-sm dark:shadow-none">
+              <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{finalScore}</div>
+              <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Correct</div>
             </div>
-            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.08]">
-              <div className="text-2xl font-bold text-rose-400">{totalQuestions - finalScore}</div>
-              <div className="text-xs text-zinc-400 mt-1">Incorrect</div>
+            <div className="p-4 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] shadow-sm dark:shadow-none">
+              <div className="text-2xl font-bold text-rose-600 dark:text-rose-400">{totalQuestions - finalScore}</div>
+              <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Incorrect</div>
             </div>
-            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.08]">
-              <div className="text-2xl font-bold text-blue-400">{percentage}%</div>
-              <div className="text-xs text-zinc-400 mt-1">Accuracy</div>
+            <div className="p-4 rounded-xl bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] shadow-sm dark:shadow-none">
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{percentage}%</div>
+              <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Accuracy</div>
             </div>
           </div>
 
@@ -447,15 +447,15 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
             </button>
             <button
               onClick={handleRetakeFromSummary}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-200 font-semibold text-xs transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 text-zinc-800 dark:text-zinc-200 font-semibold text-xs transition-colors shadow-sm dark:shadow-none"
             >
-              <RotateCcw className="w-4 h-4 text-zinc-400" />
+              <RotateCcw className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
               <span>Reset Entire Quiz</span>
             </button>
             {onSwitchToNotes && (
               <button
                 onClick={onSwitchToNotes}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-300 font-semibold text-xs transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 text-zinc-800 dark:text-zinc-300 font-semibold text-xs transition-colors shadow-sm dark:shadow-none"
               >
                 <BookOpen className="w-4 h-4" />
                 <span>Back to Notes</span>
@@ -466,9 +466,9 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
 
         {/* Detailed Question Review List */}
         <div className="mt-10 space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-white/[0.08]">
-            <h3 className="text-base font-bold text-zinc-100">Question-by-Question Audit</h3>
-            <span className="text-xs text-zinc-400 font-mono">
+          <div className="flex items-center justify-between pb-2 border-b border-zinc-200 dark:border-white/[0.08]">
+            <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">Question-by-Question Audit</h3>
+            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-mono">
               {finalScore}/{totalQuestions} Correct
             </span>
           </div>
@@ -489,49 +489,49 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-zinc-400">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
                     <span>Q{idx + 1}</span>
                     <span>•</span>
                     {getDifficultyBadge(q.difficulty)}
                     {q.subtopic && (
                       <>
                         <span className="hidden sm:inline">•</span>
-                        <span className="hidden sm:inline text-xs text-zinc-400">{q.subtopic}</span>
+                        <span className="hidden sm:inline text-xs text-zinc-500 dark:text-zinc-400">{q.subtopic}</span>
                       </>
                     )}
                   </div>
                   {isCorrect ? (
-                    <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400">
+                    <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                       <CheckCircle2 className="w-4 h-4" /> Correct
                     </span>
                   ) : (
-                    <span className="flex items-center gap-1.5 text-xs font-semibold text-rose-400">
+                    <span className="flex items-center gap-1.5 text-xs font-semibold text-rose-600 dark:text-rose-400">
                       <XCircle className="w-4 h-4" /> Incorrect
                     </span>
                   )}
                 </div>
 
-                <div className="font-semibold text-sm text-zinc-100 mb-3 leading-relaxed">
+                <div className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 mb-3 leading-relaxed">
                   <QuizMarkdown content={q.question} />
                 </div>
 
                 <div className="text-xs space-y-2 mb-3">
-                  <div className="text-zinc-400 flex flex-wrap items-baseline gap-1.5">
+                  <div className="text-zinc-600 dark:text-zinc-400 flex flex-wrap items-baseline gap-1.5">
                     <span>Your answer:</span>
                     {userAns.length > 0 ? (
-                      <span className="font-semibold text-zinc-200 inline-flex flex-wrap items-center gap-1">
+                      <span className="font-semibold text-zinc-800 dark:text-zinc-200 inline-flex flex-wrap items-center gap-1">
                         {userAns.map((id, uIdx) => (
                           <span key={id} className="inline-flex items-center">
-                            {uIdx > 0 && <span className="mr-1 text-zinc-500">,</span>}
+                            {uIdx > 0 && <span className="mr-1 text-zinc-400 dark:text-zinc-500">,</span>}
                             <QuizMarkdown content={q.options.find((o) => o.id === id)?.text || id} isInline />
                           </span>
                         ))}
                       </span>
                     ) : (
-                      <span className="font-semibold text-zinc-400 italic">Not answered</span>
+                      <span className="font-semibold text-zinc-500 dark:text-zinc-400 italic">Not answered</span>
                     )}
                   </div>
-                  <div className="text-emerald-400 font-semibold flex flex-wrap items-baseline gap-1.5">
+                  <div className="text-emerald-600 dark:text-emerald-400 font-semibold flex flex-wrap items-baseline gap-1.5">
                     <span>Correct answer:</span>
                     <span className="inline-flex flex-wrap items-center gap-1">
                       {q.correctOptionIds.map((id, cIdx) => (
@@ -544,8 +544,8 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
                   </div>
                 </div>
 
-                <div className="text-xs p-3 rounded-lg bg-black/40 border border-white/[0.06] text-zinc-300">
-                  <span className="font-bold text-zinc-100">Explanation: </span>
+                <div className="text-xs p-3 rounded-lg bg-zinc-50 dark:bg-black/40 border border-zinc-200 dark:border-white/[0.06] text-zinc-700 dark:text-zinc-300 shadow-sm dark:shadow-none">
+                  <span className="font-bold text-zinc-900 dark:text-zinc-100">Explanation: </span>
                   <QuizMarkdown content={q.explanation} isInline />
                 </div>
               </div>
@@ -564,24 +564,24 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
   // ---------------------------------------------------------------------------
   function renderResetModal() {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-        <div className="w-full max-w-md rounded-2xl bg-[#0c0c0f] border border-white/10 p-6 shadow-2xl space-y-5 text-left">
-          <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="w-full max-w-md rounded-2xl bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-white/10 p-6 shadow-2xl space-y-5 text-left">
+          <div className="flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-white/[0.08]">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
                 <AlertTriangle className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-zinc-100">Reset Entire Topic Quiz?</h3>
+              <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">Reset Entire Topic Quiz?</h3>
             </div>
             <button
               onClick={() => setShowResetModal(false)}
-              className="p-1 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-white/5 transition-colors"
+              className="p-1 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-white/5 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          <p className="text-xs text-zinc-400 leading-relaxed">
+          <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
             This will permanently clear your answers, scores, and saved question history for this
             lecture note. You will start over fresh from Question 1.
           </p>
@@ -590,7 +590,7 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
             <button
               onClick={() => setShowResetModal(false)}
               disabled={isResetting}
-              className="px-4 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-semibold text-zinc-300 transition-colors"
+              className="px-4 py-2 rounded-xl border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 text-xs font-semibold text-zinc-700 dark:text-zinc-300 transition-colors"
             >
               Cancel
             </button>
@@ -615,18 +615,18 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
 
   return (
     <div className="max-w-3xl mx-auto py-6 px-4 animate-in fade-in duration-300">
-      {/* Compact Top Bar (Removed bulky Topic Quiz, title, description, and 30 mins) */}
-      <div className="mb-4 flex items-center justify-between gap-3 pb-3 border-b border-white/[0.08]">
+      {/* Compact Top Bar */}
+      <div className="mb-4 flex items-center justify-between gap-3 pb-3 border-b border-zinc-200 dark:border-white/[0.08]">
         <div className="flex items-center gap-2">
           {checkedCount > 0 ? (
-            <span className="flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
-              <Target className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300">
+              <Target className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span className="font-bold">{correctCount}/{checkedCount} Correct</span>
               <span className="text-emerald-500/60">•</span>
               <span>{liveAccuracy}%</span>
             </span>
           ) : (
-            <span className="text-xs font-semibold text-zinc-400 font-mono">
+            <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 font-mono">
               {totalQuestions} Questions
             </span>
           )}
@@ -637,7 +637,7 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
           <button
             onClick={() => setShowResetModal(true)}
             title="Reset all questions in this quiz"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-rose-500/10 hover:border-rose-500/30 hover:text-rose-300 text-xs font-semibold text-zinc-400 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:border-rose-300 dark:hover:border-rose-500/30 text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-rose-600 dark:hover:text-rose-300 transition-all shadow-sm dark:shadow-none"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Reset Quiz</span>
@@ -647,7 +647,7 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
           {onSwitchToNotes && (
             <button
               onClick={onSwitchToNotes}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-semibold text-zinc-300 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 text-xs font-semibold text-zinc-700 dark:text-zinc-300 transition-colors shadow-sm dark:shadow-none"
             >
               <BookOpen className="w-3.5 h-3.5" />
               <span>Notes</span>
@@ -658,18 +658,18 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
 
       {/* Progress Bar & Numbered Question Dots */}
       <div className="mb-6 space-y-3">
-        <div className="flex items-center justify-between text-xs text-zinc-400 font-mono">
+        <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 font-mono">
           <span>Question {currentIndex + 1} of {totalQuestions}</span>
           <span>{Math.round(((currentIndex + 1) / totalQuestions) * 100)}% Traversed</span>
         </div>
-        <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+        <div className="w-full h-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
           <div
             className="h-full bg-blue-500 transition-all duration-300 rounded-full"
             style={{ width: `${((currentIndex + 1) / totalQuestions) * 100}%` }}
           />
         </div>
 
-        {/* Numbered Dots (Color-coded: Green = Correct, Red = Incorrect, Blue Ring = Active) */}
+        {/* Numbered Dots */}
         <div className="flex flex-wrap gap-1.5 pt-1">
           {quiz.questions.map((q, idx) => {
             const hasAnswer = (selectedAnswers[q.id] || []).length > 0;
@@ -677,24 +677,20 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
             const isCurrent = idx === currentIndex;
             const isCorrect = isQuestionCorrect(q.id);
 
-            let dotColor = 'bg-white/[0.04] text-zinc-400 border-white/[0.06] hover:bg-white/10';
+            let dotColor = 'bg-zinc-100 dark:bg-white/[0.04] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-white/[0.06] hover:bg-zinc-200 dark:hover:bg-white/10';
 
             if (isCheckedQ) {
               if (isCorrect) {
-                // Correct -> Green dot
-                dotColor = 'bg-emerald-500/20 text-emerald-400 border-emerald-500/60 font-bold hover:bg-emerald-500/30';
+                dotColor = 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border-emerald-500/60 font-bold hover:bg-emerald-500/30';
               } else {
-                // Incorrect -> Red dot
-                dotColor = 'bg-rose-500/20 text-rose-400 border-rose-500/60 font-bold hover:bg-rose-500/30';
+                dotColor = 'bg-rose-500/20 text-rose-700 dark:text-rose-400 border-rose-500/60 font-bold hover:bg-rose-500/30';
               }
             } else if (hasAnswer) {
-              // Answered but unchecked
-              dotColor = 'bg-blue-500/20 text-blue-300 border-blue-500/40 font-medium';
+              dotColor = 'bg-blue-500/15 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/40 font-medium';
             }
 
-            // Current Question Accent Ring
             const ringStyle = isCurrent
-              ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-[#09090b] shadow-md z-10 scale-105'
+              ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-white dark:ring-offset-[#09090b] shadow-md z-10 scale-105'
               : '';
 
             return (
@@ -712,42 +708,42 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
       </div>
 
       {/* Active Question Card */}
-      <div className="bg-[#0c0c0f] border border-white/10 rounded-2xl p-6 sm:p-8 shadow-xl relative">
+      <div className="bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm dark:shadow-xl relative">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-zinc-300 font-mono">
+            <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300 font-mono">
               Question {currentIndex + 1}
             </span>
-            <span className="text-zinc-600">•</span>
+            <span className="text-zinc-400 dark:text-zinc-600">•</span>
             {getDifficultyBadge(currentQ.difficulty)}
             {currentQ.subtopic && (
               <>
-                <span className="hidden sm:inline text-zinc-600">•</span>
-                <span className="hidden sm:inline text-xs text-zinc-400 font-mono">{currentQ.subtopic}</span>
+                <span className="hidden sm:inline text-zinc-400 dark:text-zinc-600">•</span>
+                <span className="hidden sm:inline text-xs text-zinc-500 dark:text-zinc-400 font-mono">{currentQ.subtopic}</span>
               </>
             )}
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[11px] px-2.5 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.08] text-zinc-400 font-mono">
+            <span className="text-[11px] px-2.5 py-0.5 rounded-md bg-zinc-100 dark:bg-white/[0.04] border border-zinc-200 dark:border-white/[0.08] text-zinc-600 dark:text-zinc-400 font-mono">
               {currentQ.type === 'single_choice' ? 'Single Choice' : 'Multiple Choice (Select all)'}
             </span>
 
-            {/* Reset Current Question button (Visible when checked) */}
+            {/* Reset Current Question button */}
             {isChecked && (
               <button
                 onClick={handleResetCurrentQuestion}
                 title="Reset this question to attempt it again"
-                className="flex items-center gap-1 px-2.5 py-0.5 rounded-md border border-white/10 bg-white/5 hover:bg-white/10 text-[11px] font-semibold text-zinc-300 transition-colors"
+                className="flex items-center gap-1 px-2.5 py-0.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 transition-colors"
               >
-                <RotateCcw className="w-3 h-3 text-zinc-400" />
+                <RotateCcw className="w-3 h-3 text-zinc-500 dark:text-zinc-400" />
                 <span>Try Again</span>
               </button>
             )}
           </div>
         </div>
 
-        <div className="text-base sm:text-lg font-semibold text-zinc-100 mb-6 leading-relaxed">
+        <div className="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-6 leading-relaxed">
           <QuizMarkdown content={currentQ.question} />
         </div>
 
@@ -757,18 +753,18 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
             const isSelected = currentSelected.includes(opt.id);
             const isCorrectOption = currentQ.correctOptionIds.includes(opt.id);
 
-            let optionStyle = 'bg-white/[0.02] border-white/10 hover:bg-white/[0.05] text-zinc-200';
+            let optionStyle = 'bg-white dark:bg-white/[0.02] border-zinc-200 dark:border-white/10 hover:bg-zinc-50 dark:hover:bg-white/[0.05] text-zinc-800 dark:text-zinc-200 shadow-sm dark:shadow-none';
 
             if (isChecked) {
               if (isCorrectOption) {
-                optionStyle = 'bg-emerald-500/10 border-emerald-500/60 text-emerald-300 font-semibold shadow-sm';
+                optionStyle = 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-500/60 text-emerald-800 dark:text-emerald-300 font-semibold shadow-sm';
               } else if (isSelected && !isCorrectOption) {
-                optionStyle = 'bg-rose-500/10 border-rose-500/60 text-rose-300';
+                optionStyle = 'bg-rose-50 dark:bg-rose-500/10 border-rose-500/60 text-rose-800 dark:text-rose-300';
               } else {
-                optionStyle = 'bg-white/[0.01] border-white/[0.06] text-zinc-500 opacity-60';
+                optionStyle = 'bg-zinc-50 dark:bg-white/[0.01] border-zinc-200 dark:border-white/[0.06] text-zinc-400 dark:text-zinc-500 opacity-60';
               }
             } else if (isSelected) {
-              optionStyle = 'bg-blue-500/15 border-blue-500 text-blue-200 font-semibold ring-1 ring-blue-500';
+              optionStyle = 'bg-blue-50 dark:bg-blue-500/15 border-blue-500 text-blue-900 dark:text-blue-200 font-semibold ring-1 ring-blue-500';
             }
 
             return (
@@ -778,7 +774,7 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
                 disabled={isChecked}
                 className={`w-full p-4 rounded-xl border text-left flex items-start gap-3 transition-all ${optionStyle}`}
               >
-                {/* Circular Radio or Checkbox Indicator (No Letters) */}
+                {/* Circular Radio or Checkbox Indicator */}
                 <div
                   className={`w-5 h-5 ${
                     currentQ.type === 'single_choice' ? 'rounded-full' : 'rounded-md'
@@ -789,7 +785,7 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
                       ? 'bg-rose-500 border-rose-500 text-white shadow-sm shadow-rose-500/30'
                       : isSelected
                       ? 'bg-blue-600 border-blue-500 text-white shadow-sm shadow-blue-500/30'
-                      : 'border-white/20 bg-white/[0.04]'
+                      : 'border-zinc-300 dark:border-white/20 bg-zinc-100 dark:bg-white/[0.04]'
                   }`}
                 >
                   {isChecked && isCorrectOption ? (
@@ -808,53 +804,53 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
                   <QuizMarkdown content={opt.text} isInline />
                 </div>
                 {isChecked && isCorrectOption && (
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                 )}
                 {isChecked && isSelected && !isCorrectOption && (
-                  <XCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+                  <XCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
                 )}
               </button>
             );
           })}
         </div>
 
-        {/* Explanation Card (Revealed after check) */}
+        {/* Explanation Card */}
         {isChecked && (
           <div
             className={`p-4 rounded-xl border text-sm mb-6 animate-in fade-in slide-in-from-top-2 duration-200 ${
               isCurrentQuestionCorrect
-                ? 'bg-emerald-500/[0.06] border-emerald-500/30'
-                : 'bg-rose-500/[0.06] border-rose-500/30'
+                ? 'bg-emerald-50 dark:bg-emerald-500/[0.06] border-emerald-500/30'
+                : 'bg-rose-50 dark:bg-rose-500/[0.06] border-rose-500/30'
             }`}
           >
             <div className="flex items-center justify-between mb-1.5">
-              <div className="flex items-center gap-1.5 font-bold text-zinc-100">
-                <Sparkles className="w-4 h-4 text-blue-400" />
+              <div className="flex items-center gap-1.5 font-bold text-zinc-900 dark:text-zinc-100">
+                <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 <span>Explanation</span>
               </div>
               {!isCurrentQuestionCorrect && (
                 <button
                   onClick={handleResetCurrentQuestion}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-rose-300 hover:text-white underline underline-offset-2 transition-colors"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 dark:text-rose-300 hover:text-rose-700 dark:hover:text-white underline underline-offset-2 transition-colors"
                 >
                   <RotateCcw className="w-3 h-3" />
                   <span>Try this question again</span>
                 </button>
               )}
             </div>
-            <div className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-sans">
+            <div className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed font-sans">
               <QuizMarkdown content={currentQ.explanation} />
             </div>
           </div>
         )}
 
         {/* Footer Navigation & Actions */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/[0.08]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-zinc-200 dark:border-white/[0.08]">
           <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
             <button
               onClick={handlePrev}
               disabled={currentIndex === 0}
-              className="inline-flex items-center gap-1 px-4 py-2 rounded-xl border border-white/10 bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white/10 text-xs font-semibold text-zinc-300 transition-colors"
+              className="inline-flex items-center gap-1 px-4 py-2 rounded-xl border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-100 dark:hover:bg-white/10 text-xs font-semibold text-zinc-700 dark:text-zinc-300 transition-colors shadow-sm dark:shadow-none"
             >
               <ChevronLeft className="w-4 h-4" /> Previous
             </button>
@@ -862,9 +858,9 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
             {isChecked && (
               <button
                 onClick={handleResetCurrentQuestion}
-                className="sm:hidden inline-flex items-center gap-1 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-xs font-semibold text-zinc-300"
+                className="sm:hidden inline-flex items-center gap-1 px-3 py-2 rounded-xl border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 text-xs font-semibold text-zinc-700 dark:text-zinc-300"
               >
-                <RotateCcw className="w-3.5 h-3.5 text-zinc-400" />
+                <RotateCcw className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
                 <span>Retry</span>
               </button>
             )}
@@ -892,16 +888,16 @@ export const QuizSection: React.FC<QuizSectionProps> = ({
         </div>
 
         {/* Keyboard Shortcut Cheatsheet Hint */}
-        <div className="hidden sm:flex items-center justify-center gap-2 pt-4 mt-2 border-t border-white/[0.04] text-[11px] text-zinc-500 font-mono select-none">
-          <Keyboard className="w-3.5 h-3.5 text-zinc-600" />
+        <div className="hidden sm:flex items-center justify-center gap-2 pt-4 mt-2 border-t border-zinc-100 dark:border-white/[0.04] text-[11px] text-zinc-500 dark:text-zinc-500 font-mono select-none">
+          <Keyboard className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-600" />
           <span>Shortcuts:</span>
-          <span className="text-zinc-400">[Enter] Check / Next</span>
+          <span className="text-zinc-600 dark:text-zinc-400">[Enter] Check / Next</span>
           <span>•</span>
-          <span className="text-zinc-400">[← / →] Navigate</span>
+          <span className="text-zinc-600 dark:text-zinc-400">[← / →] Navigate</span>
           {isChecked && (
             <>
               <span>•</span>
-              <span className="text-zinc-400">[R] Retry</span>
+              <span className="text-zinc-600 dark:text-zinc-400">[R] Retry</span>
             </>
           )}
         </div>

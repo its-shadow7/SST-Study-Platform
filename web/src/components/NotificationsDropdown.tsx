@@ -134,7 +134,7 @@ export const NotificationsDropdown: React.FC = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="relative p-1.5 rounded-lg text-zinc-400 hover:text-zinc-100 hover:bg-white/5 transition-colors"
+        className="relative p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-white/5 transition-colors"
         title="Notifications"
         aria-label="View notifications"
       >
@@ -147,13 +147,13 @@ export const NotificationsDropdown: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl border border-zinc-700/60 bg-zinc-900/95 backdrop-blur-xl shadow-2xl shadow-black/80 z-50 text-zinc-100 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-xl dark:shadow-2xl shadow-zinc-900/10 dark:shadow-black/80 z-50 text-zinc-900 dark:text-zinc-100 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/[0.02]">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-200 dark:border-white/10 bg-zinc-50/80 dark:bg-white/[0.02]">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold tracking-tight">Notifications</span>
+              <span className="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Notifications</span>
               {unreadCount > 0 && (
-                <span className="px-1.5 py-0.5 rounded-md bg-rose-500/20 text-rose-300 text-[10px] font-mono font-medium">
+                <span className="px-1.5 py-0.5 rounded-md bg-rose-500/15 text-rose-600 dark:text-rose-300 text-[10px] font-mono font-medium">
                   {unreadCount} unread
                 </span>
               )}
@@ -162,12 +162,12 @@ export const NotificationsDropdown: React.FC = () => {
               <button
                 onClick={handleMarkAllRead}
                 disabled={markingAll}
-                className="flex items-center gap-1 text-[11px] text-zinc-400 hover:text-white transition-colors disabled:opacity-50"
+                className="flex items-center gap-1 text-[11px] text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors disabled:opacity-50"
               >
                 {markingAll ? (
                   <Loader2 className="w-3 h-3 animate-spin" />
                 ) : (
-                  <CheckCheck className="w-3 h-3 text-emerald-400" />
+                  <CheckCheck className="w-3 h-3 text-emerald-500 dark:text-emerald-400" />
                 )}
                 <span>Mark all read</span>
               </button>
@@ -175,19 +175,19 @@ export const NotificationsDropdown: React.FC = () => {
           </div>
 
           {/* List */}
-          <div className="max-h-[360px] overflow-y-auto divide-y divide-white/5">
+          <div className="max-h-[360px] overflow-y-auto divide-y divide-zinc-100 dark:divide-white/5">
             {loading && notifications.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 text-zinc-400 gap-2">
-                <Loader2 className="w-5 h-5 animate-spin text-blue-400" />
+              <div className="flex flex-col items-center justify-center py-10 text-zinc-500 dark:text-zinc-400 gap-2">
+                <Loader2 className="w-5 h-5 animate-spin text-blue-500 dark:text-blue-400" />
                 <span className="text-xs">Loading notifications...</span>
               </div>
             ) : notifications.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 px-4 text-center text-zinc-400">
-                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center mb-2 text-zinc-500">
+              <div className="flex flex-col items-center justify-center py-10 px-4 text-center text-zinc-500 dark:text-zinc-400">
+                <div className="w-10 h-10 rounded-full bg-zinc-100 dark:bg-white/5 flex items-center justify-center mb-2 text-zinc-400 dark:text-zinc-500">
                   <Bell className="w-5 h-5" />
                 </div>
-                <p className="text-xs font-medium text-zinc-300">You're all caught up!</p>
-                <p className="text-[11px] text-zinc-400 mt-0.5">
+                <p className="text-xs font-medium text-zinc-800 dark:text-zinc-300">You're all caught up!</p>
+                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">
                   Replies, moderation alerts, and updates will appear here.
                 </p>
               </div>
@@ -198,23 +198,23 @@ export const NotificationsDropdown: React.FC = () => {
                   onClick={() => void handleMarkAsRead(n)}
                   className={`flex items-start gap-3 p-3.5 cursor-pointer transition-colors ${
                     !n.read
-                      ? 'bg-blue-500/[0.07] hover:bg-blue-500/[0.12]'
-                      : 'hover:bg-white/[0.04]'
+                      ? 'bg-blue-50/70 hover:bg-blue-100/70 dark:bg-blue-500/[0.07] dark:hover:bg-blue-500/[0.12]'
+                      : 'hover:bg-zinc-50 dark:hover:bg-white/[0.04]'
                   }`}
                 >
-                  <div className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-8 h-8 rounded-xl bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 flex items-center justify-center shrink-0 mt-0.5">
                     {getNotificationIcon(n.type)}
                   </div>
                   <div className="flex-1 min-w-0 space-y-0.5">
                     <div className="flex items-center justify-between gap-2">
-                      <p className={`text-xs truncate ${!n.read ? 'font-semibold text-zinc-100' : 'font-medium text-zinc-300'}`}>
+                      <p className={`text-xs truncate ${!n.read ? 'font-semibold text-zinc-900 dark:text-zinc-100' : 'font-medium text-zinc-700 dark:text-zinc-300'}`}>
                         {n.title}
                       </p>
-                      <span className="text-[10px] text-zinc-400 shrink-0 font-mono">
+                      <span className="text-[10px] text-zinc-400 dark:text-zinc-500 shrink-0 font-mono">
                         {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
                       </span>
                     </div>
-                    <p className="text-[11px] text-zinc-400 line-clamp-2 leading-relaxed">
+                    <p className="text-[11px] text-zinc-600 dark:text-zinc-400 line-clamp-2 leading-relaxed">
                       {n.message}
                     </p>
                   </div>

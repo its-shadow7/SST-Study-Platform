@@ -52,11 +52,11 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({ sections }) =>
 
   return (
     <aside
-      className="w-72 shrink-0 sticky top-14 h-[calc(100vh-3.5rem)] hidden xl:flex flex-col py-8 pl-6 pr-4 overflow-y-auto select-none border-l border-white/[0.08]"
+      className="w-72 shrink-0 sticky top-14 h-[calc(100vh-3.5rem)] hidden xl:flex flex-col py-8 pl-6 pr-4 overflow-y-auto select-none border-l border-zinc-200 dark:border-white/[0.08]"
       aria-label="Table of contents"
     >
-      <div className="flex items-center gap-2 mb-4 text-[11px] font-semibold tracking-wider uppercase text-zinc-400">
-        <AlignLeft className="w-3.5 h-3.5 text-zinc-400" />
+      <div className="flex items-center gap-2 mb-4 text-[11px] font-semibold tracking-wider uppercase text-zinc-500 dark:text-zinc-400">
+        <AlignLeft className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
         <span>On this page</span>
       </div>
 
@@ -68,8 +68,8 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({ sections }) =>
               key={sec.section_id}
               onClick={() => scrollToSection(sec.section_id)}
               className={`group flex items-start text-left py-1.5 pl-3 -ml-px transition-all duration-150 border-l ${isActive
-                  ? 'border-blue-500 text-zinc-100 font-medium'
-                  : 'border-transparent text-zinc-400 hover:text-zinc-200 hover:border-white/20'
+                  ? 'border-blue-500 text-blue-600 dark:text-zinc-100 font-medium'
+                  : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:border-zinc-300 dark:hover:border-white/20'
                 }`}
             >
               <span className="line-clamp-2 leading-snug text-[13px]">
@@ -122,26 +122,26 @@ export const MobileTableOfContents: React.FC<TableOfContentsProps> = ({ sections
 
   return (
     <div className="xl:hidden w-full mb-6">
-      <div className="border border-white/10 rounded-xl bg-white/[0.02] overflow-hidden transition-all">
+      <div className="border border-zinc-200 dark:border-white/10 rounded-xl bg-white dark:bg-white/[0.02] overflow-hidden shadow-sm dark:shadow-none transition-all">
         <button
           onClick={() => setIsOpen((prev) => !prev)}
-          className="w-full px-4 py-2.5 flex items-center justify-between text-xs text-zinc-300 hover:text-white transition-colors"
+          className="w-full px-4 py-2.5 flex items-center justify-between text-xs text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors"
           aria-expanded={isOpen}
           aria-label="Toggle mobile table of contents"
         >
           <div className="flex items-center gap-2 truncate pr-2">
-            <AlignLeft className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-            <span className="font-semibold text-zinc-400 uppercase tracking-wider text-[10px]">On this page:</span>
-            <span className="truncate text-zinc-200 font-medium">{activeSection?.heading}</span>
+            <AlignLeft className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+            <span className="font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider text-[10px]">On this page:</span>
+            <span className="truncate text-zinc-900 dark:text-zinc-200 font-medium">{activeSection?.heading}</span>
           </div>
-          <div className="flex items-center gap-1.5 shrink-0 text-zinc-400">
-            <span className="text-[10px] font-mono bg-white/5 px-1.5 py-0.5 rounded">{sections.length}</span>
+          <div className="flex items-center gap-1.5 shrink-0 text-zinc-500 dark:text-zinc-400">
+            <span className="text-[10px] font-mono bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-transparent px-1.5 py-0.5 rounded">{sections.length}</span>
             <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
           </div>
         </button>
 
         {isOpen && (
-          <div className="px-3 pb-3 pt-1 border-t border-white/[0.06] space-y-1" role="region" aria-label="Mobile table of contents">
+          <div className="px-3 pb-3 pt-1 border-t border-zinc-100 dark:border-white/[0.06] space-y-1" role="region" aria-label="Mobile table of contents">
             {sections.map((sec, idx) => {
               const isActive = sec.section_id === activeSectionId;
               return (
@@ -149,11 +149,11 @@ export const MobileTableOfContents: React.FC<TableOfContentsProps> = ({ sections
                   key={sec.section_id}
                   onClick={() => scrollToSection(sec.section_id)}
                   className={`w-full text-left px-3 py-1.5 rounded-lg text-xs flex items-center gap-2 transition-colors ${isActive
-                      ? 'bg-blue-500/15 text-blue-300 font-medium'
-                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04]'
+                      ? 'bg-blue-50 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300 font-medium'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-white/[0.04]'
                     }`}
                 >
-                  <span className="text-[10px] font-mono text-zinc-400 shrink-0">{String(idx + 1).padStart(2, '0')}</span>
+                  <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-400 shrink-0">{String(idx + 1).padStart(2, '0')}</span>
                   <span className="truncate">{sec.heading}</span>
                 </button>
               );

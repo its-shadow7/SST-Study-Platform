@@ -4,30 +4,61 @@
 
 /* ==============================================================================
    SST Study Platform - Linear & Tailwind Docs Aesthetic
-   Theme: True oled-slate (#09090b) High-Contrast Dark Mode
+   High-Contrast Dark Mode & Crisp Modern Light Mode
    ============================================================================== */
 
 :root {
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* oled-slate color system */
+  /* Default / Dark Theme tokens */
   --bg-oled: #09090b;
   --bg-card: #0e0e11;
   --bg-surface: #141418;
   --text-primary: #e4e4e7;
-  /* off-white text-zinc-200 */
   --text-muted: #a1a1aa;
-  /* text-zinc-400 */
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-glass: rgba(255, 255, 255, 0.12);
   --accent-primary: #3b82f6;
   --accent-subtle: rgba(59, 130, 246, 0.15);
 }
 
+/* Light Theme Variables */
+html.light,
+html:not(.dark) {
+  --bg-oled: #ffffff;
+  --bg-card: #ffffff;
+  --bg-surface: #f8fafc;
+  --text-primary: #09090b;
+  --text-muted: #64748b;
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-glass: rgba(0, 0, 0, 0.12);
+  --accent-primary: #2563eb;
+  --accent-subtle: rgba(37, 99, 235, 0.10);
+  color-scheme: light;
+}
+
+/* Dark Theme Variables */
+html.dark {
+  --bg-oled: #09090b;
+  --bg-card: #0e0e11;
+  --bg-surface: #141418;
+  --text-primary: #e4e4e7;
+  --text-muted: #a1a1aa;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-glass: rgba(255, 255, 255, 0.12);
+  --accent-primary: #3b82f6;
+  --accent-subtle: rgba(59, 130, 246, 0.15);
+  color-scheme: dark;
+}
+
 @layer base {
   * {
     border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  html.light * {
+    border-color: rgba(0, 0, 0, 0.08);
   }
 
   body {
@@ -37,6 +68,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   /* Selection highlight */
@@ -44,11 +76,15 @@
     background-color: rgba(59, 130, 246, 0.3);
     color: #f8fafc;
   }
+
+  html.light ::selection {
+    background-color: rgba(37, 99, 235, 0.2);
+    color: #0f172a;
+  }
 }
 
 /* ==============================================================================
    Ultra-thin, Rounded WebKit Scrollbars (4px-6px)
-   Strictly forbidden: default chunky browser scrollbars
    ============================================================================== */
 ::-webkit-scrollbar {
   width: 5px;
@@ -69,26 +105,50 @@
   background: rgba(255, 255, 255, 0.24);
 }
 
+html.light ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.28);
+}
+
 /* Firefox scrollbar styling */
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
 }
 
+html.light * {
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+}
+
 /* ==============================================================================
-   KaTeX Dark Mode Adjustments
+   KaTeX Math Rendering (Adaptive Light & Dark Modes)
    ============================================================================== */
 .katex-display {
   margin: 1.5rem 0 !important;
   padding: 1rem !important;
-  background: rgba(255, 255, 255, 0.02) !important;
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
   border-radius: 0.5rem !important;
   overflow-x: auto !important;
 }
 
-.katex {
+html.dark .katex-display {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+html.light .katex-display {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+html.dark .katex {
   color: #f1f5f9 !important;
+}
+
+html.light .katex {
+  color: #0f172a !important;
 }
 
 .quiz-markdown .katex {
@@ -105,20 +165,36 @@
    Markdown Reader Typography Spacing
    ============================================================================== */
 .markdown-body {
-  color: #e4e4e7;
   font-size: 1.0625rem;
   line-height: 1.85;
+}
+
+html.dark .markdown-body {
+  color: #e4e4e7;
+}
+
+html.light .markdown-body {
+  color: #27272a;
 }
 
 .markdown-body p {
   margin-bottom: 1.5rem;
 }
 
-.markdown-body h1,
-.markdown-body h2,
-.markdown-body h3,
-.markdown-body h4 {
+html.dark .markdown-body h1,
+html.dark .markdown-body h2,
+html.dark .markdown-body h3,
+html.dark .markdown-body h4 {
   color: #f4f4f5;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+html.light .markdown-body h1,
+html.light .markdown-body h2,
+html.light .markdown-body h3,
+html.light .markdown-body h4 {
+  color: #09090b;
   font-weight: 600;
   letter-spacing: -0.02em;
 }
@@ -127,7 +203,14 @@
   margin-top: 1.25rem;
   margin-bottom: 1.5rem;
   border-radius: 0.5rem;
+}
+
+html.dark .markdown-body pre {
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+html.light .markdown-body pre {
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 /* ==============================================================================
@@ -139,7 +222,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {

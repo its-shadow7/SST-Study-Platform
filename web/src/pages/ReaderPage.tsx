@@ -192,7 +192,7 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
   };
 
   return (
-    <div className="flex w-full min-h-[calc(100vh-3.5rem)] bg-[#09090b] text-zinc-200">
+    <div className="flex w-full min-h-[calc(100vh-3.5rem)] bg-white dark:bg-[#09090b] text-zinc-800 dark:text-zinc-200 transition-colors">
       {/* 1. Left Island: Navigation (w-80) */}
       <Sidebar
         notes={notesIndex}
@@ -212,10 +212,10 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
         {isZenMode && (
           <button
             onClick={() => setIsZenMode(false)}
-            className="self-start mb-4 flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-xs text-zinc-300 transition-colors"
+            className="self-start mb-4 flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 text-xs text-zinc-700 dark:text-zinc-300 transition-colors shadow-sm dark:shadow-none"
             title="Expand Navigation Sidebar"
           >
-            <PanelLeftOpen className="w-4 h-4 text-zinc-400" />
+            <PanelLeftOpen className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
             <span>Show Navigation</span>
           </button>
         )}
@@ -362,15 +362,15 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
               {activeTab === 'notes' && (
                 <>
                   {/* Note Header Metadata & Badges */}
-                  <div className="space-y-4 border-b border-white/[0.08] pb-6">
+                  <div className="space-y-4 border-b border-zinc-200 dark:border-white/[0.08] pb-6">
                     <div className="flex flex-wrap items-center gap-2 text-xs">
-                      <span className="px-2.5 py-0.5 rounded-md font-mono font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                      <span className="px-2.5 py-0.5 rounded-md font-mono font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
                         {currentNote.subject_code}
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-md bg-white/5 text-zinc-300 border border-white/10 font-mono">
+                      <span className="px-2.5 py-0.5 rounded-md bg-zinc-100 dark:bg-white/5 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-white/10 font-mono">
                         {currentNote.term}
                       </span>
-                      <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
+                      <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-medium">
                         <CheckCircle className="w-3.5 h-3.5" />
                         <span>Reviewed & Approved</span>
                       </span>
@@ -379,7 +379,7 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
                     <h1
                       className={`${
                         density === 'compact' ? 'text-2xl sm:text-3xl' : 'text-3xl sm:text-4xl'
-                      } font-bold tracking-tight text-zinc-100 transition-all`}
+                      } font-bold tracking-tight text-zinc-900 dark:text-zinc-100 transition-all`}
                     >
                       {currentNote.topic_title}
                     </h1>
@@ -388,7 +388,7 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
                     <p
                       className={`${
                         density === 'compact' ? 'text-sm p-3' : 'text-base p-4'
-                      } text-zinc-300 leading-relaxed bg-white/[0.02] border border-white/[0.06] rounded-xl transition-all`}
+                      } text-zinc-700 dark:text-zinc-300 leading-relaxed bg-zinc-50 dark:bg-white/[0.02] border border-zinc-200 dark:border-white/[0.06] rounded-xl shadow-sm dark:shadow-none transition-all`}
                     >
                       {currentNote.summary}
                     </p>
@@ -398,30 +398,30 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => toggleBookmark(currentNote.note_id, currentNote.topic_title)}
-                          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg border text-xs font-medium transition-all ${bookmarked
-                            ? 'border-amber-500/40 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 shadow-sm'
-                            : 'border-white/10 bg-white/5 hover:bg-white/10 text-zinc-300'
+                          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg border text-xs font-medium transition-all shadow-sm dark:shadow-none ${bookmarked
+                            ? 'border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 shadow-sm'
+                            : 'border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-zinc-50 dark:hover:bg-white/10 text-zinc-700 dark:text-zinc-300'
                             }`}
                         >
                           <BookmarkIcon
-                            className={`w-4 h-4 ${bookmarked ? 'fill-amber-400 text-amber-400' : ''}`}
+                            className={`w-4 h-4 ${bookmarked ? 'fill-amber-500 dark:fill-amber-400 text-amber-500 dark:text-amber-400' : ''}`}
                           />
                           <span>{bookmarked ? 'Bookmarked' : 'Bookmark Note'}</span>
                         </button>
 
                         <button
                           onClick={handleCopyLink}
-                          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-xs text-zinc-300 transition-colors"
+                          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-zinc-50 dark:hover:bg-white/10 text-xs text-zinc-700 dark:text-zinc-300 transition-colors shadow-sm dark:shadow-none"
                           title="Copy link to note"
                         >
                           {linkCopied ? (
                             <>
-                              <Check className="w-4 h-4 text-emerald-400" />
-                              <span className="text-emerald-400">Copied!</span>
+                              <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                              <span className="text-emerald-600 dark:text-emerald-400">Copied!</span>
                             </>
                           ) : (
                             <>
-                              <Share2 className="w-4 h-4 text-zinc-400" />
+                              <Share2 className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
                               <span>Share</span>
                             </>
                           )}
@@ -430,13 +430,13 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
 
                       <div className="flex items-center gap-3">
                         {/* Spacing Density Segmented Pill */}
-                        <div className="flex items-center p-0.5 rounded-lg bg-white/[0.04] border border-white/10 text-xs shadow-sm">
+                        <div className="flex items-center p-0.5 rounded-lg bg-zinc-100 dark:bg-white/[0.04] border border-zinc-200 dark:border-white/10 text-xs shadow-sm">
                           <button
                             onClick={() => setDensity('compact')}
                             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all ${
                               density === 'compact'
-                                ? 'bg-blue-600/25 text-blue-400 border border-blue-500/30 font-semibold shadow-sm'
-                                : 'text-zinc-400 hover:text-zinc-200'
+                                ? 'bg-blue-600/15 dark:bg-blue-600/25 text-blue-700 dark:text-blue-400 border border-blue-500/30 font-semibold shadow-sm'
+                                : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
                             }`}
                             title="Compact density: tighter line height & spacing to read more content at once"
                             aria-label="Compact reading density"
@@ -448,8 +448,8 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
                             onClick={() => setDensity('comfortable')}
                             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all ${
                               density === 'comfortable'
-                                ? 'bg-white/10 text-zinc-100 font-semibold shadow-sm'
-                                : 'text-zinc-400 hover:text-zinc-200'
+                                ? 'bg-white dark:bg-white/10 text-zinc-900 dark:text-zinc-100 font-semibold shadow-sm'
+                                : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
                             }`}
                             title="Comfortable density: standard relaxed reading spacing"
                             aria-label="Comfortable reading density"
@@ -459,7 +459,7 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
                           </button>
                         </div>
 
-                        <div className="hidden sm:flex items-center gap-2 text-xs text-zinc-400 font-mono">
+                        <div className="hidden sm:flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 font-mono">
                           <Calendar className="w-3.5 h-3.5 text-zinc-400" />
                           <span>Updated {currentNote.last_updated}</span>
                         </div>
@@ -473,7 +473,7 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
                         {currentNote.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="text-[11px] font-mono px-2 py-0.5 rounded bg-white/[0.04] text-zinc-400 border border-white/[0.06]"
+                            className="text-[11px] font-mono px-2 py-0.5 rounded bg-zinc-100 dark:bg-white/[0.04] text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-white/[0.06]"
                           >
                             #{tag}
                           </span>
@@ -495,9 +495,9 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
                             density === 'compact'
                               ? 'text-xl font-bold mb-3 pb-1.5'
                               : 'text-2xl font-bold mb-4 pb-2'
-                          } tracking-tight text-zinc-100 border-b border-white/[0.08] flex items-center gap-3 transition-all`}
+                          } tracking-tight text-zinc-900 dark:text-zinc-100 border-b border-zinc-200 dark:border-white/[0.08] flex items-center gap-3 transition-all`}
                         >
-                          <span className="text-xs font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
+                          <span className="text-xs font-mono text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
                             {String(idx + 1).padStart(2, '0')}
                           </span>
                           <span>{section.heading}</span>
@@ -511,9 +511,9 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
                           <div
                             className={`${
                               density === 'compact' ? 'mt-3 pt-2' : 'mt-4 pt-3'
-                            } border-t border-white/[0.04] text-xs text-zinc-500`}
+                            } border-t border-zinc-200 dark:border-white/[0.04] text-xs text-zinc-500`}
                           >
-                            <span className="font-semibold text-zinc-400 mr-2">Citations:</span>
+                            <span className="font-semibold text-zinc-700 dark:text-zinc-400 mr-2">Citations:</span>
                             {section.citations.join('; ')}
                           </div>
                         )}
@@ -526,13 +526,13 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
                     <div
                       className={`${
                         density === 'compact' ? 'mt-8 p-4.5 space-y-2.5' : 'mt-12 p-6 space-y-3'
-                      } rounded-xl border border-blue-500/20 bg-blue-500/[0.03] transition-all`}
+                      } rounded-xl border border-blue-500/30 bg-blue-50/50 dark:bg-blue-500/[0.03] transition-all`}
                     >
-                      <h3 className="text-base font-semibold text-blue-400 flex items-center gap-2">
+                      <h3 className="text-base font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-2">
                         <CheckCircle className="w-4 h-4" />
                         Key Takeaways
                       </h3>
-                      <ul className="space-y-2 text-sm text-zinc-300">
+                      <ul className="space-y-2 text-sm text-zinc-700 dark:text-zinc-300">
                         {currentNote.key_takeaways.map((takeaway, i) => (
                           <li key={i} className="flex items-start gap-2">
                             <span className="text-blue-500 font-bold">•</span>

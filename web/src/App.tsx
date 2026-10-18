@@ -69,7 +69,7 @@ export const App: React.FC = () => {
   // Loading screen while checking existing auth session
   if (authLoading) {
     return (
-      <div className="min-h-screen w-full bg-[#09090b] flex flex-col items-center justify-center space-y-4 select-none">
+      <div className="min-h-screen w-full bg-slate-50 dark:bg-[#09090b] flex flex-col items-center justify-center space-y-4 select-none">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center font-bold text-sm text-white animate-pulse">
           SST
         </div>
@@ -85,7 +85,7 @@ export const App: React.FC = () => {
   const isReaderPage = location.pathname.startsWith('/term/') || location.pathname.startsWith('/read/');
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-zinc-200 flex flex-col font-sans selection:bg-blue-500/30 selection:text-white">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#09090b] text-zinc-800 dark:text-zinc-200 flex flex-col font-sans selection:bg-blue-500/30 selection:text-white">
       {/* Global Navbar (shown everywhere except login wall) */}
       {!isLoginPage && (
         <Navbar

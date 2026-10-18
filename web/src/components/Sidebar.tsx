@@ -140,12 +140,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const sidebarContent = (
-    <div className="flex flex-col h-full bg-[#09090b] text-zinc-300 select-none">
+    <div className="flex flex-col h-full bg-white dark:bg-[#09090b] text-zinc-700 dark:text-zinc-300 select-none transition-colors">
       {/* Top Header: Term Switcher & Zen Mode */}
-      <div className="p-4 border-b border-white/[0.08] space-y-3">
+      <div className="p-4 border-b border-zinc-200 dark:border-white/[0.08] space-y-3">
         <div className="flex items-center justify-between">
-          <label className="text-[11px] font-semibold tracking-wider uppercase text-zinc-400 flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5 text-zinc-400" />
+          <label className="text-[11px] font-semibold tracking-wider uppercase text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
+            <Layers className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
             Curriculum Term
           </label>
           <div className="flex items-center gap-1">
@@ -153,7 +153,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onClick={onToggleZenMode}
               title={isZenMode ? 'Expand sidebar' : 'Zen Mode (collapse sidebar)'}
               aria-label={isZenMode ? 'Expand navigation sidebar' : 'Zen mode (collapse sidebar)'}
-              className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-200 hover:bg-white/5 transition-colors hidden lg:flex"
+              className="p-1.5 rounded-md text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-white/5 transition-colors hidden lg:flex"
             >
               <PanelLeftClose className="w-4 h-4" />
             </button>
@@ -161,7 +161,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 onClick={onCloseMobile}
                 aria-label="Close course navigation drawer"
-                className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-200 hover:bg-white/5 transition-colors lg:hidden"
+                className="p-1.5 rounded-md text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-white/5 transition-colors lg:hidden"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -175,7 +175,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             value={currentTerm}
             onChange={(e) => onSelectTerm(e.target.value)}
             aria-label="Select curriculum term"
-            className="w-full appearance-none bg-zinc-900/90 text-zinc-200 text-sm font-medium rounded-lg px-3 py-2 border border-white/10 hover:border-white/20 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer"
+            className="w-full appearance-none bg-zinc-50 dark:bg-zinc-900/90 text-zinc-800 dark:text-zinc-200 text-sm font-medium rounded-lg px-3 py-2 border border-zinc-200 dark:border-white/10 hover:border-zinc-300 dark:hover:border-white/20 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer shadow-sm dark:shadow-none"
           >
             {ALL_TERMS.map((t, idx) => {
               const termNum = idx + 1;
@@ -185,7 +185,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   key={t}
                   value={t}
                   disabled={isLocked}
-                  className={`bg-zinc-900 ${isLocked ? 'text-zinc-600' : 'text-zinc-200'}`}
+                  className={`bg-white dark:bg-zinc-900 ${isLocked ? 'text-zinc-400 dark:text-zinc-600' : 'text-zinc-800 dark:text-zinc-200'}`}
                 >
                   {t} {isLocked ? '🔒 (Locked)' : ''}
                 </option>
@@ -203,12 +203,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={`Filter ${currentTerm} notes...`}
-            className="w-full bg-black/40 text-xs text-zinc-200 placeholder-zinc-500 rounded-md pl-8 pr-3 py-1.5 border border-white/[0.08] focus:outline-none focus:border-white/20 transition-colors"
+            className="w-full bg-zinc-50 dark:bg-black/40 text-xs text-zinc-800 dark:text-zinc-200 placeholder-zinc-400 dark:placeholder-zinc-500 rounded-md pl-8 pr-3 py-1.5 border border-zinc-200 dark:border-white/[0.08] focus:outline-none focus:border-zinc-300 dark:focus:border-white/20 transition-colors shadow-sm dark:shadow-none"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 text-xs"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 text-xs"
             >
               ×
             </button>
@@ -234,12 +234,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {/* Subject Header Accordion Toggle */}
                 <button
                   onClick={() => toggleSubject(code)}
-                  className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md hover:bg-white/[0.04] text-xs font-semibold uppercase tracking-wider text-zinc-400 hover:text-zinc-200 transition-colors"
+                  className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md hover:bg-zinc-100 dark:hover:bg-white/[0.04] text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors"
                 >
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-blue-500/80" />
                     <span>{code}</span>
-                    <span className="text-[10px] font-normal text-zinc-400 bg-white/5 px-1.5 py-0.2 rounded">
+                    <span className="text-[10px] font-normal text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-white/5 px-1.5 py-0.2 rounded border border-zinc-200 dark:border-transparent">
                       {subjectNotes.length}
                     </span>
                   </div>
@@ -263,13 +263,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           key={note.note_id}
                           onClick={() => handleSelectNote(note)}
                           className={`w-full group flex items-center justify-between text-left px-2.5 py-2 rounded-md text-xs transition-all ${isActive
-                              ? 'border-l-2 border-blue-500 bg-white/[0.06] text-zinc-100 font-medium pl-2'
-                              : 'border-l-2 border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]'
+                              ? 'border-l-2 border-blue-500 bg-blue-50 dark:bg-white/[0.06] text-blue-700 dark:text-zinc-100 font-medium pl-2 shadow-sm dark:shadow-none'
+                              : 'border-l-2 border-transparent text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-white/[0.03]'
                             }`}
                         >
                           <div className="flex items-center gap-2 truncate pr-2">
                             <BookOpen
-                              className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-blue-400' : 'text-zinc-500 group-hover:text-zinc-400'
+                              className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-600 dark:group-hover:text-zinc-400'
                                 }`}
                             />
                             <span className="truncate">{note.topic_title}</span>
@@ -278,11 +278,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           <div className="flex items-center gap-1.5 shrink-0">
                             {hasPersonalNotes && (
                               <span title="Contains personal study notes">
-                                <PenLine className="w-3 h-3 text-blue-400/90 group-hover:text-blue-300 transition-colors" />
+                                <PenLine className="w-3 h-3 text-blue-500 dark:text-blue-400/90 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors" />
                               </span>
                             )}
                             {bookmarked && (
-                              <BookmarkIcon className="w-3 h-3 text-amber-400 fill-amber-400 shrink-0" />
+                              <BookmarkIcon className="w-3 h-3 text-amber-500 dark:text-amber-400 fill-amber-500 dark:fill-amber-400 shrink-0" />
                             )}
                           </div>
                         </button>
@@ -297,7 +297,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Footer Info */}
-      <div className="p-3 border-t border-white/[0.08] text-[11px] text-zinc-400 flex items-center justify-between bg-black/20">
+      <div className="p-3 border-t border-zinc-200 dark:border-white/[0.08] text-[11px] text-zinc-500 dark:text-zinc-400 flex items-center justify-between bg-zinc-50/80 dark:bg-black/20">
         <span>SST Study Platform</span>
         <span>v1.1</span>
       </div>
@@ -308,7 +308,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <>
       {/* Desktop Island Sidebar (w-80) */}
       <aside
-        className={`shrink-0 sticky top-14 h-[calc(100vh-3.5rem)] border-r border-white/[0.08] transition-all duration-200 hidden lg:block ${isZenMode ? 'w-0 overflow-hidden border-r-0' : 'w-80'
+        className={`shrink-0 sticky top-14 h-[calc(100vh-3.5rem)] border-r border-zinc-200 dark:border-white/[0.08] transition-all duration-200 hidden lg:block ${isZenMode ? 'w-0 overflow-hidden border-r-0' : 'w-80'
           }`}
       >
         {sidebarContent}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import {
   Settings as SettingsIcon,
   User as UserIcon,
@@ -17,13 +18,17 @@ import {
   FileText,
   Save,
   CheckCircle2,
-  GraduationCap
+  GraduationCap,
+  Sun,
+  Moon,
+  Monitor
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { RoleBadge } from '@/components/RoleBadge';
 
 export const SettingsPage: React.FC = () => {
   const { user, logout, deleteAccount, updateProfile } = useAuth();
+  const { theme, resolvedTheme, setTheme } = useTheme();
   const navigate = useNavigate();
 
   // Profile Form state
@@ -114,8 +119,8 @@ export const SettingsPage: React.FC = () => {
 
   if (!user) {
     return (
-      <div className="min-h-[calc(100vh-3.5rem)] bg-[#09090b] text-zinc-200 py-16 px-4 text-center space-y-4">
-        <p className="text-zinc-400 text-sm">Please sign in to view your settings.</p>
+      <div className="min-h-[calc(100vh-3.5rem)] bg-slate-50 dark:bg-[#09090b] text-zinc-800 dark:text-zinc-200 py-16 px-4 text-center space-y-4 transition-colors">
+        <p className="text-zinc-500 dark:text-zinc-400 text-sm">Please sign in to view your settings.</p>
         <button
           onClick={() => navigate('/login')}
           className="px-4 py-2 rounded-lg bg-blue-600 text-xs text-white"
@@ -134,41 +139,106 @@ export const SettingsPage: React.FC = () => {
     .toUpperCase();
 
   return (
-    <div className="min-h-[calc(100vh-3.5rem)] bg-[#09090b] text-zinc-200 py-10 px-4 sm:px-8 max-w-3xl mx-auto space-y-8">
+    <div className="min-h-[calc(100vh-3.5rem)] bg-slate-50 dark:bg-[#09090b] text-zinc-800 dark:text-zinc-200 py-10 px-4 sm:px-8 max-w-3xl mx-auto space-y-8 transition-colors">
       {/* Header */}
-      <div className="border-b border-white/[0.08] pb-6">
+      <div className="border-b border-zinc-200 dark:border-white/[0.08] pb-6">
         <div className="flex items-center gap-2.5 mb-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-500/20 bg-blue-500/10 text-xs font-medium text-blue-400">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-500/20 bg-blue-500/10 text-xs font-medium text-blue-600 dark:text-blue-400">
             <SettingsIcon className="w-3.5 h-3.5" />
             <span>Student Account</span>
           </div>
           <RoleBadge role={user.role} size="md" />
         </div>
-        <h1 className="text-3xl font-bold tracking-tight text-zinc-100">
+        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
           Account & Profile Settings
         </h1>
-        <p className="text-xs text-zinc-400 mt-1">
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
           Customize your public handle for discussion forums, choose your current active term, and manage platform preferences.
         </p>
       </div>
 
-      {/* 1. Public Profile Customization Card */}
-      <form onSubmit={handleSaveProfile} className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] space-y-6">
-        <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
+      {/* 1. Appearance & Theme Selection Card */}
+      <div className="p-6 rounded-2xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/[0.02] shadow-sm dark:shadow-none space-y-4">
+        <div className="flex items-center gap-2.5 border-b border-zinc-200 dark:border-white/[0.06] pb-4">
+          <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+            {resolvedTheme === 'dark' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+          </div>
+          <div>
+            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Interface Appearance</h2>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+              Select your preferred display theme for study sessions and note reading.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <button
+            type="button"
+            onClick={() => setTheme('light')}
+            className={`p-3.5 rounded-xl border flex flex-col items-center gap-2.5 text-center transition-all ${
+              theme === 'light'
+                ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 ring-1 ring-blue-500 font-medium shadow-sm'
+                : 'border-zinc-200 dark:border-white/10 bg-zinc-50/60 dark:bg-zinc-900/40 text-zinc-700 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-white/20 hover:bg-zinc-100 dark:hover:bg-zinc-900'
+            }`}
+          >
+            <Sun className={`w-5 h-5 ${theme === 'light' ? 'text-blue-600 dark:text-blue-400' : 'text-zinc-400'}`} />
+            <div className="text-xs">
+              <span className="block font-semibold">Light Mode</span>
+              <span className="text-[10px] text-zinc-500 dark:text-zinc-400">High clarity daytime</span>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setTheme('dark')}
+            className={`p-3.5 rounded-xl border flex flex-col items-center gap-2.5 text-center transition-all ${
+              theme === 'dark'
+                ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 ring-1 ring-blue-500 font-medium shadow-sm'
+                : 'border-zinc-200 dark:border-white/10 bg-zinc-50/60 dark:bg-zinc-900/40 text-zinc-700 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-white/20 hover:bg-zinc-100 dark:hover:bg-zinc-900'
+            }`}
+          >
+            <Moon className={`w-5 h-5 ${theme === 'dark' ? 'text-blue-600 dark:text-blue-400' : 'text-zinc-400'}`} />
+            <div className="text-xs">
+              <span className="block font-semibold">Dark Mode</span>
+              <span className="text-[10px] text-zinc-500 dark:text-zinc-400">OLED slate contrast</span>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setTheme('system')}
+            className={`p-3.5 rounded-xl border flex flex-col items-center gap-2.5 text-center transition-all ${
+              theme === 'system'
+                ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 ring-1 ring-blue-500 font-medium shadow-sm'
+                : 'border-zinc-200 dark:border-white/10 bg-zinc-50/60 dark:bg-zinc-900/40 text-zinc-700 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-white/20 hover:bg-zinc-100 dark:hover:bg-zinc-900'
+            }`}
+          >
+            <Monitor className={`w-5 h-5 ${theme === 'system' ? 'text-blue-600 dark:text-blue-400' : 'text-zinc-400'}`} />
+            <div className="text-xs">
+              <span className="block font-semibold">System Default</span>
+              <span className="text-[10px] text-zinc-500 dark:text-zinc-400">Matches device theme</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* 2. Public Profile Customization Card */}
+      <form onSubmit={handleSaveProfile} className="p-6 rounded-2xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/[0.02] shadow-sm dark:shadow-none space-y-6">
+        <div className="flex items-center justify-between border-b border-zinc-200 dark:border-white/[0.06] pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+            <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
               <UserIcon className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-zinc-100">Public Student Profile</h2>
-              <p className="text-[11px] text-zinc-400">
+              <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Public Student Profile</h2>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
                 Visible across discussion threads, comments, and study peer groups.
               </p>
             </div>
           </div>
 
           {hasChanges && (
-            <span className="text-[11px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 font-mono">
+            <span className="text-[11px] text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 font-mono">
               Unsaved Changes
             </span>
           )}
@@ -176,7 +246,7 @@ export const SettingsPage: React.FC = () => {
 
         {/* Avatar Section */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-5">
-          <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-800 border border-white/20 flex items-center justify-center shrink-0 shadow-lg">
+          <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-800 border border-zinc-200 dark:border-white/20 flex items-center justify-center shrink-0 shadow-lg">
             {avatarUrl && !avatarLoadError ? (
               <img
                 src={avatarUrl}
@@ -192,8 +262,8 @@ export const SettingsPage: React.FC = () => {
           </div>
 
           <div className="flex-1 space-y-1.5">
-            <label className="text-xs font-medium text-zinc-300 flex items-center gap-1.5">
-              <ImageIcon className="w-3.5 h-3.5 text-zinc-400" />
+            <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
+              <ImageIcon className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
               <span>Avatar Image URL</span>
             </label>
             <input
@@ -204,7 +274,7 @@ export const SettingsPage: React.FC = () => {
                 setAvatarLoadError(false);
               }}
               placeholder="https://example.com/your-avatar.png (Optional)"
-              className="w-full bg-zinc-900 border border-white/10 rounded-lg px-3 py-2 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-lg px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:border-blue-500 transition-colors shadow-sm dark:shadow-none"
             />
             <p className="text-[11px] text-zinc-500">
               Leave blank to use your default Scaler account initials or Google profile avatar.
@@ -217,14 +287,14 @@ export const SettingsPage: React.FC = () => {
           {/* Username Input */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-medium text-zinc-300 flex items-center gap-1.5">
-                <AtSign className="w-3.5 h-3.5 text-zinc-400" />
+              <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
+                <AtSign className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
                 <span>Public Handle / Username</span>
               </label>
               <RoleBadge role={user.role} size="sm" />
             </div>
             <div className="relative flex items-center">
-              <span className="absolute left-3 text-xs text-zinc-500 font-mono select-none">@</span>
+              <span className="absolute left-3 text-xs text-zinc-400 dark:text-zinc-500 font-mono select-none">@</span>
               <input
                 type="text"
                 value={username}
@@ -232,7 +302,7 @@ export const SettingsPage: React.FC = () => {
                 maxLength={30}
                 required
                 placeholder="username"
-                className="w-full bg-zinc-900 border border-white/10 rounded-lg pl-7 pr-3 py-2 text-xs font-mono text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-lg pl-7 pr-3 py-2 text-xs font-mono text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:border-blue-500 transition-colors shadow-sm dark:shadow-none"
               />
             </div>
             <p className="text-[11px] text-zinc-500">
@@ -242,19 +312,19 @@ export const SettingsPage: React.FC = () => {
 
           {/* Active Term Dropdown */}
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-zinc-300 flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-zinc-400" />
+            <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
+              <Layers className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
               <span>Active Curriculum Term</span>
             </label>
             <select
               value={activeTerm}
               onChange={(e) => setActiveTerm(parseInt(e.target.value, 10))}
-              className="w-full bg-zinc-900 border border-white/10 rounded-lg px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer"
+              className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-lg px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer shadow-sm dark:shadow-none"
             >
               {Array.from({ length: 12 }, (_, i) => i + 1).map((t) => {
                 const year = Math.ceil(t / 4);
                 return (
-                  <option key={t} value={t} className="bg-zinc-900 text-zinc-100">
+                  <option key={t} value={t} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">
                     Term {t} (Year {year} Curriculum)
                   </option>
                 );
@@ -269,8 +339,8 @@ export const SettingsPage: React.FC = () => {
         {/* Bio Textarea */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-medium text-zinc-300 flex items-center gap-1.5">
-              <FileText className="w-3.5 h-3.5 text-zinc-400" />
+            <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
+              <FileText className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
               <span>Student Bio</span>
             </label>
             <span className="text-[11px] text-zinc-500 font-mono">
@@ -282,7 +352,7 @@ export const SettingsPage: React.FC = () => {
             onChange={(e) => setBio(e.target.value.slice(0, 300))}
             rows={3}
             placeholder="Tell fellow students about your interests, study group focus, or domain (e.g. Systems & ML)..."
-            className="w-full bg-zinc-900 border border-white/10 rounded-lg p-3 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-blue-500 transition-colors resize-none leading-relaxed"
+            className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-lg p-3 text-xs text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:border-blue-500 transition-colors resize-none leading-relaxed shadow-sm dark:shadow-none"
           />
         </div>
 
@@ -299,125 +369,125 @@ export const SettingsPage: React.FC = () => {
         </div>
       </form>
 
-      {/* 2. Identity & Academic Standing Information Card */}
-      <div className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] space-y-5">
-        <h2 className="text-sm font-semibold tracking-wider uppercase text-zinc-400 flex items-center gap-2">
-          <GraduationCap className="w-4 h-4 text-blue-400" />
+      {/* 3. Identity & Academic Standing Information Card */}
+      <div className="p-6 rounded-2xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/[0.02] shadow-sm dark:shadow-none space-y-5">
+        <h2 className="text-sm font-semibold tracking-wider uppercase text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+          <GraduationCap className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           <span>Academic & Session Information</span>
         </h2>
 
-        <div className="space-y-4 text-xs divide-y divide-white/[0.04]">
+        <div className="space-y-4 text-xs divide-y divide-zinc-100 dark:divide-white/[0.04]">
           <div className="flex items-center justify-between pt-2">
-            <span className="text-zinc-400 flex items-center gap-2">
-              <UserIcon className="w-3.5 h-3.5 text-zinc-500" />
+            <span className="text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+              <UserIcon className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500" />
               <span>Username & Role</span>
             </span>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-zinc-100">@{user.username}</span>
+              <span className="font-mono text-zinc-900 dark:text-zinc-100 font-medium">@{user.username}</span>
               <RoleBadge role={user.role} size="sm" />
             </div>
           </div>
 
           <div className="flex items-center justify-between pt-3">
-            <span className="text-zinc-400 flex items-center gap-2">
-              <UserIcon className="w-3.5 h-3.5 text-zinc-500" />
+            <span className="text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+              <UserIcon className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500" />
               <span>Display Name</span>
             </span>
-            <span className="font-medium text-zinc-100">{user.display_name}</span>
+            <span className="font-medium text-zinc-900 dark:text-zinc-100">{user.display_name}</span>
           </div>
 
           <div className="flex items-center justify-between pt-3">
-            <span className="text-zinc-400 flex items-center gap-2">
-              <Mail className="w-3.5 h-3.5 text-zinc-500" />
+            <span className="text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+              <Mail className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500" />
               <span>Institutional Email</span>
             </span>
-            <span className="font-mono text-zinc-200">{user.email}</span>
+            <span className="font-mono text-zinc-800 dark:text-zinc-200">{user.email}</span>
           </div>
 
           <div className="flex items-center justify-between pt-3">
-            <span className="text-zinc-400 flex items-center gap-2">
-              <GraduationCap className="w-3.5 h-3.5 text-zinc-500" />
+            <span className="text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+              <GraduationCap className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500" />
               <span>Academic Standing</span>
             </span>
-            <span className="font-medium text-blue-400">
+            <span className="font-medium text-blue-600 dark:text-blue-400">
               Year {user.year_of_study || 4} Student
               {user.batch_year ? ` (Batch '${String(user.batch_year).slice(2)})` : ''}
             </span>
           </div>
 
           <div className="flex items-center justify-between pt-3">
-            <span className="text-zinc-400 flex items-center gap-2">
-              <Layers className="w-3.5 h-3.5 text-zinc-500" />
+            <span className="text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+              <Layers className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500" />
               <span>Current Active Term</span>
             </span>
-            <span className="font-mono text-emerald-400 font-semibold">
+            <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
               Term {user.active_term || 1}
             </span>
           </div>
 
           <div className="flex items-center justify-between pt-3">
-            <span className="text-zinc-400 flex items-center gap-2">
-              <Layers className="w-3.5 h-3.5 text-zinc-500" />
+            <span className="text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+              <Layers className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500" />
               <span>Unlocked Curriculum</span>
             </span>
-            <span className="font-mono text-zinc-300">
+            <span className="font-mono text-zinc-800 dark:text-zinc-300">
               Terms 1–{user.max_allowed_term || 16}
             </span>
           </div>
 
           <div className="flex items-center justify-between pt-3">
-            <span className="text-zinc-400 flex items-center gap-2">
-              <Fingerprint className="w-3.5 h-3.5 text-zinc-500" />
+            <span className="text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+              <Fingerprint className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500" />
               <span>Internal Student ID</span>
             </span>
-            <span className="font-mono text-[11px] text-zinc-400 truncate max-w-[200px]" title={user.user_id}>
+            <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400 truncate max-w-[200px]" title={user.user_id}>
               {user.user_id}
             </span>
           </div>
 
           <div className="flex items-center justify-between pt-3">
-            <span className="text-zinc-400 flex items-center gap-2">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
               <span>Verification Status</span>
             </span>
-            <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
+            <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-medium">
               Verified Scaler Student
             </span>
           </div>
         </div>
       </div>
 
-      {/* 3. Session Management Card */}
-      <div className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] flex items-center justify-between">
+      {/* 4. Session Management Card */}
+      <div className="p-6 rounded-2xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/[0.02] shadow-sm dark:shadow-none flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-zinc-200">Sign Out</h3>
-          <p className="text-xs text-zinc-400 mt-0.5">
+          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-200">Sign Out</h3>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
             End your active JWT session on this device.
           </p>
         </div>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-medium text-zinc-200 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 text-xs font-medium text-zinc-700 dark:text-zinc-200 transition-colors shadow-sm dark:shadow-none"
         >
-          <LogOut className="w-4 h-4 text-zinc-400" />
+          <LogOut className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
           <span>Sign Out</span>
         </button>
       </div>
 
-      {/* 4. Danger Zone: Delete Account */}
-      <div className="p-6 rounded-2xl border border-rose-500/20 bg-rose-500/[0.02] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* 5. Danger Zone: Delete Account */}
+      <div className="p-6 rounded-2xl border border-rose-500/20 bg-rose-500/[0.02] flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm dark:shadow-none">
         <div>
-          <h3 className="text-sm font-semibold text-rose-400 flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4" />
             <span>Delete Account & Student Data</span>
           </h3>
-          <p className="text-xs text-zinc-400 mt-1 max-w-md">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 max-w-md">
             Permanently delete your profile record, refresh session tokens, and saved bookmarks from MongoDB Atlas.
           </p>
         </div>
         <button
           onClick={() => setShowDeleteModal(true)}
-          className="self-start sm:self-auto flex items-center gap-2 px-4 py-2 rounded-xl border border-rose-500/40 bg-rose-500/10 hover:bg-rose-500/20 text-xs font-semibold text-rose-300 transition-colors"
+          className="self-start sm:self-auto flex items-center gap-2 px-4 py-2 rounded-xl border border-rose-500/40 bg-rose-500/10 hover:bg-rose-500/20 text-xs font-semibold text-rose-700 dark:text-rose-300 transition-colors"
         >
           <Trash2 className="w-4 h-4" />
           <span>Delete Account</span>
@@ -428,24 +498,24 @@ export const SettingsPage: React.FC = () => {
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setShowDeleteModal(false)}
           />
-          <div className="relative w-full max-w-md rounded-2xl border border-rose-500/30 bg-[#0d0d10] p-6 shadow-2xl space-y-4 z-10">
+          <div className="relative w-full max-w-md rounded-2xl border border-rose-500/30 bg-white dark:bg-[#0d0d10] p-6 shadow-2xl space-y-4 z-10">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-rose-400 font-semibold text-sm">
+              <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 font-semibold text-sm">
                 <AlertTriangle className="w-5 h-5" />
                 <span>Confirm Account Deletion</span>
               </div>
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="text-zinc-500 hover:text-zinc-300"
+                className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-xs text-zinc-300 leading-relaxed">
+            <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
               Are you sure you want to permanently delete your account (<strong>{user.email}</strong>)?
               All bookmarked lectures and session keys will be purged from MongoDB Atlas. This action cannot be undone.
             </p>
@@ -453,7 +523,7 @@ export const SettingsPage: React.FC = () => {
             <div className="flex items-center justify-end gap-3 pt-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="px-3.5 py-1.5 rounded-lg border border-white/10 text-xs text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
+                className="px-3.5 py-1.5 rounded-lg border border-zinc-200 dark:border-white/10 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-white/5"
               >
                 Cancel
               </button>
