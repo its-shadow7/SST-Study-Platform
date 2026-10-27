@@ -211,7 +211,7 @@ class InMemoryStore:
             "email": email,
             "display_name": display_name,
             "username": candidate,
-            "role": "student",
+            "role": "admin" if (is_special or is_special_email(email)) else "student",
             "active_term": 1,
             "avatar_url": avatar_url,
             "bio": None,
@@ -353,7 +353,9 @@ class InMemoryStore:
         content: str,
         parent_id: Optional[str] = None,
         status: str = "published",
-        moderation_reasons: Optional[List[str]] = None
+        moderation_reasons: Optional[List[str]] = None,
+        reported_by: Optional[List[str]] = None,
+        **kwargs
     ) -> dict:
         comment_id = f"comm_{uuid.uuid4().hex[:12]}"
         now_str = datetime.now(timezone.utc).isoformat()
@@ -703,3 +705,10 @@ def seed_initial_notes(db=None) -> int:
 
     logger.info(f"[Seeder] Seeded {loaded_count} lecture notes into InMemoryStore.")
     return loaded_count
+
+
+# Auto-seed in_memory_store with fixtures upon module import
+try:
+    seed_initial_notes(None)
+except Exception as _e_init:
+    logger.warning("Could not auto-seed in_memory_store on import: %s", _e_init)

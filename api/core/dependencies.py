@@ -52,14 +52,20 @@ async def get_current_student(request: Request) -> dict:
         if not user or user.get("status") != "active":
             raise HTTPException(status_code=401, detail="User account is inactive or not found.")
         user["user_id"] = str(user["_id"])
-        user["role"] = user.get("role") or ("admin" if is_special_email(user.get("email")) else "student")
+        if is_special_email(user.get("email")):
+            user["role"] = "admin"
+        else:
+            user["role"] = user.get("role") or "student"
         return user
     else:
         user = in_memory_store.get_user_by_sub(sub)
         if not user or user.get("status") != "active":
             raise HTTPException(status_code=401, detail="User account is inactive or not found.")
         user["user_id"] = user["_id"]
-        user["role"] = user.get("role") or ("admin" if is_special_email(user.get("email")) else "student")
+        if is_special_email(user.get("email")):
+            user["role"] = "admin"
+        else:
+            user["role"] = user.get("role") or "student"
         return user
 
 
