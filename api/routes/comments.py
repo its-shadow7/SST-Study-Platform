@@ -512,7 +512,18 @@ async def vote_comment(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Comment '{clean_id}' not found.",
             )
-        user_vote, final_score = res
+        if isinstance(res, tuple):
+            user_vote, final_score = res
+        elif isinstance(res, dict):
+            final_score = res.get("score", 0)
+            if user_id in res.get("upvoted_by", []):
+                user_vote = "upvote"
+            elif user_id in res.get("downvoted_by", []):
+                user_vote = "downvote"
+            else:
+                user_vote = None
+        else:
+            user_vote, final_score = res
         return VoteCommentResponse(id=clean_id, score=final_score, user_vote=user_vote)
 
 
@@ -567,7 +578,16 @@ async def delete_comment(
             )
 
         try:
-            del_status = in_memory_store.delete_comment(clean_id, user_id)
+            del_status = in_memory_store.delete_comment(
+                clean_id,
+                user_id,
+                is_admin=(user.get("role") in ("admin", "moderator"))
+            )
+            if not del_status:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Comment '{clean_id}' not found.",
+                )
         except PermissionError:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,

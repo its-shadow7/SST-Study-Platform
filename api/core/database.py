@@ -381,7 +381,7 @@ class InMemoryStore:
             "downvoted_by": [],
             "status": status,
             "moderation_reasons": moderation_reasons or [],
-            "reported_by": [],
+            "reported_by": reported_by or [],
             "report_history": [],
             "created_at": now_str,
             "updated_at": now_str,
@@ -395,21 +395,43 @@ class InMemoryStore:
     def get_comments(self, note_id: str, include_quarantined: bool = False) -> List[dict]:
         results = []
         for c in self.comments.values():
-            if c["note_id"] == note_id:
-                if c["status"] in ("published", "reported"):
+            if c.get("note_id") == note_id:
+                if c.get("status") in ("published", "reported"):
                     results.append(c)
-                elif include_quarantined and c["status"] == "quarantined":
+                elif include_quarantined and c.get("status") == "quarantined":
                     results.append(c)
-        results.sort(key=lambda x: x["created_at"])
+        results.sort(key=lambda x: x.get("created_at", ""))
+        return results
+
+    def get_comments_for_note(self, note_id: str, sort: str = "top") -> List[dict]:
+        results = []
+        for c in self.comments.values():
+            if c.get("note_id") == note_id:
+                if c.get("status") in ("published", "reported"):
+                    user = self.get_user_by_id(c.get("user_id"))
+                    item = dict(c)
+                    if user:
+                        item["username"] = user.get("username") or item.get("username")
+                        item["avatar_url"] = user.get("avatar_url") or item.get("avatar_url")
+                        item["author_role"] = user.get("role", "student")
+                    else:
+                        item.setdefault("author_role", "student")
+                    results.append(item)
+
+        if sort == "top":
+            results.sort(key=lambda x: (x.get("score", 0), x.get("created_at", "")), reverse=True)
+        else:
+            results.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+
         return results
 
     def get_comment_by_id(self, comment_id: str) -> Optional[dict]:
         return self.comments.get(comment_id)
 
-    def vote_comment(self, comment_id: str, user_id: str, action: str) -> dict:
+    def vote_comment(self, comment_id: str, user_id: str, action: str):
         c = self.comments.get(comment_id)
         if not c:
-            raise KeyError("Comment not found")
+            return None
 
         upvoted = set(c.get("upvoted_by", []))
         downvoted = set(c.get("downvoted_by", []))
@@ -431,18 +453,29 @@ class InMemoryStore:
         c["downvoted_by"] = list(downvoted)
         c["score"] = len(upvoted) - len(downvoted)
         c["updated_at"] = datetime.now(timezone.utc).isoformat()
-        return c
 
-    def delete_comment(self, comment_id: str, user_id: str, is_admin: bool = False) -> bool:
+        user_vote = "upvote" if user_id in upvoted else ("downvote" if user_id in downvoted else None)
+        return (user_vote, c["score"])
+
+    def delete_comment(self, comment_id: str, user_id: str, is_admin: bool = False) -> Optional[str]:
         c = self.comments.get(comment_id)
         if not c:
-            return False
-        if not is_admin and c["user_id"] != user_id:
-            return False
-        c["status"] = "deleted"
-        c["content"] = "[This comment has been deleted]"
-        c["updated_at"] = datetime.now(timezone.utc).isoformat()
-        return True
+            return None
+        if not is_admin and str(c.get("user_id")) != str(user_id):
+            raise PermissionError("You can only delete your own comments.")
+
+        has_children = any(
+            reply.get("parent_id") == comment_id and reply.get("status") != "deleted"
+            for reply in self.comments.values()
+        )
+        if has_children:
+            now_str = datetime.now(timezone.utc).isoformat()
+            c["content"] = "[Deleted]"
+            c["updated_at"] = now_str
+            return "redacted"
+        else:
+            del self.comments[comment_id]
+            return "deleted"
 
     def report_comment(self, comment_id: str, user_id: str, reason: str) -> dict:
         c = self.comments.get(comment_id)
