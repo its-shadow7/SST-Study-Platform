@@ -95,7 +95,7 @@ def get_mongo_db():
 def is_special_email(email: Optional[str]) -> bool:
     if not email:
         return False
-    special_emails = [e.lower().strip() for e in os.getenv("SPECIAL_EMAILS", "acca3402@gmail.com").split(",") if e.strip()]
+    special_emails = [e.lower().strip() for e in os.getenv("SPECIAL_EMAILS", "").split(",") if e.strip()]
     return email.lower().strip() in special_emails
 
 

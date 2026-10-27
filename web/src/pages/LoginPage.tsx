@@ -69,14 +69,14 @@ export const LoginPage: React.FC = () => {
               </button>
               <button
                 onClick={() => {
-                  loginDevMock('acca3402@gmail.com')
+                  loginDevMock('admin@sst.scaler.com')
                     .then(() => navigate('/terms'))
                     .catch((e) => console.error('Dev bypass error:', e));
                 }}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-indigo-500/30 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20 text-xs text-indigo-700 dark:text-indigo-300 transition-colors"
               >
                 <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                <span>Special Mail Bypass</span>
+                <span>Admin Bypass</span>
               </button>
             </div>
           </div>

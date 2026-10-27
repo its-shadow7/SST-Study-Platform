@@ -42,26 +42,28 @@ def clean_database(dry_run: bool = False):
 
     print(f"Connected to MongoDB Atlas: {db.name}")
 
-    # 1. Identify acca3402 user record
-    acca_user = db.users.find_one({"email": "acca3402@gmail.com"})
-    acca_id = str(acca_user["_id"]) if acca_user else None
+    # 1. Identify special admin user records from SPECIAL_EMAILS
+    special_raw = os.getenv("SPECIAL_EMAILS", "")
+    special_emails = [e.strip().lower() for e in special_raw.split(",") if e.strip()]
+    special_users = list(db.users.find({"email": {"$in": special_emails}})) if special_emails else []
+    special_ids = [str(u["_id"]) for u in special_users]
 
-    if acca_user:
-        print(f"[PRESERVED] Found acca3402 user record (ID: {acca_id}). It will NOT be deleted.")
+    if special_users:
+        print(f"[PRESERVED] Found {len(special_users)} admin user records ({', '.join(special_emails)}). They will NOT be deleted.")
     else:
-        print("[INFO] acca3402 has not created an entry in this DB yet. Protected rule is active.")
+        print("[INFO] No special admin users found in DB yet.")
 
     # 2. Count items to delete
-    comment_filter = {"user_id": {"$ne": acca_id}} if acca_id else {}
+    comment_filter = {"user_id": {"$nin": special_ids}} if special_ids else {}
     comments_to_delete = db.comments.count_documents(comment_filter)
 
-    user_filter = {"email": {"$ne": "acca3402@gmail.com"}}
+    user_filter = {"email": {"$nin": special_emails}} if special_emails else {}
     users_to_delete = db.users.count_documents(user_filter)
 
-    session_filter = {"user_id": {"$ne": acca_id}} if acca_id else {}
+    session_filter = {"user_id": {"$nin": special_ids}} if special_ids else {}
     sessions_to_delete = db.sessions.count_documents(session_filter)
 
-    notif_filter = {"user_id": {"$ne": acca_id}} if acca_id else {}
+    notif_filter = {"user_id": {"$nin": special_ids}} if special_ids else {}
     notifs_to_delete = db.notifications.count_documents(notif_filter)
 
     logs_to_delete = db.moderation_logs.count_documents({})

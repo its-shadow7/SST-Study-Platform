@@ -567,7 +567,7 @@ Configured in `.env` (loaded via `api/config.py`):
 | `GOOGLE_CLIENT_ID` | string | `""` | Google OAuth Web Client ID |
 | `GOOGLE_ALLOWED_HD` | string | `"sst.scaler.com"` | Permitted Google Workspace hosted domain |
 | `ALLOW_DEV_MOCK_LOGIN` | boolean | `false` | Enables `mock:student@sst.scaler.com` dev bypass |
-| `SPECIAL_EMAILS` | string | `"acca3402@gmail.com"`| Comma-separated emails bypassing roll-number checks |
+| `SPECIAL_EMAILS` | string | `""` | Comma-separated admin emails bypassing roll-number checks |
 | `JWT_PRIVATE_KEY_B64` | base64 | `""` | RSA-2048 private key in base64 (for token signing) |
 | `JWT_PUBLIC_KEY_B64` | base64 | `""` | RSA-2048 public key in base64 (for edge verification) |
 | `JWT_ISSUER` | string | `"sst-study-platform"`| Registered JWT issuer (`iss`) claim |

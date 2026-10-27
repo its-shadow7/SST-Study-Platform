@@ -14,7 +14,7 @@ class Settings:
     GOOGLE_CLIENT_ID: str = os.getenv("GOOGLE_CLIENT_ID", "").strip()
     GOOGLE_ALLOWED_HD: str = os.getenv("GOOGLE_ALLOWED_HD", "sst.scaler.com").strip()
     ALLOW_DEV_MOCK_LOGIN: bool = os.getenv("ALLOW_DEV_MOCK_LOGIN", "false").lower() in ("true", "1")
-    SPECIAL_EMAILS: str = os.getenv("SPECIAL_EMAILS", "acca3402@gmail.com").strip()
+    SPECIAL_EMAILS: str = os.getenv("SPECIAL_EMAILS", "").strip()
     
     # JWT Asymmetric Keys (RS256)
     JWT_PRIVATE_KEY_B64: str = os.getenv("JWT_PRIVATE_KEY_B64", "").strip()

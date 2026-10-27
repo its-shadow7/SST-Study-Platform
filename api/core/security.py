@@ -38,9 +38,7 @@ def _upstash_exec(cmd: list) -> any:
 
 def get_special_emails() -> set:
     raw = getattr(settings, "SPECIAL_EMAILS", "") or ""
-    emails = {e.strip().lower() for e in raw.split(",") if e.strip()}
-    emails.add("acca3402@gmail.com")
-    return emails
+    return {e.strip().lower() for e in raw.split(",") if e.strip()}
 
 
 def is_special_email(email: str) -> bool:

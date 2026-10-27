@@ -15,3 +15,10 @@ def ensure_test_jwt_keys():
         settings.JWT_PUBLIC_KEY_B64 = pub_b64
         os.environ["JWT_PRIVATE_KEY_B64"] = priv_b64
         os.environ["JWT_PUBLIC_KEY_B64"] = pub_b64
+
+    # Ensure test special account is registered for test fixtures without hardcoding in app code
+    existing_specials = [e for e in getattr(settings, "SPECIAL_EMAILS", "").split(",") if e]
+    if "acca3402@gmail.com" not in existing_specials:
+        existing_specials.append("acca3402@gmail.com")
+        settings.SPECIAL_EMAILS = ",".join(existing_specials)
+        os.environ["SPECIAL_EMAILS"] = settings.SPECIAL_EMAILS
