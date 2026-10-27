@@ -92,6 +92,13 @@ def get_mongo_db():
 # In-Memory Database Fallback for Development & Offline Mode
 # ==============================================================================
 
+def is_special_email(email: Optional[str]) -> bool:
+    if not email:
+        return False
+    special_emails = [e.lower().strip() for e in os.getenv("SPECIAL_EMAILS", "acca3402@gmail.com").split(",") if e.strip()]
+    return email.lower().strip() in special_emails
+
+
 class InMemoryStore:
     def __init__(self):
         self.users: Dict[str, dict] = {}
