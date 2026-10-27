@@ -4,15 +4,13 @@
   "private": true,
   "description": "Study Platform for Scaler School of Technology",
   "scripts": {
-    "build:notes": "python tooling/build_notes.py",
-    "build:web": "npm --prefix web run build",
-    "build": "npm run build:notes && npm run build:web",
-    "dev": "node tooling/dev.js",
+    "build": "npm --prefix web run build",
+    "dev": "node scripts/dev.js",
     "dev:api": "uvicorn api.index:app --reload --port 8000",
-    "dev:web": "npm --prefix web run dev"
-  },
-  "dependencies": {
-    "jose": "^5.9.6"
+    "dev:web": "npm --prefix web run dev",
+    "seed": "python scripts/seed_db.py",
+    "clean:db": "python scripts/clean_db.py",
+    "set:role": "python scripts/set_role.py"
   },
   "devDependencies": {
     "@types/node": "^26.6.4",

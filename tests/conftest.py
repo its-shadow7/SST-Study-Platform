@@ -1,7 +1,7 @@
 import os
 import pytest
-from tooling.generate_keys import generate_keys
-from api.config import settings
+from scripts.generate_keys import generate_keys
+from api.core.config import settings
 
 @pytest.fixture(scope="session", autouse=True)
 def ensure_test_jwt_keys():

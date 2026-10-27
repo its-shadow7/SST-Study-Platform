@@ -17,7 +17,8 @@ import {
   FileText,
   HelpCircle,
   Sun,
-  Moon
+  Moon,
+  FileEdit,
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -155,17 +156,30 @@ export const Navbar: React.FC<NavbarProps> = ({
           </Link>
 
           {(user?.role === 'admin' || user?.role === 'moderator') && (
-            <Link
-              to="/moderation"
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors ${
-                isCurrent('/moderation')
-                  ? 'bg-amber-500/15 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-medium shadow-sm'
-                  : 'text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 hover:bg-amber-500/10'
-              }`}
-            >
-              <ShieldAlert className="w-3.5 h-3.5" />
-              <span>Moderation</span>
-            </Link>
+            <>
+              <Link
+                to="/moderation"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors ${
+                  isCurrent('/moderation')
+                    ? 'bg-amber-500/15 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-medium shadow-sm'
+                    : 'text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 hover:bg-amber-500/10'
+                }`}
+              >
+                <ShieldAlert className="w-3.5 h-3.5" />
+                <span>Moderation</span>
+              </Link>
+              <Link
+                to="/studio"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors ${
+                  isCurrent('/studio')
+                    ? 'bg-blue-500/15 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-500/30 font-medium shadow-sm'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-white/5'
+                }`}
+              >
+                <FileEdit className="w-3.5 h-3.5" />
+                <span>Note Studio</span>
+              </Link>
+            </>
           )}
         </nav>
       </div>

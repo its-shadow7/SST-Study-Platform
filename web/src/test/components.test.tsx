@@ -8,6 +8,7 @@ import { Sidebar } from '@/components/Sidebar';
 import { MobileTableOfContents } from '@/components/TableOfContents';
 import { BookmarkProvider, useBookmarks } from '@/context/BookmarkContext';
 import { api } from '@/services/apiClient';
+import { App } from '@/App';
 
 // Mock Sonner toast
 vi.mock('sonner', () => ({
@@ -79,9 +80,8 @@ describe('Frontend Component Acceptance Suite', () => {
   });
 
   // 1. Session Restoration Test
-  it('renders session restoration loading state when authLoading is true', async () => {
+  it('renders session restoration loading state when authLoading is true', () => {
     currentMockAuthLoading = true;
-    const { App } = await import('@/App');
     render(
       <BrowserRouter>
         <App />
@@ -89,7 +89,8 @@ describe('Frontend Component Acceptance Suite', () => {
     );
 
     expect(screen.getByText('Restoring session...')).toBeDefined();
-  }, 15000);
+    currentMockAuthLoading = false;
+  });
 
   // 2. Search Modal Filtering and Keyboard Navigation Test
   it('filters notes in SearchModal by query and subject code', () => {

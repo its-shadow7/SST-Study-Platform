@@ -1,94 +1,95 @@
 import { Note, NoteIndexItem } from '../types/note';
-import { setCsrfToken } from './apiClient';
+import { api, ApiError } from './apiClient';
 
-let refreshPromise: Promise<boolean> | null = null;
+// In-memory cache for fast navigation between reader and studio
+const cache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL_MS = 60 * 1000; // 1 minute
+
+export function clearNotesCache(): void {
+  cache.clear();
+}
 
 /**
- * Deduplicated auth session refresh.
- * Calls /api/auth/refresh to rotate refresh token and obtain a fresh access_token cookie.
+ * Fetches the catalogue index of notes accessible to the current student.
+ * If includeDrafts is true (moderator/admin), includes draft status notes.
  */
-async function refreshAuthSession(): Promise<boolean> {
-  if (refreshPromise) {
-    return refreshPromise;
+export async function fetchNotesIndex(includeDrafts: boolean = false): Promise<NoteIndexItem[]> {
+  const cacheKey = `notes_index_${includeDrafts}`;
+  const cached = cache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    return cached.data as NoteIndexItem[];
   }
 
-  refreshPromise = (async () => {
-    try {
-      const response = await fetch('/api/auth/refresh', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        return false;
-      }
-
-      const data = await response.json();
-      if (data?.csrf_token) {
-        setCsrfToken(data.csrf_token);
-      }
-      return true;
-    } catch {
-      return false;
-    } finally {
-      refreshPromise = null;
-    }
-  })();
-
-  return refreshPromise;
-}
-
-export async function fetchNotesIndex(): Promise<NoteIndexItem[]> {
-  let response = await fetch('/data/notes-index.json', {
-    credentials: 'include',
-  });
-
-  if (response.status === 401) {
-    const refreshed = await refreshAuthSession();
-    if (refreshed) {
-      response = await fetch('/data/notes-index.json', {
-        credentials: 'include',
-      });
-    }
-  }
-
-  if (!response.ok) {
-    if (response.status === 401 || response.status === 403) {
+  try {
+    const data = await api.get<NoteIndexItem[]>(
+      `/api/notes?include_drafts=${includeDrafts ? 'true' : 'false'}`
+    );
+    cache.set(cacheKey, { data, timestamp: Date.now() });
+    return data;
+  } catch (err: any) {
+    if (err?.status === 401 || err?.status === 403) {
       throw new Error('AUTH_REQUIRED');
     }
-    throw new Error(`Failed to load course note catalogue (${response.status})`);
+    throw new Error(err?.message || 'Failed to load course note catalogue');
   }
-
-  return response.json();
 }
 
+/**
+ * Fetches complete note content by ID (including all sections and topic quiz).
+ * Term gating is enforced by the FastAPI backend (403 FORBIDDEN if higher term than allowed).
+ */
 export async function fetchNoteById(noteId: string): Promise<Note> {
-  let response = await fetch(`/data/notes/${noteId}.json`, {
-    credentials: 'include',
-  });
-
-  if (response.status === 401) {
-    const refreshed = await refreshAuthSession();
-    if (refreshed) {
-      response = await fetch(`/data/notes/${noteId}.json`, {
-        credentials: 'include',
-      });
-    }
+  const cleanId = noteId.toLowerCase().trim();
+  const cacheKey = `note_${cleanId}`;
+  const cached = cache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    return cached.data as Note;
   }
 
-  if (!response.ok) {
-    if (response.status === 401 || response.status === 403) {
+  try {
+    const data = await api.get<Note>(`/api/notes/${encodeURIComponent(cleanId)}`);
+    cache.set(cacheKey, { data, timestamp: Date.now() });
+    return data;
+  } catch (err: any) {
+    if (err?.status === 401) {
       throw new Error('AUTH_REQUIRED');
     }
-    if (response.status === 404) {
+    if (err?.status === 403) {
+      throw new Error('TERM_LOCKED');
+    }
+    if (err?.status === 404) {
       throw new Error('NOTE_NOT_FOUND');
     }
-    throw new Error(`Failed to load note '${noteId}' (${response.status})`);
+    throw new Error(err?.message || `Failed to load note '${cleanId}'`);
   }
-
-  return response.json();
 }
 
+/**
+ * Saves or updates a note in MongoDB Atlas (moderator/admin only).
+ * Automatically invalidates local note caches.
+ */
+export async function saveNote(noteData: Partial<Note> & { note_id: string }): Promise<Note> {
+  const cleanId = noteData.note_id.toLowerCase().trim();
+  try {
+    // Uses PUT /api/notes/{id} which upserts atomically
+    const saved = await api.put<Note>(`/api/notes/${encodeURIComponent(cleanId)}`, noteData);
+    clearNotesCache();
+    return saved;
+  } catch (err: any) {
+    throw new Error(err?.message || `Failed to save note '${cleanId}'`);
+  }
+}
+
+/**
+ * Deletes a note permanently from MongoDB Atlas (moderator/admin only).
+ * Automatically invalidates local note caches.
+ */
+export async function deleteNote(noteId: string): Promise<void> {
+  const cleanId = noteId.toLowerCase().trim();
+  try {
+    await api.delete(`/api/notes/${encodeURIComponent(cleanId)}`);
+    clearNotesCache();
+  } catch (err: any) {
+    throw new Error(err?.message || `Failed to delete note '${cleanId}'`);
+  }
+}

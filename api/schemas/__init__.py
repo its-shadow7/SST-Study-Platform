@@ -1,0 +1,89 @@
+from api.schemas.auth import (
+    GoogleLoginRequest,
+    UserResponse,
+    UpdateProfileRequest,
+    PublicUserProfileResponse,
+    AuthResponse,
+    BookmarkItem,
+    BookmarkListResponse,
+    BookmarkActionResponse,
+    ErrorResponse
+)
+from api.schemas.note import (
+    NoteSection,
+    QuizOption,
+    QuizQuestion,
+    NoteDocument,
+    NoteIndexItem,
+    NoteUpsertRequest,
+    extract_term_number
+)
+from api.schemas.comment import (
+    CreateCommentRequest,
+    VoteCommentRequest,
+    VoteCommentResponse,
+    CommentDocument,
+    CommentListResponse,
+    DeleteCommentResponse,
+    ReportCommentRequest,
+    ReportCommentResponse,
+    ResolveModerationRequest,
+    ResolveModerationResponse,
+    ModerationQueueResponse,
+    ModerationAuditLogItem,
+    ModerationAuditLogResponse,
+    NotificationItem,
+    NotificationListResponse
+)
+from api.schemas.quiz import (
+    SaveQuizAttemptRequest,
+    QuizAttemptResponse,
+    UserQuizStats
+)
+from api.schemas.scratchpad import (
+    UpdateScratchpadRequest,
+    PrivateNoteDocument,
+    ScratchpadResponse,
+    ScratchpadSummaryResponse
+)
+
+__all__ = [
+    "GoogleLoginRequest",
+    "UserResponse",
+    "UpdateProfileRequest",
+    "PublicUserProfileResponse",
+    "AuthResponse",
+    "BookmarkItem",
+    "BookmarkListResponse",
+    "BookmarkActionResponse",
+    "ErrorResponse",
+    "NoteSection",
+    "QuizOption",
+    "QuizQuestion",
+    "NoteDocument",
+    "NoteIndexItem",
+    "NoteUpsertRequest",
+    "extract_term_number",
+    "CreateCommentRequest",
+    "VoteCommentRequest",
+    "VoteCommentResponse",
+    "CommentDocument",
+    "CommentListResponse",
+    "DeleteCommentResponse",
+    "ReportCommentRequest",
+    "ReportCommentResponse",
+    "ResolveModerationRequest",
+    "ResolveModerationResponse",
+    "ModerationQueueResponse",
+    "ModerationAuditLogItem",
+    "ModerationAuditLogResponse",
+    "NotificationItem",
+    "NotificationListResponse",
+    "SaveQuizAttemptRequest",
+    "QuizAttemptResponse",
+    "UserQuizStats",
+    "UpdateScratchpadRequest",
+    "PrivateNoteDocument",
+    "ScratchpadResponse",
+    "ScratchpadSummaryResponse"
+]

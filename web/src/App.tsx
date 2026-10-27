@@ -12,6 +12,7 @@ import { BookmarksPage } from '@/pages/BookmarksPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import { ModerationPage } from '@/pages/ModerationPage';
 import { ProfilePage } from '@/pages/ProfilePage';
+import { NoteStudioPage } from '@/pages/NoteStudioPage';
 import { ProfileSetupModal } from '@/components/ProfileSetupModal';
 import { NoteRedirector } from '@/components/NoteRedirector';
 import { Layers, AlertCircle, RotateCcw } from 'lucide-react';
@@ -238,6 +239,36 @@ export const App: React.FC = () => {
               user ? (
                 user.role === 'admin' || user.role === 'moderator' ? (
                   <ModerationPage />
+                ) : (
+                  <Navigate to="/terms" replace />
+                )
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
+
+          {/* Note Studio Routes (Admins & Moderators) */}
+          <Route
+            path="/studio"
+            element={
+              user ? (
+                user.role === 'admin' || user.role === 'moderator' ? (
+                  <NoteStudioPage />
+                ) : (
+                  <Navigate to="/terms" replace />
+                )
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
+          <Route
+            path="/studio/:noteId"
+            element={
+              user ? (
+                user.role === 'admin' || user.role === 'moderator' ? (
+                  <NoteStudioPage />
                 ) : (
                   <Navigate to="/terms" replace />
                 )

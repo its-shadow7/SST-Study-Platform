@@ -33,3 +33,4 @@ Original_Notes/
 .env*
 
 scratch/
+*.pdf

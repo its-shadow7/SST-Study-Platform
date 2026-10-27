@@ -26,7 +26,8 @@ import {
   HelpCircle,
   ArrowRight,
   AlignJustify,
-  AlignLeft
+  AlignLeft,
+  FileEdit,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -408,6 +409,17 @@ export const ReaderPage: React.FC<ReaderPageProps> = ({
                           />
                           <span>{bookmarked ? 'Bookmarked' : 'Bookmark Note'}</span>
                         </button>
+
+                        {(user?.role === 'admin' || user?.role === 'moderator') && (
+                          <button
+                            onClick={() => navigate(`/studio/${currentNote.note_id}`)}
+                            className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-zinc-50 dark:hover:bg-white/10 text-xs font-medium text-zinc-700 dark:text-zinc-300 transition-colors shadow-sm dark:shadow-none"
+                            title="Edit this lecture in Note Studio"
+                          >
+                            <FileEdit className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
+                            <span>Edit Lecture</span>
+                          </button>
+                        )}
 
                         <button
                           onClick={handleCopyLink}

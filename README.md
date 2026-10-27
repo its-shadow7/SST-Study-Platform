@@ -1,5 +1,7 @@
 # Antigravity Study Platform (SST Study Site)
 
+> 🤖 **AI Model & Agent Guide**: For complete technical specifications, architectural diagrams, dual-persistence mechanics, database schemas, and codebase invariants tailored for LLMs, see [AI_PROJECT_CONTEXT.md](AI_PROJECT_CONTEXT.md).
+
 Private study platform for Scaler School of Technology (SST) students, implementing the **Antigravity Study Platform Technical Design Document (v1.1)**.
 
 ---
