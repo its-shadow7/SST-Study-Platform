@@ -28,9 +28,9 @@ jobs:
           pip install -r api/requirements.txt
           pip install pytest httpx
 
-      - name: Validate notes catalogue compilation
+      - name: Validate note fixtures and schemas
         run: |
-          python tooling/build_notes.py
+          python scripts/seed_db.py
 
       - name: Run Pytest test suite
         env:
